@@ -180,8 +180,8 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
 
   // Mutación para crear factura
   const createInvoiceMutation = useMutation({
-    mutationFn: async (invoiceData: InsertInvoice & { items: InsertInvoiceItem[] }) =>
-      authenticatedRequest('/api/invoices', 'POST', invoiceData),
+    mutationFn: async (payload: { invoice: InsertInvoice, items: InsertInvoiceItem[] }) =>
+      authenticatedRequest('/api/invoices', 'POST', payload),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['/api/invoices'] });
       queryClient.invalidateQueries({ queryKey: ['/api/customers'] });
@@ -371,7 +371,8 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
       return;
     }
 
-    const invoiceData: InsertInvoice & { items: InsertInvoiceItem[] } = {
+    // Preparar datos de factura (sin items)
+    const invoiceData: InsertInvoice = {
       number: nextInvoiceNumber?.number || 'FAC-001',
       customerId: null,
       customerName: formData.customerName,
@@ -390,18 +391,26 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
       delivered: false,
       cancelledAt: null,
       cancellationReason: null,
-      items: currentInvoice.items.map(item => ({
-        invoiceId: 'temp', // Will be updated by server
-        serviceId: item.serviceId,
-        serviceName: item.serviceName,
-        serviceType: item.serviceType,
-        quantity: item.quantity,
-        unitPrice: item.unitPrice,
-        total: item.total,
-      }))
     };
 
-    createInvoiceMutation.mutate(invoiceData);
+    // Preparar items de factura
+    const items: InsertInvoiceItem[] = currentInvoice.items.map(item => ({
+      invoiceId: 'temp', // Will be updated by server
+      serviceId: item.serviceId,
+      serviceName: item.serviceName,
+      serviceType: item.serviceType,
+      quantity: item.quantity,
+      unitPrice: item.unitPrice,
+      total: item.total,
+    }));
+
+    // Enviar con la estructura que espera el backend
+    const payload = {
+      invoice: invoiceData,
+      items: items
+    };
+
+    createInvoiceMutation.mutate(payload);
   };
 
   // Filtrar clientes para búsqueda

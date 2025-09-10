@@ -145,12 +145,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/invoices", async (req, res) => {
+  app.post("/api/invoices", requireAuthentication, async (req: AuthenticatedRequest, res) => {
     try {
       const { invoice: invoiceData, items } = req.body;
       
+      // Parse string dates back to Date objects (JSON.stringify converts Date to string)
+      const processedInvoiceData = {
+        ...invoiceData,
+        date: invoiceData.date ? new Date(invoiceData.date) : undefined,
+        deliveryDate: invoiceData.deliveryDate ? new Date(invoiceData.deliveryDate) : null,
+      };
+      
       // Validate invoice data
-      const validatedInvoice = insertInvoiceSchema.parse(invoiceData);
+      const validatedInvoice = insertInvoiceSchema.parse(processedInvoiceData);
       
       // Create invoice
       const invoice = await storage.createInvoice(validatedInvoice);
@@ -177,11 +184,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
       
-      res.json({ invoice, items: invoiceItems });
+      res.status(201).json({ invoice, items: invoiceItems });
     } catch (error) {
       if (error instanceof z.ZodError) {
         return res.status(400).json({ message: "Invalid data", errors: error.errors });
       }
+      console.error("Invoice creation error:", (error as Error).message);
       res.status(500).json({ message: "Server error" });
     }
   });
@@ -196,7 +204,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.put("/api/invoices/:id", async (req, res) => {
+  app.put("/api/invoices/:id", requireAuthentication, async (req: AuthenticatedRequest, res) => {
     try {
       const { id } = req.params;
       const updates = req.body;
