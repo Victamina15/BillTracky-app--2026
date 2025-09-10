@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { FileText, LogOut, Home, Package, Users, Settings, CreditCard } from "lucide-react";
 import { type Employee, type Invoice } from "@shared/schema";
-import InvoiceForm from "./invoice-form";
+import InvoiceCreation from "./invoice-creation";
 import OrderManagement from "./order-management";
 import CustomersGrid from "./customers-grid";
 import ServicesConfig from "./services-config";
@@ -63,7 +63,7 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
   const renderTabContent = () => {
     switch (activeTab) {
       case "invoices":
-        return <InvoiceForm user={user} onNotification={onNotification} />;
+        return <InvoiceCreation onNotification={onNotification} />;
       case "orders":
         return <OrderManagement onNotification={onNotification} />;
       case "customers":
