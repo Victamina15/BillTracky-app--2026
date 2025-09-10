@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { FileText, LogOut, Home, Package, Users, Settings, CreditCard } from "lucide-react";
+import { FileText, LogOut, Home, Package, Users, Settings, CreditCard, BarChart3 } from "lucide-react";
 import { type Employee, type Invoice } from "@shared/schema";
 import InvoiceCreation from "./invoice-creation";
 import OrderManagement from "./order-management";
 import CustomersGrid from "./customers-grid";
 import ServicesConfig from "./services-config";
 import PaymentMethodsConfig from "./payment-methods-config";
+import CashClosure from "./cash-closure";
 import { useQuery } from "@tanstack/react-query";
 
 interface DashboardProps {
@@ -72,6 +73,8 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
         return <ServicesConfig onNotification={onNotification} />;
       case "payment-methods":
         return <PaymentMethodsConfig onNotification={onNotification} />;
+      case "cash-closure":
+        return <CashClosure onBack={() => setActiveTab('overview')} />;
       default:
         return (
           <div>
@@ -162,12 +165,12 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
                     <p className="text-sm font-medium">Buscar Orden</p>
                   </button>
                   <button 
-                    onClick={() => onNotification("Generando reportes...")}
+                    onClick={() => setActiveTab('cash-closure')}
                     className="bg-green-600 text-white p-4 rounded-lg hover:bg-green-700 transition-colors text-left"
-                    data-testid="quick-action-reports"
+                    data-testid="quick-action-cash-closure"
                   >
-                    <span className="text-lg mb-2 block">🖨️</span>
-                    <p className="text-sm font-medium">Reportes</p>
+                    <span className="text-lg mb-2 block">💰</span>
+                    <p className="text-sm font-medium">Cierre de Caja</p>
                   </button>
                   <button 
                     onClick={() => setActiveTab('services')}
@@ -316,6 +319,16 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
           >
             <CreditCard className="w-4 h-4 mr-2" />
             Métodos de Pago
+          </button>
+          <button 
+            onClick={() => setActiveTab('cash-closure')} 
+            className={`tab-btn px-4 py-3 text-sm font-medium whitespace-nowrap ${
+              activeTab === 'cash-closure' ? 'tab-active' : ''
+            }`}
+            data-testid="tab-cash-closure"
+          >
+            <BarChart3 className="w-4 h-4 mr-2" />
+            Cierre de Caja
           </button>
         </div>
       </nav>

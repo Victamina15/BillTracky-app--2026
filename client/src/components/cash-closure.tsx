@@ -80,6 +80,7 @@ export default function CashClosure({ onBack }: CashClosureProps) {
       
       // Filtrar por fecha seleccionada
       return data.filter((invoice: Invoice) => {
+        if (!invoice.date) return false;
         const invoiceDate = new Date(invoice.date).toISOString().split('T')[0];
         return invoiceDate === selectedDate;
       });
@@ -116,23 +117,23 @@ export default function CashClosure({ onBack }: CashClosureProps) {
 
   // Calcular resumen diario
   const dailySummary: DailySummary = useMemo(() => {
-    const deliveredInvoices = invoices.filter(invoice => 
+    const deliveredInvoices = invoices.filter((invoice: Invoice) => 
       invoice.status === 'delivered' && invoice.paid
     );
     
-    const pendingInvoices = invoices.filter(invoice => 
+    const pendingInvoices = invoices.filter((invoice: Invoice) => 
       !invoice.paid && invoice.status !== 'cancelled'
     );
 
     // Resumen por método de pago
     const paymentSummary: PaymentSummary = {};
-    paymentMethods.forEach(method => {
+    paymentMethods.forEach((method: PaymentMethod) => {
       paymentSummary[method.name] = { quantity: 0, total: 0 };
     });
     paymentSummary['Pendiente'] = { quantity: 0, total: 0 };
 
-    deliveredInvoices.forEach(invoice => {
-      const methodName = paymentMethods.find(m => m.code === invoice.paymentMethod)?.name || 'Pendiente';
+    deliveredInvoices.forEach((invoice: Invoice) => {
+      const methodName = paymentMethods.find((m: PaymentMethod) => m.code === invoice.paymentMethod)?.name || 'Pendiente';
       if (paymentSummary[methodName]) {
         paymentSummary[methodName].quantity++;
         paymentSummary[methodName].total += parseFloat(invoice.total);
@@ -141,8 +142,8 @@ export default function CashClosure({ onBack }: CashClosureProps) {
 
     // Estadísticas por empleado
     const employeeStats: EmployeeStats = {};
-    deliveredInvoices.forEach(invoice => {
-      const employee = employees.find(e => e.id === invoice.employeeId);
+    deliveredInvoices.forEach((invoice: Invoice) => {
+      const employee = employees.find((e: Employee) => e.id === invoice.employeeId);
       const employeeName = employee?.name || 'Desconocido';
       
       if (!employeeStats[employeeName]) {
@@ -156,9 +157,9 @@ export default function CashClosure({ onBack }: CashClosureProps) {
       totalInvoices: invoices.length,
       deliveredInvoices: deliveredInvoices.length,
       pendingInvoices: pendingInvoices.length,
-      totalRevenue: deliveredInvoices.reduce((sum, inv) => sum + parseFloat(inv.total), 0),
-      totalSubtotal: deliveredInvoices.reduce((sum, inv) => sum + parseFloat(inv.subtotal), 0),
-      totalTax: deliveredInvoices.reduce((sum, inv) => sum + parseFloat(inv.tax), 0),
+      totalRevenue: deliveredInvoices.reduce((sum: number, inv: Invoice) => sum + parseFloat(inv.total), 0),
+      totalSubtotal: deliveredInvoices.reduce((sum: number, inv: Invoice) => sum + parseFloat(inv.subtotal), 0),
+      totalTax: deliveredInvoices.reduce((sum: number, inv: Invoice) => sum + parseFloat(inv.tax), 0),
       totalItems: invoices.length, // Se podría mejorar con items reales
       urgentOrders: 0, // Se podría agregar campo urgente al schema
       paymentSummary,
@@ -201,7 +202,7 @@ export default function CashClosure({ onBack }: CashClosureProps) {
   };
 
   const printCashClosure = () => {
-    const currentEmployee = employees.find(e => e.id === localStorage.getItem('employeeId'));
+    const currentEmployee = employees.find((e: Employee) => e.id === localStorage.getItem('employeeId'));
     
     const printWindow = window.open('', '_blank');
     if (!printWindow) return;
@@ -497,7 +498,7 @@ export default function CashClosure({ onBack }: CashClosureProps) {
                 {Object.entries(dailySummary.paymentSummary)
                   .filter(([_, data]) => data.quantity > 0)
                   .map(([methodName, data]) => {
-                    const method = paymentMethods.find(m => m.name === methodName);
+                    const method = paymentMethods.find((m: PaymentMethod) => m.name === methodName);
                     const methodCode = method?.code || 'pending';
                     
                     return (
