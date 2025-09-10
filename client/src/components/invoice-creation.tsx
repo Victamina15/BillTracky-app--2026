@@ -133,6 +133,14 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
   const [showCustomerSearchModal, setShowCustomerSearchModal] = useState(false);
   const [showDiscountModal, setShowDiscountModal] = useState(false);
   const [showDateModal, setShowDateModal] = useState(false);
+  const [showAddItemModal, setShowAddItemModal] = useState(false);
+
+  // Estados para el nuevo selector de servicios escalable
+  const [serviceSearchTerm, setServiceSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedService, setSelectedService] = useState<Service | null>(null);
+  const [selectedServiceType, setSelectedServiceType] = useState<'wash' | 'iron' | 'both'>('wash');
+  const [itemQuantity, setItemQuantity] = useState(1);
   const [selectedDeliveryDate, setSelectedDeliveryDate] = useState('');
   
   // Estados de descuento
@@ -419,6 +427,67 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
     customer.phone.includes(customerSearchTerm)
   );
 
+  // Obtener categorías únicas de servicios (basado en nombres comunes)
+  const getServiceCategories = () => {
+    const categories = new Set<string>();
+    services.forEach(service => {
+      // Extraer categoría basada en el nombre del servicio
+      const name = service.name.toLowerCase();
+      if (name.includes('pantalon') || name.includes('jean') || name.includes('short')) {
+        categories.add('Pantalones');
+      } else if (name.includes('camisa') || name.includes('blusa') || name.includes('polo')) {
+        categories.add('Camisas');
+      } else if (name.includes('vestido') || name.includes('falda') || name.includes('saco')) {
+        categories.add('Vestidos');
+      } else if (name.includes('ropa interior') || name.includes('calcetines') || name.includes('medias')) {
+        categories.add('Ropa Interior');
+      } else if (name.includes('abrigo') || name.includes('chaqueta') || name.includes('sueter')) {
+        categories.add('Abrigos');
+      } else if (name.includes('cortina') || name.includes('sabana') || name.includes('funda')) {
+        categories.add('Hogar');
+      } else {
+        categories.add('Otros');
+      }
+    });
+    return Array.from(categories).sort();
+  };
+
+  // Filtrar servicios por categoría y búsqueda
+  const filteredServices = services.filter(service => {
+    const matchesSearch = service.name.toLowerCase().includes(serviceSearchTerm.toLowerCase());
+    
+    if (selectedCategory === 'all') return matchesSearch;
+    
+    const name = service.name.toLowerCase();
+    const categoryMatch = {
+      'Pantalones': name.includes('pantalon') || name.includes('jean') || name.includes('short'),
+      'Camisas': name.includes('camisa') || name.includes('blusa') || name.includes('polo'),
+      'Vestidos': name.includes('vestido') || name.includes('falda') || name.includes('saco'),
+      'Ropa Interior': name.includes('ropa interior') || name.includes('calcetines') || name.includes('medias'),
+      'Abrigos': name.includes('abrigo') || name.includes('chaqueta') || name.includes('sueter'),
+      'Hogar': name.includes('cortina') || name.includes('sabana') || name.includes('funda'),
+      'Otros': true // Otros incluye todo lo que no está en las categorías anteriores
+    };
+    
+    return matchesSearch && categoryMatch[selectedCategory as keyof typeof categoryMatch];
+  });
+
+  // Resetear selección cuando cambia la búsqueda/categoría
+  const resetItemSelection = () => {
+    setSelectedService(null);
+    setSelectedServiceType('wash');
+    setItemQuantity(1);
+  };
+
+  // Agregar artículo desde el modal mejorado
+  const addItemFromModal = () => {
+    if (!selectedService) return;
+    
+    addItem(selectedService, selectedServiceType, itemQuantity);
+    resetItemSelection();
+    setShowAddItemModal(false);
+  };
+
   if (customersLoading || servicesLoading || paymentMethodsLoading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -539,42 +608,16 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
               </CardTitle>
             </CardHeader>
             <CardContent>
-              {/* Selector rápido de servicios */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                {services.slice(0, 3).map(service => (
-                  <div key={service.id} className="border rounded-lg p-4">
-                    <h4 className="font-medium text-gray-900 dark:text-white mb-2">{service.name}</h4>
-                    <div className="space-y-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="w-full"
-                        onClick={() => addItem(service, 'wash')}
-                        data-testid={`button-add-${service.name.toLowerCase()}-wash`}
-                      >
-                        Lavado - {formatCurrency(service.washPrice)}
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="w-full"
-                        onClick={() => addItem(service, 'iron')}
-                        data-testid={`button-add-${service.name.toLowerCase()}-iron`}
-                      >
-                        Planchado - {formatCurrency(service.ironPrice)}
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="w-full"
-                        onClick={() => addItem(service, 'both')}
-                        data-testid={`button-add-${service.name.toLowerCase()}-both`}
-                      >
-                        Ambos - {formatCurrency(service.bothPrice)}
-                      </Button>
-                    </div>
-                  </div>
-                ))}
+              {/* Botón para agregar artículo - Escalable para muchos servicios */}
+              <div className="mb-6">
+                <Button
+                  onClick={() => setShowAddItemModal(true)}
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3"
+                  data-testid="button-add-item"
+                >
+                  <Plus className="w-5 h-5 mr-2" />
+                  Agregar Artículo
+                </Button>
               </div>
 
               {/* Lista de artículos */}
@@ -950,6 +993,172 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
               data-testid="button-confirm-delivery-date"
             >
               Confirmar
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal de Agregar Artículo - Escalable para muchos servicios */}
+      <Dialog open={showAddItemModal} onOpenChange={(open) => {
+        setShowAddItemModal(open);
+        if (!open) resetItemSelection();
+      }}>
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-hidden flex flex-col" data-testid="modal-add-item">
+          <DialogHeader>
+            <DialogTitle className="text-center">
+              <Plus className="w-12 h-12 text-blue-600 mx-auto mb-4" />
+              Agregar Artículo
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="flex-1 overflow-hidden space-y-4">
+            {/* Búsqueda y Filtros */}
+            <div className="space-y-3">
+              <div>
+                <Label htmlFor="service-search">Buscar Servicio</Label>
+                <Input
+                  id="service-search"
+                  type="text"
+                  placeholder="Buscar por nombre de servicio..."
+                  value={serviceSearchTerm}
+                  onChange={(e) => setServiceSearchTerm(e.target.value)}
+                  className="w-full"
+                  data-testid="input-service-search"
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="category-filter">Categoría</Label>
+                <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                  <SelectTrigger data-testid="select-category">
+                    <SelectValue placeholder="Seleccionar categoría" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Todas las categorías</SelectItem>
+                    {getServiceCategories().map(category => (
+                      <SelectItem key={category} value={category}>{category}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            {/* Lista de Servicios Filtrados */}
+            <div className="flex-1 overflow-hidden">
+              <Label>Servicios ({filteredServices.length})</Label>
+              <div className="border rounded-lg h-48 overflow-y-auto mt-2">
+                {filteredServices.length === 0 ? (
+                  <div className="p-4 text-center text-gray-500">
+                    No se encontraron servicios
+                  </div>
+                ) : (
+                  <div className="space-y-1 p-2">
+                    {filteredServices.map(service => (
+                      <div
+                        key={service.id}
+                        className={`p-3 rounded cursor-pointer transition-colors ${
+                          selectedService?.id === service.id 
+                            ? 'bg-blue-100 dark:bg-blue-900 border-blue-300' 
+                            : 'hover:bg-gray-50 dark:hover:bg-gray-700'
+                        }`}
+                        onClick={() => setSelectedService(service)}
+                        data-testid={`service-option-${service.id}`}
+                      >
+                        <div className="font-medium">{service.name}</div>
+                        <div className="text-sm text-gray-600 dark:text-gray-400">
+                          Lavado: {formatCurrency(service.washPrice)} | 
+                          Planchado: {formatCurrency(service.ironPrice)} | 
+                          Ambos: {formatCurrency(service.bothPrice)}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Configuración del Artículo */}
+            {selectedService && (
+              <div className="space-y-3 border-t pt-4">
+                <div>
+                  <Label>Tipo de Servicio</Label>
+                  <Select value={selectedServiceType} onValueChange={(value: 'wash' | 'iron' | 'both') => setSelectedServiceType(value)}>
+                    <SelectTrigger data-testid="select-service-type">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="wash">Lavado - {formatCurrency(selectedService.washPrice)}</SelectItem>
+                      <SelectItem value="iron">Planchado - {formatCurrency(selectedService.ironPrice)}</SelectItem>
+                      <SelectItem value="both">Lavado y Planchado - {formatCurrency(selectedService.bothPrice)}</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <Label>Cantidad</Label>
+                  <div className="flex items-center space-x-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setItemQuantity(Math.max(1, itemQuantity - 1))}
+                      data-testid="button-decrease-quantity"
+                    >
+                      <Minus className="w-4 h-4" />
+                    </Button>
+                    <Input
+                      type="number"
+                      min="1"
+                      value={itemQuantity}
+                      onChange={(e) => setItemQuantity(Math.max(1, parseInt(e.target.value) || 1))}
+                      className="w-20 text-center"
+                      data-testid="input-quantity"
+                    />
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setItemQuantity(itemQuantity + 1)}
+                      data-testid="button-increase-quantity"
+                    >
+                      <Plus className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Vista Previa del Precio */}
+                <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg">
+                  <div className="flex justify-between items-center">
+                    <span className="font-medium">Total del artículo:</span>
+                    <span className="text-lg font-bold text-blue-600">
+                      {formatCurrency(
+                        parseFloat(
+                          selectedServiceType === 'wash' ? selectedService.washPrice :
+                          selectedServiceType === 'iron' ? selectedService.ironPrice :
+                          selectedService.bothPrice
+                        ) * itemQuantity
+                      )}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+          
+          <div className="flex space-x-3 pt-4 border-t">
+            <Button
+              variant="outline"
+              className="flex-1"
+              onClick={() => setShowAddItemModal(false)}
+              data-testid="button-cancel-add-item"
+            >
+              Cancelar
+            </Button>
+            <Button
+              className="flex-1"
+              onClick={addItemFromModal}
+              disabled={!selectedService}
+              data-testid="button-add-item-confirm"
+            >
+              Agregar Artículo
             </Button>
           </div>
         </DialogContent>
