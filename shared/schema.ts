@@ -290,3 +290,21 @@ export type InsertUser = z.infer<typeof insertUserSchema>;
 
 export type UserSession = typeof userSessions.$inferSelect;
 export type InsertUserSession = z.infer<typeof insertUserSessionSchema>;
+
+// PATCH request schemas for order management
+export const patchOrderStatusSchema = z.object({
+  status: z.enum(['received', 'in_process', 'ready', 'delivered', 'cancelled']),
+});
+
+export const patchOrderPaymentSchema = z.object({
+  paymentMethod: z.string().min(1, "Payment method is required"),
+  paymentReference: z.string().optional(),
+});
+
+export const patchOrderCancelSchema = z.object({
+  reason: z.string().min(1, "Cancellation reason is required").trim(),
+});
+
+export type PatchOrderStatus = z.infer<typeof patchOrderStatusSchema>;
+export type PatchOrderPayment = z.infer<typeof patchOrderPaymentSchema>;
+export type PatchOrderCancel = z.infer<typeof patchOrderCancelSchema>;

@@ -1,8 +1,40 @@
-import type { Express } from "express";
+import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertCustomerSchema, insertServiceSchema, insertInvoiceSchema, insertInvoiceItemSchema, insertPaymentMethodSchema, insertCompanySettingsSchema, insertMessageTemplateSchema, insertEmployeeSchema } from "@shared/schema";
+import { insertCustomerSchema, insertServiceSchema, insertInvoiceSchema, insertInvoiceItemSchema, insertPaymentMethodSchema, insertCompanySettingsSchema, insertMessageTemplateSchema, insertEmployeeSchema, patchOrderStatusSchema, patchOrderPaymentSchema, patchOrderCancelSchema } from "@shared/schema";
 import { z } from "zod";
+
+// Authentication middleware
+interface AuthenticatedRequest extends Request {
+  employee?: any;
+}
+
+async function requireAuthentication(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+  try {
+    const employeeId = req.headers['x-employee-id'] as string;
+    const accessCode = req.headers['x-access-code'] as string;
+    
+    if (!employeeId && !accessCode) {
+      return res.status(401).json({ message: "Authentication required" });
+    }
+    
+    let employee;
+    if (employeeId) {
+      employee = await storage.getEmployee(employeeId);
+    } else if (accessCode) {
+      employee = await storage.getEmployeeByAccessCode(accessCode);
+    }
+    
+    if (!employee || !employee.active) {
+      return res.status(401).json({ message: "Invalid or inactive employee" });
+    }
+    
+    req.employee = employee;
+    next();
+  } catch (error) {
+    res.status(500).json({ message: "Authentication error" });
+  }
+}
 
 export async function registerRoutes(app: Express): Promise<Server> {
   
@@ -176,6 +208,193 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.json(invoice);
     } catch (error) {
+      res.status(500).json({ message: "Server error" });
+    }
+  });
+
+  // Order Management - PATCH routes for status updates
+  
+  // Change order status
+  app.patch("/api/invoices/:id/status", requireAuthentication, async (req: AuthenticatedRequest, res) => {
+    try {
+      const { id } = req.params;
+      
+      // Validate request body with Zod
+      const validationResult = patchOrderStatusSchema.safeParse(req.body);
+      if (!validationResult.success) {
+        return res.status(400).json({ 
+          message: "Invalid request data", 
+          errors: validationResult.error.errors 
+        });
+      }
+      
+      const { status } = validationResult.data;
+      
+      const invoice = await storage.getInvoice(id);
+      if (!invoice) {
+        return res.status(404).json({ message: "Order not found" });
+      }
+      
+      // Validate status transitions
+      const currentStatus = invoice.status;
+      const validTransitions: Record<string, string[]> = {
+        'received': ['in_process', 'cancelled'],
+        'in_process': ['ready', 'cancelled'],
+        'ready': ['delivered', 'in_process'],
+        'delivered': [], // Final status
+        'cancelled': [] // Final status
+      };
+      
+      if (currentStatus && !validTransitions[currentStatus]?.includes(status)) {
+        return res.status(400).json({ 
+          message: `Invalid transition from ${currentStatus} to ${status}` 
+        });
+      }
+      
+      // Update status and set delivered flag and delivery date if delivered
+      const updates: any = { status, employeeId: req.employee.id };
+      if (status === 'delivered') {
+        updates.delivered = true;
+        updates.deliveryDate = new Date();
+      }
+      
+      const updatedInvoice = await storage.updateInvoice(id, updates);
+      res.json(updatedInvoice);
+      
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Server error" });
+    }
+  });
+  
+  // Process payment
+  app.patch("/api/invoices/:id/payment", requireAuthentication, async (req: AuthenticatedRequest, res) => {
+    try {
+      const { id } = req.params;
+      
+      // Validate request body with Zod
+      const validationResult = patchOrderPaymentSchema.safeParse(req.body);
+      if (!validationResult.success) {
+        return res.status(400).json({ 
+          message: "Invalid request data", 
+          errors: validationResult.error.errors 
+        });
+      }
+      
+      const { paymentMethod, paymentReference } = validationResult.data;
+      
+      // Get payment methods dynamically from storage
+      const availablePaymentMethods = await storage.getPaymentMethods();
+      const activePaymentMethods = availablePaymentMethods.filter(method => method.active);
+      
+      // Validate payment method by name
+      const selectedPaymentMethod = activePaymentMethods.find(method => 
+        method.name.toLowerCase() === paymentMethod.toLowerCase()
+      );
+      
+      if (!selectedPaymentMethod) {
+        const availableNames = activePaymentMethods.map(method => method.name);
+        return res.status(400).json({ 
+          message: "Invalid payment method", 
+          available: availableNames 
+        });
+      }
+      
+      // Validate payment reference for methods that require it
+      if (selectedPaymentMethod.requiresReference && !paymentReference) {
+        return res.status(400).json({ 
+          message: `Payment reference is required for ${selectedPaymentMethod.name}` 
+        });
+      }
+      
+      const invoice = await storage.getInvoice(id);
+      if (!invoice) {
+        return res.status(404).json({ message: "Order not found" });
+      }
+      
+      // Cannot process payment for cancelled orders
+      if (invoice.status === 'cancelled') {
+        return res.status(400).json({ 
+          message: "Cannot process payment for cancelled orders" 
+        });
+      }
+      
+      // Prevent re-payment unless explicitly allowed (already paid orders)
+      if (invoice.paid) {
+        return res.status(400).json({ 
+          message: "Order has already been paid. Contact supervisor to modify payment details." 
+        });
+      }
+      
+      const updates = {
+        paymentMethod: selectedPaymentMethod.name,
+        paymentReference: paymentReference || null,
+        paid: true,
+        employeeId: req.employee.id
+      };
+      
+      const updatedInvoice = await storage.updateInvoice(id, updates);
+      res.json(updatedInvoice);
+      
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Server error" });
+    }
+  });
+  
+  // Cancel order
+  app.patch("/api/invoices/:id/cancel", requireAuthentication, async (req: AuthenticatedRequest, res) => {
+    try {
+      const { id } = req.params;
+      
+      // Validate request body with Zod
+      const validationResult = patchOrderCancelSchema.safeParse(req.body);
+      if (!validationResult.success) {
+        return res.status(400).json({ 
+          message: "Invalid request data", 
+          errors: validationResult.error.errors 
+        });
+      }
+      
+      const { reason } = validationResult.data;
+      
+      const invoice = await storage.getInvoice(id);
+      if (!invoice) {
+        return res.status(404).json({ message: "Order not found" });
+      }
+      
+      // Cannot cancel delivered orders
+      if (invoice.status === 'delivered') {
+        return res.status(400).json({ 
+          message: "Cannot cancel delivered orders" 
+        });
+      }
+      
+      // Already cancelled
+      if (invoice.status === 'cancelled') {
+        return res.status(400).json({ 
+          message: "Order is already cancelled" 
+        });
+      }
+      
+      const updates = {
+        status: 'cancelled' as const,
+        cancelledAt: new Date(),
+        cancellationReason: reason,
+        employeeId: req.employee.id
+      };
+      
+      const updatedInvoice = await storage.updateInvoice(id, updates);
+      res.json(updatedInvoice);
+      
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid data", errors: error.errors });
+      }
       res.status(500).json({ message: "Server error" });
     }
   });
