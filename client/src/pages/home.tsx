@@ -39,6 +39,8 @@ export default function Home() {
   };
 
   const handleEmployeeLogin = (employee: Employee) => {
+    // Store employee ID in localStorage for authenticated requests
+    localStorage.setItem('employeeId', employee.id);
     setCurrentUser(employee);
     setUserType("employee");
     setShowLoginModal(false);
@@ -51,6 +53,8 @@ export default function Home() {
   };
 
   const logout = () => {
+    // Clear stored employee ID from localStorage
+    localStorage.removeItem('employeeId');
     setCurrentUser(null);
     setUserType(null);
     showNotification("Sesión cerrada correctamente.");

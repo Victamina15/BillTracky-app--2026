@@ -1,5 +1,7 @@
-import { type Employee, type InsertEmployee, type Customer, type InsertCustomer, type Service, type InsertService, type Invoice, type InsertInvoice, type InvoiceItem, type InsertInvoiceItem, type PaymentMethod, type InsertPaymentMethod, type CompanySettings, type InsertCompanySettings, type MessageTemplate, type InsertMessageTemplate } from "@shared/schema";
+import { type Employee, type InsertEmployee, type Customer, type InsertCustomer, type Service, type InsertService, type Invoice, type InsertInvoice, type InvoiceItem, type InsertInvoiceItem, type PaymentMethod, type InsertPaymentMethod, type CompanySettings, type InsertCompanySettings, type MessageTemplate, type InsertMessageTemplate, employees, customers, services, invoices, invoiceItems, paymentMethods, companySettings, messageTemplates } from "@shared/schema";
 import { randomUUID } from "crypto";
+import { db } from "./db";
+import { eq, desc, sql } from "drizzle-orm";
 
 export interface IStorage {
   // Employees
@@ -546,4 +548,220 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+// DatabaseStorage implementation using PostgreSQL with Drizzle ORM
+export class DatabaseStorage implements IStorage {
+  // Employees
+  async getEmployee(id: string): Promise<Employee | undefined> {
+    const [employee] = await db.select().from(employees).where(eq(employees.id, id));
+    return employee || undefined;
+  }
+
+  async getEmployees(): Promise<Employee[]> {
+    return await db.select().from(employees);
+  }
+
+  async getEmployeeByAccessCode(accessCode: string): Promise<Employee | undefined> {
+    const [employee] = await db.select().from(employees).where(eq(employees.accessCode, accessCode));
+    return employee || undefined;
+  }
+
+  async createEmployee(employee: InsertEmployee): Promise<Employee> {
+    const [newEmployee] = await db.insert(employees).values(employee).returning();
+    return newEmployee;
+  }
+
+  async updateEmployee(id: string, updates: Partial<Employee>): Promise<Employee | undefined> {
+    const [updated] = await db.update(employees)
+      .set({ ...updates, lastAccess: new Date() })
+      .where(eq(employees.id, id))
+      .returning();
+    return updated || undefined;
+  }
+
+  async deleteEmployee(id: string): Promise<void> {
+    await db.delete(employees).where(eq(employees.id, id));
+  }
+
+  // Customers
+  async getCustomer(id: string): Promise<Customer | undefined> {
+    const [customer] = await db.select().from(customers).where(eq(customers.id, id));
+    return customer || undefined;
+  }
+
+  async getCustomers(): Promise<Customer[]> {
+    return await db.select().from(customers);
+  }
+
+  async getCustomerByPhone(phone: string): Promise<Customer | undefined> {
+    const [customer] = await db.select().from(customers).where(eq(customers.phone, phone));
+    return customer || undefined;
+  }
+
+  async createCustomer(customer: InsertCustomer): Promise<Customer> {
+    const [newCustomer] = await db.insert(customers).values(customer).returning();
+    return newCustomer;
+  }
+
+  async updateCustomer(id: string, updates: Partial<Customer>): Promise<Customer | undefined> {
+    const [updated] = await db.update(customers)
+      .set(updates)
+      .where(eq(customers.id, id))
+      .returning();
+    return updated || undefined;
+  }
+
+  // Services
+  async getService(id: string): Promise<Service | undefined> {
+    const [service] = await db.select().from(services).where(eq(services.id, id));
+    return service || undefined;
+  }
+
+  async getServices(): Promise<Service[]> {
+    return await db.select().from(services);
+  }
+
+  async createService(service: InsertService): Promise<Service> {
+    const [newService] = await db.insert(services).values(service).returning();
+    return newService;
+  }
+
+  async updateService(id: string, updates: Partial<Service>): Promise<Service | undefined> {
+    const [updated] = await db.update(services)
+      .set(updates)
+      .where(eq(services.id, id))
+      .returning();
+    return updated || undefined;
+  }
+
+  // Invoices
+  async getInvoice(id: string): Promise<Invoice | undefined> {
+    const [invoice] = await db.select().from(invoices).where(eq(invoices.id, id));
+    return invoice || undefined;
+  }
+
+  async getInvoices(): Promise<Invoice[]> {
+    return await db.select().from(invoices).orderBy(desc(invoices.date));
+  }
+
+  async getInvoicesByCustomer(customerId: string): Promise<Invoice[]> {
+    return await db.select().from(invoices)
+      .where(eq(invoices.customerId, customerId))
+      .orderBy(desc(invoices.date));
+  }
+
+  async createInvoice(invoice: InsertInvoice): Promise<Invoice> {
+    const [newInvoice] = await db.insert(invoices).values(invoice).returning();
+    return newInvoice;
+  }
+
+  async updateInvoice(id: string, updates: Partial<Invoice>): Promise<Invoice | undefined> {
+    const [updated] = await db.update(invoices)
+      .set(updates)
+      .where(eq(invoices.id, id))
+      .returning();
+    return updated || undefined;
+  }
+
+  async getNextInvoiceNumber(): Promise<string> {
+    const result = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(invoices);
+    const count = result[0]?.count || 0;
+    return `FAC-${String(count + 1).padStart(3, '0')}`;
+  }
+
+  // Invoice Items
+  async getInvoiceItems(invoiceId: string): Promise<InvoiceItem[]> {
+    return await db.select().from(invoiceItems).where(eq(invoiceItems.invoiceId, invoiceId));
+  }
+
+  async createInvoiceItem(item: InsertInvoiceItem): Promise<InvoiceItem> {
+    const [newItem] = await db.insert(invoiceItems).values(item).returning();
+    return newItem;
+  }
+
+  async deleteInvoiceItems(invoiceId: string): Promise<void> {
+    await db.delete(invoiceItems).where(eq(invoiceItems.invoiceId, invoiceId));
+  }
+
+  // Payment Methods
+  async getPaymentMethods(): Promise<PaymentMethod[]> {
+    return await db.select().from(paymentMethods).where(eq(paymentMethods.active, true));
+  }
+
+  async getPaymentMethod(id: string): Promise<PaymentMethod | undefined> {
+    const [method] = await db.select().from(paymentMethods).where(eq(paymentMethods.id, id));
+    return method || undefined;
+  }
+
+  async createPaymentMethod(method: InsertPaymentMethod): Promise<PaymentMethod> {
+    const [newMethod] = await db.insert(paymentMethods).values(method).returning();
+    return newMethod;
+  }
+
+  async updatePaymentMethod(id: string, updates: Partial<PaymentMethod>): Promise<PaymentMethod | undefined> {
+    const [updated] = await db.update(paymentMethods)
+      .set(updates)
+      .where(eq(paymentMethods.id, id))
+      .returning();
+    return updated || undefined;
+  }
+
+  async deletePaymentMethod(id: string): Promise<void> {
+    await db.delete(paymentMethods).where(eq(paymentMethods.id, id));
+  }
+
+  // Company Settings
+  async getCompanySettings(): Promise<CompanySettings | undefined> {
+    const [settings] = await db.select().from(companySettings).limit(1);
+    return settings || undefined;
+  }
+
+  async updateCompanySettings(settings: InsertCompanySettings): Promise<CompanySettings> {
+    // First, try to get existing settings
+    const existing = await this.getCompanySettings();
+    
+    if (existing) {
+      // Update existing settings
+      const [updated] = await db.update(companySettings)
+        .set({ ...settings, updatedAt: new Date() })
+        .where(eq(companySettings.id, existing.id))
+        .returning();
+      return updated;
+    } else {
+      // Create new settings
+      const [newSettings] = await db.insert(companySettings).values(settings).returning();
+      return newSettings;
+    }
+  }
+
+  // Message Templates
+  async getMessageTemplates(): Promise<MessageTemplate[]> {
+    return await db.select().from(messageTemplates);
+  }
+
+  async getMessageTemplate(id: string): Promise<MessageTemplate | undefined> {
+    const [template] = await db.select().from(messageTemplates).where(eq(messageTemplates.id, id));
+    return template || undefined;
+  }
+
+  async getMessageTemplateByType(type: string): Promise<MessageTemplate | undefined> {
+    const [template] = await db.select().from(messageTemplates).where(eq(messageTemplates.type, type));
+    return template || undefined;
+  }
+
+  async createMessageTemplate(template: InsertMessageTemplate): Promise<MessageTemplate> {
+    const [newTemplate] = await db.insert(messageTemplates).values(template).returning();
+    return newTemplate;
+  }
+
+  async updateMessageTemplate(id: string, updates: Partial<MessageTemplate>): Promise<MessageTemplate | undefined> {
+    const [updated] = await db.update(messageTemplates)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(messageTemplates.id, id))
+      .returning();
+    return updated || undefined;
+  }
+}
+
+export const storage = new DatabaseStorage();

@@ -80,7 +80,7 @@ export default function LoginModal({ isOpen, onClose, onRegisterClick, onUserLog
     setIsLoading(true);
     try {
       // Llamada a la API de empleados existente
-      const response = await fetch("/api/auth", {
+      const response = await fetch("/api/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -89,8 +89,8 @@ export default function LoginModal({ isOpen, onClose, onRegisterClick, onUserLog
       });
 
       if (response.ok) {
-        const employee = await response.json();
-        onEmployeeLogin(employee);
+        const result = await response.json();
+        onEmployeeLogin(result.employee);
       } else {
         const error = await response.json();
         employeeForm.setError("accessCode", { message: error.message });
@@ -260,7 +260,7 @@ export default function LoginModal({ isOpen, onClose, onRegisterClick, onUserLog
 
             <div className="text-center">
               <p className="text-sm text-muted-foreground">
-                Códigos de prueba: 1234 (Gerente), 5678 (Empleado), 9999 (Supervisor)
+                Códigos de prueba: E001 (Gerente), E002 (Empleado), E003 (Supervisor)
               </p>
             </div>
           </form>
