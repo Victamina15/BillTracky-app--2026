@@ -458,7 +458,7 @@ export default function OrderManagement({ onNotification }: OrderManagementProps
                       <Button
                         size="sm"
                         onClick={() => openDetailsModal(order)}
-                        className="bg-blue-500 hover:bg-blue-600 text-white border-0"
+                        className="bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200"
                         data-testid={`button-details-${order.id}`}
                         title="Ver detalles"
                       >
@@ -468,7 +468,7 @@ export default function OrderManagement({ onNotification }: OrderManagementProps
                       <Button
                         size="sm"
                         onClick={() => openWorkTicketModal(order)}
-                        className="bg-purple-500 hover:bg-purple-600 text-white border-0"
+                        className="bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200"
                         data-testid={`button-ticket-${order.id}`}
                         title="Ticket de trabajo"
                       >
@@ -483,7 +483,7 @@ export default function OrderManagement({ onNotification }: OrderManagementProps
                               setSelectedOrder(order);
                               setShowStatusModal(true);
                             }}
-                            className="bg-orange-500 hover:bg-orange-600 text-white border-0"
+                            className="bg-orange-50 hover:bg-orange-100 text-orange-700 border border-orange-200"
                             data-testid={`button-status-${order.id}`}
                             title="Cambiar estado"
                           >
@@ -497,7 +497,7 @@ export default function OrderManagement({ onNotification }: OrderManagementProps
                                 setSelectedOrder(order);
                                 setShowPaymentModal(true);
                               }}
-                              className="bg-green-500 hover:bg-green-600 text-white border-0"
+                              className="bg-green-50 hover:bg-green-100 text-green-700 border border-green-200"
                               data-testid={`button-payment-${order.id}`}
                               title="Marcar como pagado"
                             >
@@ -511,7 +511,7 @@ export default function OrderManagement({ onNotification }: OrderManagementProps
                               setSelectedOrder(order);
                               setShowCancelModal(true);
                             }}
-                            className="bg-red-500 hover:bg-red-600 text-white border-0"
+                            className="bg-red-50 hover:bg-red-100 text-red-700 border border-red-200"
                             data-testid={`button-cancel-${order.id}`}
                             title="Cancelar orden"
                           >
@@ -899,7 +899,7 @@ export default function OrderManagement({ onNotification }: OrderManagementProps
                     </div>
                     <div>
                       <span className="font-medium">Estado:</span> 
-                      <Badge className={`${getStatusClasses(selectedOrder.status)} ml-2`} size="sm">
+                      <Badge className={`${getStatusClasses(selectedOrder.status)} ml-2`}>
                         {statusConfig[selectedOrder.status as keyof typeof statusConfig]?.name || selectedOrder.status}
                       </Badge>
                     </div>
