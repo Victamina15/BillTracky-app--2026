@@ -1,0 +1,661 @@
+import React, { useState } from 'react';
+import { 
+  BarChart3, 
+  DollarSign, 
+  FileText, 
+  Printer, 
+  Download, 
+  CheckCircle,
+  Clock,
+  CreditCard,
+  Banknote,
+  Landmark,
+  Users
+} from 'lucide-react';
+
+// Interfaces TypeScript
+interface Order {
+  id: string;
+  numero: string;
+  cliente: string;
+  telefono: string;
+  total: number;
+  subtotal: number;
+  itbis: number;
+  estado: 'Recibido' | 'En Proceso' | 'Listo' | 'Entregado' | 'Cancelado';
+  fechaRecibido: string;
+  fechaEntrega?: string;
+  horaRecibido: string;
+  horaEntrega?: string;
+  metodoPago: 'Efectivo' | 'Tarjeta' | 'Transferencia Bancaria' | 'Pendiente';
+  empleado: string;
+  pagado: boolean;
+  entregado: boolean;
+  articulos?: number;
+  esUrgente?: boolean;
+}
+
+interface EmpleadoLogueado {
+  nombre: string;
+  rol: 'gerente' | 'empleado' | 'admin';
+}
+
+interface ResumenPorMetodo {
+  [key: string]: {
+    cantidad: number;
+    total: number;
+  };
+}
+
+interface EmpleadoStats {
+  [empleado: string]: {
+    ventas: number;
+    total: number;
+  };
+}
+
+interface EstadisticasHoy {
+  totalFacturas: number;
+  totalVentas: number;
+  totalArticulos: number;
+  facturasUrgentes: number;
+}
+
+interface ResumenDiario {
+  facturasDia: Order[];
+  facturasEntregadas: Order[];
+  facturasPendientes: Order[];
+  resumenPorMetodo: ResumenPorMetodo;
+  totalIngresos: number;
+  totalSubtotal: number;
+  totalItbis: number;
+  empleadoStats: EmpleadoStats;
+  estadisticasHoy: EstadisticasHoy;
+}
+
+const CierreCaja: React.FC = () => {
+  const [fechaSeleccionada, setFechaSeleccionada] = useState<string>(
+    new Date().toISOString().split('T')[0]
+  );
+  const [modalMessage, setModalMessage] = useState<string>('');
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+
+  // Datos simulados de órdenes
+  const orders: Order[] = [
+    {
+      id: 'INV-001',
+      numero: 'FAC-001',
+      cliente: 'Juan Pérez',
+      telefono: '8091502025',
+      total: 1200.00,
+      subtotal: 1016.95,
+      itbis: 183.05,
+      estado: 'Entregado',
+      fechaRecibido: '2025-09-10',
+      fechaEntrega: '2025-09-10',
+      horaRecibido: '09:00',
+      horaEntrega: '15:00',
+      metodoPago: 'Efectivo',
+      empleado: 'Juan Carlos',
+      pagado: true,
+      entregado: true,
+      articulos: 8,
+      esUrgente: false
+    },
+    {
+      id: 'INV-002',
+      numero: 'FAC-002',
+      cliente: 'María García',
+      telefono: '8095551234',
+      total: 850.00,
+      subtotal: 720.34,
+      itbis: 129.66,
+      estado: 'Entregado',
+      fechaRecibido: '2025-09-10',
+      fechaEntrega: '2025-09-10',
+      metodoPago: 'Tarjeta',
+      empleado: 'María Fernández',
+      pagado: true,
+      entregado: true,
+      articulos: 6,
+      esUrgente: true
+    },
+    {
+      id: 'INV-003',
+      numero: 'FAC-003',
+      cliente: 'Pedro López',
+      telefono: '8097779999',
+      total: 2100.00,
+      subtotal: 1779.66,
+      itbis: 320.34,
+      estado: 'Entregado',
+      fechaRecibido: '2025-09-10',
+      fechaEntrega: '2025-09-10',
+      metodoPago: 'Transferencia Bancaria',
+      empleado: 'Pedro González',
+      pagado: true,
+      entregado: true,
+      articulos: 12,
+      esUrgente: false
+    },
+    {
+      id: 'INV-004',
+      numero: 'FAC-004',
+      cliente: 'Ana Rodríguez',
+      telefono: '8094445555',
+      total: 1850.00,
+      subtotal: 1567.80,
+      itbis: 282.20,
+      estado: 'Entregado',
+      fechaRecibido: '2025-09-10',
+      metodoPago: 'Efectivo',
+      empleado: 'Juan Carlos',
+      pagado: true,
+      entregado: true,
+      articulos: 9,
+      esUrgente: true
+    },
+    {
+      id: 'INV-005',
+      numero: 'FAC-005',
+      cliente: 'Carlos Mejía',
+      telefono: '8093334444',
+      total: 950.00,
+      subtotal: 805.08,
+      itbis: 144.92,
+      estado: 'Entregado',
+      fechaRecibido: '2025-09-10',
+      fechaEntrega: '2025-09-10',
+      metodoPago: 'Tarjeta',
+      empleado: 'María Fernández',
+      pagado: true,
+      entregado: true,
+      articulos: 5,
+      esUrgente: false
+    },
+    {
+      id: 'INV-006',
+      numero: 'FAC-006',
+      cliente: 'Laura Jiménez',
+      telefono: '8096667777',
+      total: 1500.00,
+      subtotal: 1271.19,
+      itbis: 228.81,
+      estado: 'Entregado',
+      fechaRecibido: '2025-09-10',
+      fechaEntrega: '2025-09-10',
+      metodoPago: 'Efectivo',
+      empleado: 'Pedro González',
+      pagado: true,
+      entregado: true,
+      articulos: 5,
+      esUrgente: true
+    }
+  ];
+
+  const empleadoLogueado: EmpleadoLogueado = {
+    nombre: 'Juan Carlos',
+    rol: 'gerente'
+  };
+
+  const formatCurrency = (amount: number): string => {
+    return `RD$${amount.toFixed(2)}`;
+  };
+
+  const openModal = (message: string): void => {
+    setModalMessage(message);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = (): void => {
+    setIsModalOpen(false);
+    setModalMessage('');
+  };
+
+  // Función para obtener resumen del día
+  const obtenerResumenDiario = (fecha: string): ResumenDiario => {
+    const facturasDia = orders.filter(order => order.fechaRecibido === fecha);
+    const facturasEntregadas = facturasDia.filter(order => order.entregado && order.estado !== 'Cancelado');
+    const facturasPendientes = facturasDia.filter(order => !order.pagado && order.estado !== 'Cancelado');
+    
+    // Resumen por método de pago
+    const resumenPorMetodo: ResumenPorMetodo = {
+      'Efectivo': { cantidad: 0, total: 0 },
+      'Tarjeta': { cantidad: 0, total: 0 },
+      'Transferencia Bancaria': { cantidad: 0, total: 0 },
+      'Pendiente': { cantidad: 0, total: 0 }
+    };
+    
+    facturasEntregadas.forEach(factura => {
+      if (resumenPorMetodo[factura.metodoPago]) {
+        resumenPorMetodo[factura.metodoPago].cantidad++;
+        resumenPorMetodo[factura.metodoPago].total += factura.total;
+      }
+    });
+    
+    const totalIngresos = facturasEntregadas.reduce((sum, order) => sum + order.total, 0);
+    const totalSubtotal = facturasEntregadas.reduce((sum, order) => sum + order.subtotal, 0);
+    const totalItbis = facturasEntregadas.reduce((sum, order) => sum + order.itbis, 0);
+    
+    // Estadísticas por empleado
+    const empleadoStats: EmpleadoStats = {};
+    facturasEntregadas.forEach(factura => {
+      if (!empleadoStats[factura.empleado]) {
+        empleadoStats[factura.empleado] = { ventas: 0, total: 0 };
+      }
+      empleadoStats[factura.empleado].ventas++;
+      empleadoStats[factura.empleado].total += factura.total;
+    });
+    
+    // Estadísticas de hoy
+    const estadisticasHoy: EstadisticasHoy = {
+      totalFacturas: facturasDia.length,
+      totalVentas: totalIngresos,
+      totalArticulos: facturasDia.reduce((sum, order) => sum + (order.articulos || 0), 0),
+      facturasUrgentes: facturasDia.filter(order => order.esUrgente).length
+    };
+    
+    return {
+      facturasDia,
+      facturasEntregadas,
+      facturasPendientes,
+      resumenPorMetodo,
+      totalIngresos,
+      totalSubtotal,
+      totalItbis,
+      empleadoStats,
+      estadisticasHoy
+    };
+  };
+
+  // Función para imprimir cierre
+  const imprimirCierreCaja = (fecha: string, resumen: ResumenDiario): void => {
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) return;
+    
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>Cierre de Caja - ${fecha}</title>
+          <style>
+            body { font-family: Arial, sans-serif; max-width: 400px; margin: 0; padding: 20px; }
+            .header { text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 20px; }
+            .section { margin: 15px 0; }
+            .item { display: flex; justify-content: space-between; margin: 5px 0; }
+            .total { font-weight: bold; font-size: 1.1em; border-top: 2px solid #000; padding-top: 10px; margin-top: 15px; }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <h2>BILLTRACKY LAVANDERÍA</h2>
+            <h3>CIERRE DE CAJA</h3>
+            <p>Fecha: ${new Date(fecha).toLocaleDateString()}</p>
+            <p>Empleado: ${empleadoLogueado.nombre}</p>
+            <p>Hora: ${new Date().toLocaleTimeString()}</p>
+          </div>
+          
+          <div class="section">
+            <h4>RESUMEN GENERAL</h4>
+            <div class="item"><span>Total Facturas:</span><span>${resumen.facturasDia.length}</span></div>
+            <div class="item"><span>Entregadas:</span><span>${resumen.facturasEntregadas.length}</span></div>
+            <div class="item"><span>Pendientes:</span><span>${resumen.facturasPendientes.length}</span></div>
+            <div class="item"><span>Artículos:</span><span>${resumen.estadisticasHoy.totalArticulos}</span></div>
+            <div class="item"><span>Urgentes:</span><span>${resumen.estadisticasHoy.facturasUrgentes}</span></div>
+          </div>
+          
+          <div class="total">
+            <div class="item"><span>TOTAL INGRESOS:</span><span>${formatCurrency(resumen.totalIngresos)}</span></div>
+          </div>
+          
+          <div style="text-align: center; margin-top: 30px; font-size: 0.9em;">
+            <p>Reporte generado por Billtracky</p>
+            <p>${new Date().toLocaleString()}</p>
+          </div>
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
+    printWindow.print();
+  };
+
+  const resumenDiario = obtenerResumenDiario(fechaSeleccionada);
+
+  const Modal: React.FC = () => {
+    if (!isModalOpen) return null;
+    
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl">
+          <div className="text-center">
+            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <CheckCircle className="w-8 h-8 text-green-600" />
+            </div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">Cierre de Caja</h3>
+            <p className="text-gray-600 mb-6">{modalMessage}</p>
+            <button
+              onClick={closeModal}
+              className="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 font-medium transition-colors"
+            >
+              Aceptar
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const renderMetodoPagoIcon = (metodo: string) => {
+    switch (metodo) {
+      case 'Efectivo':
+        return <Banknote className="w-4 h-4 text-green-600" />;
+      case 'Tarjeta':
+        return <CreditCard className="w-4 h-4 text-blue-600" />;
+      case 'Transferencia Bancaria':
+        return <Landmark className="w-4 h-4 text-indigo-600" />;
+      case 'Pendiente':
+        return <Clock className="w-4 h-4 text-yellow-600" />;
+      default:
+        return <DollarSign className="w-4 h-4 text-gray-600" />;
+    }
+  };
+
+  const getMetodoPagoColor = (metodo: string) => {
+    switch (metodo) {
+      case 'Efectivo':
+        return 'bg-green-100';
+      case 'Tarjeta':
+        return 'bg-blue-100';
+      case 'Transferencia Bancaria':
+        return 'bg-indigo-100';
+      case 'Pendiente':
+        return 'bg-yellow-100';
+      default:
+        return 'bg-gray-100';
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50 p-6">
+      <div className="max-w-6xl mx-auto">
+        {/* Header */}
+        <div className="bg-white rounded-xl shadow-sm border p-6 mb-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="w-12 h-12 bg-green-600 rounded-xl flex items-center justify-center">
+                <BarChart3 className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">Cierre de Caja</h1>
+                <p className="text-gray-600">Reportes y cálculos diarios</p>
+              </div>
+            </div>
+            
+            <div className="flex space-x-3">
+              <button
+                onClick={() => imprimirCierreCaja(fechaSeleccionada, resumenDiario)}
+                className="px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 font-medium flex items-center space-x-2"
+              >
+                <Printer className="w-4 h-4" />
+                <span>Imprimir</span>
+              </button>
+              <button
+                onClick={() => openModal("Función de exportar en desarrollo.")}
+                className="px-4 py-2 bg-green-100 text-green-700 rounded-lg hover:bg-green-200 font-medium flex items-center space-x-2"
+              >
+                <Download className="w-4 h-4" />
+                <span>Exportar</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Estadísticas de Hoy */}
+        <div className="bg-gradient-to-br from-blue-600 to-blue-800 rounded-xl shadow-lg border p-8 mb-6 text-white">
+          <div className="flex items-center mb-6">
+            <div className="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center mr-4">
+              <BarChart3 className="w-6 h-6 text-white" />
+            </div>
+            <h2 className="text-2xl font-bold">Estadísticas de Hoy</h2>
+          </div>
+          
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div className="text-center">
+              <div className="text-4xl md:text-5xl font-bold mb-2">
+                {resumenDiario.estadisticasHoy.totalFacturas}
+              </div>
+              <div className="text-blue-100 text-lg">Facturas</div>
+            </div>
+            
+            <div className="text-center">
+              <div className="text-3xl md:text-4xl font-bold mb-2 text-green-300">
+                {formatCurrency(resumenDiario.estadisticasHoy.totalVentas)}
+              </div>
+              <div className="text-blue-100 text-lg">Ventas</div>
+            </div>
+            
+            <div className="text-center">
+              <div className="text-4xl md:text-5xl font-bold mb-2">
+                {resumenDiario.estadisticasHoy.totalArticulos}
+              </div>
+              <div className="text-blue-100 text-lg">Artículos</div>
+            </div>
+            
+            <div className="text-center">
+              <div className="text-4xl md:text-5xl font-bold mb-2 text-red-300">
+                {resumenDiario.estadisticasHoy.facturasUrgentes}
+              </div>
+              <div className="text-blue-100 text-lg">Urgentes</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Selector de fecha */}
+        <div className="bg-white rounded-xl shadow-sm border p-6 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Fecha del Cierre</label>
+              <input
+                type="date"
+                value={fechaSeleccionada}
+                onChange={(e) => setFechaSeleccionada(e.target.value)}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+              />
+            </div>
+            <div className="flex items-end">
+              <div className="text-right">
+                <p className="text-sm text-gray-500">Fecha seleccionada</p>
+                <p className="text-lg font-bold text-gray-900">
+                  {new Date(fechaSeleccionada).toLocaleDateString()}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Estadísticas principales */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+          <div className="bg-white rounded-xl shadow-sm border p-6">
+            <div className="flex items-center">
+              <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                <DollarSign className="w-6 h-6 text-green-600" />
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-500">Ingresos Totales</p>
+                <p className="text-2xl font-bold text-gray-900">{formatCurrency(resumenDiario.totalIngresos)}</p>
+              </div>
+            </div>
+          </div>
+          
+          <div className="bg-white rounded-xl shadow-sm border p-6">
+            <div className="flex items-center">
+              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                <FileText className="w-6 h-6 text-blue-600" />
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-500">Facturas Totales</p>
+                <p className="text-2xl font-bold text-gray-900">{resumenDiario.facturasDia.length}</p>
+              </div>
+            </div>
+          </div>
+          
+          <div className="bg-white rounded-xl shadow-sm border p-6">
+            <div className="flex items-center">
+              <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                <CheckCircle className="w-6 h-6 text-purple-600" />
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-500">Entregadas</p>
+                <p className="text-2xl font-bold text-gray-900">{resumenDiario.facturasEntregadas.length}</p>
+              </div>
+            </div>
+          </div>
+          
+          <div className="bg-white rounded-xl shadow-sm border p-6">
+            <div className="flex items-center">
+              <div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
+                <Clock className="w-6 h-6 text-yellow-600" />
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-500">Pendientes</p>
+                <p className="text-2xl font-bold text-gray-900">{resumenDiario.facturasPendientes.length}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Desglose financiero y métodos de pago */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          <div className="bg-white rounded-xl shadow-sm border p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Desglose Financiero</h3>
+            <div className="space-y-3">
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600">Subtotal:</span>
+                <span className="font-medium">{formatCurrency(resumenDiario.totalSubtotal)}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600">ITBIS (18%):</span>
+                <span className="font-medium">{formatCurrency(resumenDiario.totalItbis)}</span>
+              </div>
+              <div className="border-t pt-3">
+                <div className="flex justify-between items-center">
+                  <span className="text-xl font-bold text-gray-900">Total:</span>
+                  <span className="text-xl font-bold text-green-600">{formatCurrency(resumenDiario.totalIngresos)}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-xl shadow-sm border p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Métodos de Pago</h3>
+            <div className="space-y-3">
+              {Object.entries(resumenDiario.resumenPorMetodo).map(([metodo, datos]) => {
+                if (datos.cantidad === 0) return null;
+                
+                return (
+                  <div key={metodo} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div className="flex items-center">
+                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center mr-3 ${getMetodoPagoColor(metodo)}`}>
+                        {renderMetodoPagoIcon(metodo)}
+                      </div>
+                      <div>
+                        <p className="font-medium text-gray-900">{metodo}</p>
+                        <p className="text-sm text-gray-500">{datos.cantidad} transacciones</p>
+                      </div>
+                    </div>
+                    <span className="font-bold text-gray-900">{formatCurrency(datos.total)}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        {/* Desempeño por empleado */}
+        <div className="bg-white rounded-xl shadow-sm border p-6 mb-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Desempeño por Empleado</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {Object.entries(resumenDiario.empleadoStats).map(([empleado, stats]) => (
+              <div key={empleado} className="p-4 bg-gray-50 rounded-lg">
+                <div className="flex items-center mb-2">
+                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+                    <Users className="w-4 h-4 text-blue-600" />
+                  </div>
+                  <span className="font-medium text-gray-900">{empleado}</span>
+                </div>
+                <div className="space-y-1">
+                  <div className="flex justify-between">
+                    <span className="text-sm text-gray-600">Ventas:</span>
+                    <span className="text-sm font-medium">{stats.ventas}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-sm text-gray-600">Total:</span>
+                    <span className="text-sm font-bold text-green-600">{formatCurrency(stats.total)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-sm text-gray-600">Promedio:</span>
+                    <span className="text-sm font-medium">{formatCurrency(stats.total / stats.ventas)}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Lista de facturas del día */}
+        {resumenDiario.facturasDia.length > 0 && (
+          <div className="bg-white rounded-xl shadow-sm border p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              Facturas del {new Date(fechaSeleccionada).toLocaleDateString()}
+            </h3>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Factura</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Cliente</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Estado</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Método Pago</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Artículos</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Empleado</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200">
+                  {resumenDiario.facturasDia.map((order) => (
+                    <tr key={order.id} className="hover:bg-gray-50">
+                      <td className="px-4 py-3 text-sm font-medium flex items-center">
+                        {order.numero}
+                        {order.esUrgente && (
+                          <span className="ml-2 w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+                        )}
+                      </td>
+                      <td className="px-4 py-3 text-sm">{order.cliente}</td>
+                      <td className="px-4 py-3">
+                        <span className={`px-2 py-1 text-xs font-medium rounded-full ${
+                          order.estado === 'Entregado' ? 'bg-green-100 text-green-800' : 
+                          order.estado === 'Listo' ? 'bg-purple-100 text-purple-800' :
+                          order.estado === 'En Proceso' ? 'bg-yellow-100 text-yellow-800' :
+                          'bg-blue-100 text-blue-800'
+                        }`}>
+                          {order.estado}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-sm">{order.metodoPago}</td>
+                      <td className="px-4 py-3 text-sm text-center">{order.articulos || 0}</td>
+                      <td className="px-4 py-3 text-sm font-medium">{formatCurrency(order.total)}</td>
+                      <td className="px-4 py-3 text-sm">{order.empleado}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+      </div>
+
+      <Modal />
+    </div>
+  );
+};
+
+export default CierreCaja;
