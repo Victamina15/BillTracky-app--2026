@@ -324,6 +324,46 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
     });
   };
 
+  // Actualizar artículo existente
+  const updateItem = (itemId: string, service: Service, serviceType: 'wash' | 'iron' | 'both', quantity: number) => {
+    let unitPrice: number;
+    switch (serviceType) {
+      case 'wash':
+        unitPrice = parseFloat(service.washPrice);
+        break;
+      case 'iron':
+        unitPrice = parseFloat(service.ironPrice);
+        break;
+      case 'both':
+        unitPrice = parseFloat(service.bothPrice);
+        break;
+    }
+
+    const newItems = currentInvoice.items.map(item => {
+      if (item.id === itemId) {
+        return {
+          ...item,
+          serviceId: service.id,
+          serviceName: service.name,
+          serviceType,
+          quantity,
+          unitPrice: unitPrice.toString(),
+          total: (unitPrice * quantity).toString(),
+          service
+        };
+      }
+      return item;
+    });
+
+    const totals = calculateTotals(newItems);
+    
+    setCurrentInvoice({
+      ...currentInvoice,
+      items: newItems,
+      ...totals
+    });
+  };
+
   // Seleccionar cliente
   const selectCustomer = (customer: Customer) => {
     setCurrentInvoice({
@@ -489,6 +529,16 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
     addItem(selectedService, selectedServiceType, itemQuantity);
     resetItemSelection();
     setShowAddItemModal(false);
+  };
+
+  // Actualizar artículo desde el modal de edición
+  const updateItemFromModal = () => {
+    if (!selectedService || !editingItem) return;
+    
+    updateItem(editingItem.id, selectedService, selectedServiceType, itemQuantity);
+    resetItemSelection();
+    setEditingItem(null);
+    setShowEditItemModal(false);
   };
 
   if (customersLoading || servicesLoading || paymentMethodsLoading) {
@@ -1179,6 +1229,180 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
               data-testid="button-add-item-confirm"
             >
               Agregar Artículo
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal de Editar Artículo - Escalable para muchos servicios */}
+      <Dialog open={showEditItemModal} onOpenChange={(open) => {
+        setShowEditItemModal(open);
+        if (!open) {
+          resetItemSelection();
+          setEditingItem(null);
+        }
+      }}>
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-hidden flex flex-col" data-testid="modal-edit-item">
+          <DialogHeader>
+            <DialogTitle className="text-center">
+              <Edit className="w-12 h-12 text-green-600 mx-auto mb-4" />
+              Editar Artículo
+            </DialogTitle>
+            {editingItem && (
+              <p className="text-sm text-gray-600 dark:text-gray-400 text-center">
+                Editando: {editingItem.serviceName}
+              </p>
+            )}
+          </DialogHeader>
+          
+          <div className="flex-1 overflow-hidden space-y-4">
+            {/* Búsqueda y Filtros */}
+            <div className="space-y-3">
+              <div>
+                <Label htmlFor="edit-service-search">Buscar Servicio</Label>
+                <Input
+                  id="edit-service-search"
+                  type="text"
+                  placeholder="Buscar por nombre de servicio..."
+                  value={serviceSearchTerm}
+                  onChange={(e) => setServiceSearchTerm(e.target.value)}
+                  className="w-full"
+                  data-testid="input-edit-service-search"
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="edit-category-filter">Categoría</Label>
+                <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                  <SelectTrigger data-testid="select-edit-category">
+                    <SelectValue placeholder="Seleccionar categoría" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Todas las categorías</SelectItem>
+                    {getServiceCategories().map(category => (
+                      <SelectItem key={category} value={category}>{category}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            {/* Lista de Servicios Filtrados */}
+            <div className="flex-1 overflow-hidden">
+              <Label>Servicios ({filteredServices.length})</Label>
+              <div className="border rounded-lg h-48 overflow-y-auto mt-2">
+                {filteredServices.length === 0 ? (
+                  <div className="p-4 text-center text-gray-500">
+                    No se encontraron servicios
+                  </div>
+                ) : (
+                  <div className="space-y-1 p-2">
+                    {filteredServices.map(service => (
+                      <div
+                        key={service.id}
+                        className={`p-3 rounded cursor-pointer transition-colors ${
+                          selectedService?.id === service.id 
+                            ? 'bg-green-100 dark:bg-green-900 border-green-300' 
+                            : 'hover:bg-gray-50 dark:hover:bg-gray-700'
+                        }`}
+                        onClick={() => setSelectedService(service)}
+                        data-testid={`edit-service-option-${service.id}`}
+                      >
+                        <div className="font-medium">{service.name}</div>
+                        <div className="text-sm text-gray-600 dark:text-gray-400">
+                          Lavado: {formatCurrency(service.washPrice)} | 
+                          Planchado: {formatCurrency(service.ironPrice)} | 
+                          Ambos: {formatCurrency(service.bothPrice)}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Configuración del Artículo */}
+            {selectedService && (
+              <div className="space-y-3 border-t pt-4">
+                <div>
+                  <Label>Tipo de Servicio</Label>
+                  <Select value={selectedServiceType} onValueChange={(value: 'wash' | 'iron' | 'both') => setSelectedServiceType(value)}>
+                    <SelectTrigger data-testid="select-edit-service-type">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="wash">Lavado - {formatCurrency(selectedService.washPrice)}</SelectItem>
+                      <SelectItem value="iron">Planchado - {formatCurrency(selectedService.ironPrice)}</SelectItem>
+                      <SelectItem value="both">Lavado y Planchado - {formatCurrency(selectedService.bothPrice)}</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <Label>Cantidad</Label>
+                  <div className="flex items-center space-x-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setItemQuantity(Math.max(1, itemQuantity - 1))}
+                      data-testid="button-edit-decrease-quantity"
+                    >
+                      <Minus className="w-4 h-4" />
+                    </Button>
+                    <Input
+                      type="number"
+                      min="1"
+                      value={itemQuantity}
+                      onChange={(e) => setItemQuantity(Math.max(1, parseInt(e.target.value) || 1))}
+                      className="w-20 text-center"
+                      data-testid="input-edit-quantity"
+                    />
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setItemQuantity(itemQuantity + 1)}
+                      data-testid="button-edit-increase-quantity"
+                    >
+                      <Plus className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Vista Previa del Precio */}
+                <div className="bg-green-50 dark:bg-green-900/20 p-3 rounded-lg">
+                  <div className="flex justify-between items-center">
+                    <span className="font-medium">Total del artículo:</span>
+                    <span className="text-lg font-bold text-green-600">
+                      {formatCurrency(
+                        parseFloat(
+                          selectedServiceType === 'wash' ? selectedService.washPrice :
+                          selectedServiceType === 'iron' ? selectedService.ironPrice :
+                          selectedService.bothPrice
+                        ) * itemQuantity
+                      )}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+          
+          <div className="flex space-x-3 pt-4 border-t">
+            <Button
+              variant="outline"
+              className="flex-1"
+              onClick={() => setShowEditItemModal(false)}
+              data-testid="button-cancel-edit-item"
+            >
+              Cancelar
+            </Button>
+            <Button
+              className="flex-1 bg-green-600 hover:bg-green-700"
+              onClick={updateItemFromModal}
+              disabled={!selectedService}
+              data-testid="button-update-item-confirm"
+            >
+              Actualizar Artículo
             </Button>
           </div>
         </DialogContent>
