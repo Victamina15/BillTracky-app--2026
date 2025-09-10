@@ -24,7 +24,10 @@ import {
   Percent,
   Minus,
   AlertCircle,
-  Edit
+  Edit,
+  Printer,
+  MessageCircle,
+  MoreVertical
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -136,6 +139,7 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
   const [showDateModal, setShowDateModal] = useState(false);
   const [showAddItemModal, setShowAddItemModal] = useState(false);
   const [showEditItemModal, setShowEditItemModal] = useState(false);
+  const [showActionsModal, setShowActionsModal] = useState(false);
   const [editingItem, setEditingItem] = useState<InvoiceItemWithService | null>(null);
 
   // Estados para el nuevo selector de servicios escalable
@@ -869,6 +873,17 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
                   )}
                   Procesar Pago
                 </Button>
+
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => setShowActionsModal(true)}
+                  disabled={currentInvoice.items.length === 0}
+                  data-testid="button-invoice-actions"
+                >
+                  <MoreVertical className="w-4 h-4 mr-2" />
+                  Acciones de Factura
+                </Button>
               </div>
             </CardContent>
           </Card>
@@ -1465,6 +1480,94 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
               data-testid="button-update-item-confirm"
             >
               Actualizar Artículo
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal de Acciones de Factura */}
+      <Dialog open={showActionsModal} onOpenChange={setShowActionsModal}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-center">
+              <MoreVertical className="w-12 h-12 text-blue-600 mx-auto mb-4" />
+              Acciones de Factura
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-3">
+            <Button
+              variant="outline"
+              className="w-full p-4 h-auto justify-start bg-green-50 hover:bg-green-100 border-green-200"
+              onClick={() => {
+                window.print();
+                setShowActionsModal(false);
+              }}
+              data-testid="button-print-invoice"
+            >
+              <div className="flex items-center space-x-3">
+                <Printer className="w-6 h-6 text-green-600" />
+                <div className="text-left">
+                  <div className="font-medium text-green-700">Imprimir Factura</div>
+                  <div className="text-sm text-green-600">Generar versión impresa</div>
+                </div>
+              </div>
+            </Button>
+
+            <Button
+              variant="outline"
+              className="w-full p-4 h-auto justify-start bg-green-50 hover:bg-green-100 border-green-200"
+              onClick={() => {
+                const phoneNumber = currentInvoice.customerPhone.replace(/[^\d]/g, '');
+                const message = `¡Hola ${currentInvoice.customerName}! Tu factura está lista. Total: ${formatCurrency(currentInvoice.total)}. Fecha de entrega: ${formatDate(currentInvoice.deliveryDate)}`;
+                const whatsappUrl = `https://wa.me/1${phoneNumber}?text=${encodeURIComponent(message)}`;
+                window.open(whatsappUrl, '_blank');
+                setShowActionsModal(false);
+              }}
+              disabled={!currentInvoice.customerPhone}
+              data-testid="button-whatsapp-invoice"
+            >
+              <div className="flex items-center space-x-3">
+                <MessageCircle className="w-6 h-6 text-green-600" />
+                <div className="text-left">
+                  <div className="font-medium text-green-700">Enviar por WhatsApp</div>
+                  <div className="text-sm text-green-600">Notificar al cliente directamente</div>
+                </div>
+              </div>
+            </Button>
+
+            <Button
+              variant="outline"
+              className="w-full p-4 h-auto justify-start bg-blue-50 hover:bg-blue-100 border-blue-200"
+              onClick={() => {
+                const subject = `Factura de Billtracky - ${currentInvoice.customerName}`;
+                const body = `Estimado/a ${currentInvoice.customerName},%0D%0A%0D%0ASu factura está lista para recoger.%0D%0A%0D%0ATotal: ${formatCurrency(currentInvoice.total)}%0D%0AFecha de entrega: ${formatDate(currentInvoice.deliveryDate)}%0D%0A%0D%0AGracias por confiar en Billtracky.`;
+                const mailtoUrl = `mailto:${currentInvoice.customerEmail}?subject=${subject}&body=${body}`;
+                window.location.href = mailtoUrl;
+                setShowActionsModal(false);
+              }}
+              disabled={!currentInvoice.customerEmail}
+              data-testid="button-email-invoice"
+            >
+              <div className="flex items-center space-x-3">
+                <Mail className="w-6 h-6 text-blue-600" />
+                <div className="text-left">
+                  <div className="font-medium text-blue-700">Enviar por Correo</div>
+                  <div className="text-sm text-blue-600">
+                    {currentInvoice.customerEmail ? 'Notificar por email' : 'Email no disponible'}
+                  </div>
+                </div>
+              </div>
+            </Button>
+          </div>
+
+          <div className="flex justify-center pt-4 border-t">
+            <Button
+              variant="outline"
+              onClick={() => setShowActionsModal(false)}
+              data-testid="button-close-actions"
+            >
+              Cerrar
             </Button>
           </div>
         </DialogContent>

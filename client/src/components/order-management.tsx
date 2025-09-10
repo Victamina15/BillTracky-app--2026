@@ -72,6 +72,7 @@ export default function OrderManagement({ onNotification }: OrderManagementProps
   const [showStatusModal, setShowStatusModal] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [showCancelModal, setShowCancelModal] = useState(false);
+  const [showWorkTicketModal, setShowWorkTicketModal] = useState(false);
   const [cancelReason, setCancelReason] = useState('');
   const [paymentReference, setPaymentReference] = useState('');
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string>('');
@@ -244,6 +245,11 @@ export default function OrderManagement({ onNotification }: OrderManagementProps
   });
 
   // Funciones de acción
+  const openWorkTicketModal = (order: OrderWithItems) => {
+    setSelectedOrder(order);
+    setShowWorkTicketModal(true);
+  };
+
   const handleStatusChange = (newStatus: string) => {
     if (!selectedOrder) return;
     statusMutation.mutate({ id: selectedOrder.id, status: newStatus });
@@ -450,50 +456,64 @@ export default function OrderManagement({ onNotification }: OrderManagementProps
                     
                     <div className="flex gap-2 justify-end">
                       <Button
-                        variant="outline"
                         size="sm"
                         onClick={() => openDetailsModal(order)}
+                        className="bg-blue-500 hover:bg-blue-600 text-white border-0"
                         data-testid={`button-details-${order.id}`}
+                        title="Ver detalles"
                       >
                         <Eye className="h-4 w-4" />
+                      </Button>
+                      
+                      <Button
+                        size="sm"
+                        onClick={() => openWorkTicketModal(order)}
+                        className="bg-purple-500 hover:bg-purple-600 text-white border-0"
+                        data-testid={`button-ticket-${order.id}`}
+                        title="Ticket de trabajo"
+                      >
+                        <FileText className="h-4 w-4" />
                       </Button>
                       
                       {order.status !== 'cancelled' && order.status !== 'delivered' && (
                         <>
                           <Button
-                            variant="outline"
                             size="sm"
                             onClick={() => {
                               setSelectedOrder(order);
                               setShowStatusModal(true);
                             }}
+                            className="bg-orange-500 hover:bg-orange-600 text-white border-0"
                             data-testid={`button-status-${order.id}`}
+                            title="Cambiar estado"
                           >
                             <RefreshCw className="h-4 w-4" />
                           </Button>
                           
                           {!order.paid && (
                             <Button
-                              variant="outline"
                               size="sm"
                               onClick={() => {
                                 setSelectedOrder(order);
                                 setShowPaymentModal(true);
                               }}
+                              className="bg-green-500 hover:bg-green-600 text-white border-0"
                               data-testid={`button-payment-${order.id}`}
+                              title="Marcar como pagado"
                             >
                               <DollarSign className="h-4 w-4" />
                             </Button>
                           )}
                           
                           <Button
-                            variant="outline"
                             size="sm"
                             onClick={() => {
                               setSelectedOrder(order);
                               setShowCancelModal(true);
                             }}
+                            className="bg-red-500 hover:bg-red-600 text-white border-0"
                             data-testid={`button-cancel-${order.id}`}
+                            title="Cancelar orden"
                           >
                             <X className="h-4 w-4" />
                           </Button>
@@ -847,6 +867,153 @@ export default function OrderManagement({ onNotification }: OrderManagementProps
               </Button>
             </div>
           </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal de ticket de trabajo */}
+      <Dialog open={showWorkTicketModal} onOpenChange={setShowWorkTicketModal}>
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto" data-testid="modal-work-ticket">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <FileText className="h-5 w-5 text-purple-600" />
+              Ticket de Trabajo - Orden {selectedOrder?.number}
+            </DialogTitle>
+          </DialogHeader>
+          {selectedOrder && (
+            <div className="space-y-6">
+              {/* Información del cliente */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-sm">
+                    <User className="h-4 w-4" />
+                    Cliente: {selectedOrder.customerName}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                    <div>
+                      <span className="font-medium">Teléfono:</span> {selectedOrder.customerPhone}
+                    </div>
+                    <div>
+                      <span className="font-medium">Fecha de entrega:</span> {formatDate(selectedOrder.deliveryDate)}
+                    </div>
+                    <div>
+                      <span className="font-medium">Estado:</span> 
+                      <Badge className={`${getStatusClasses(selectedOrder.status)} ml-2`} size="sm">
+                        {statusConfig[selectedOrder.status as keyof typeof statusConfig]?.name || selectedOrder.status}
+                      </Badge>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Desglose de prendas */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Package className="h-5 w-5 text-purple-600" />
+                    Desglose de Prendas a Procesar
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {orderItemsLoading ? (
+                      <p className="text-center text-gray-500" data-testid="text-loading-items">Cargando items...</p>
+                    ) : orderItems.length > 0 ? (
+                      orderItems.map((item, index) => (
+                        <div key={item.id || index} className="border rounded-lg p-4 bg-gray-50 dark:bg-gray-800" data-testid={`work-ticket-item-${index}`}>
+                          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
+                            <div>
+                              <h4 className="font-semibold text-purple-700 dark:text-purple-300" data-testid={`item-service-name-${index}`}>
+                                {item.serviceName}
+                              </h4>
+                              <p className="text-sm text-gray-600 dark:text-gray-400" data-testid={`item-quantity-${index}`}>
+                                Cantidad: {item.quantity}
+                              </p>
+                            </div>
+                            
+                            <div className="space-y-2">
+                              <h5 className="font-medium text-sm">Servicios a realizar:</h5>
+                              <div className="space-y-1" data-testid={`service-indicators-${index}`}>
+                                {item.serviceType === 'wash' && (
+                                  <div className="flex items-center gap-2" data-testid={`wash-indicator-${index}`}>
+                                    <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+                                    <span className="text-sm">Lavado</span>
+                                  </div>
+                                )}
+                                {item.serviceType === 'iron' && (
+                                  <div className="flex items-center gap-2" data-testid={`iron-indicator-${index}`}>
+                                    <div className="w-3 h-3 bg-orange-500 rounded-full"></div>
+                                    <span className="text-sm">Planchado</span>
+                                  </div>
+                                )}
+                                {item.serviceType === 'both' && (
+                                  <>
+                                    <div className="flex items-center gap-2" data-testid={`wash-indicator-${index}`}>
+                                      <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+                                      <span className="text-sm">Lavado</span>
+                                    </div>
+                                    <div className="flex items-center gap-2" data-testid={`iron-indicator-${index}`}>
+                                      <div className="w-3 h-3 bg-orange-500 rounded-full"></div>
+                                      <span className="text-sm">Planchado</span>
+                                    </div>
+                                  </>
+                                )}
+                              </div>
+                            </div>
+                            
+                            <div>
+                              <p className="text-sm text-gray-600 dark:text-gray-400">Precio unitario:</p>
+                              <p className="font-semibold" data-testid={`item-unit-price-${index}`}>{formatCurrency(item.unitPrice)}</p>
+                            </div>
+                            
+                            <div>
+                              <p className="text-sm text-gray-600 dark:text-gray-400">Total:</p>
+                              <p className="font-bold text-green-600" data-testid={`item-total-${index}`}>{formatCurrency(item.total)}</p>
+                            </div>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="text-center text-gray-500" data-testid="text-no-items">No hay items en esta orden</p>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Resumen del ticket */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-sm">
+                    <CheckCircle className="h-4 w-4 text-green-600" />
+                    Resumen de Trabajo
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                    <div className="text-center p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg" data-testid="wash-counter">
+                      <div className="font-bold text-lg text-blue-600" data-testid="wash-count">
+                        {orderItems.filter(item => item.serviceType === 'wash' || item.serviceType === 'both').reduce((acc, item) => acc + item.quantity, 0)}
+                      </div>
+                      <div className="text-blue-600">Prendas para lavar</div>
+                    </div>
+                    <div className="text-center p-3 bg-orange-50 dark:bg-orange-900/20 rounded-lg" data-testid="iron-counter">
+                      <div className="font-bold text-lg text-orange-600" data-testid="iron-count">
+                        {orderItems.filter(item => item.serviceType === 'iron' || item.serviceType === 'both').reduce((acc, item) => acc + item.quantity, 0)}
+                      </div>
+                      <div className="text-orange-600">Prendas para planchar</div>
+                    </div>
+                    <div className="text-center p-3 bg-green-50 dark:bg-green-900/20 rounded-lg" data-testid="total-counter">
+                      <div className="font-bold text-lg text-green-600" data-testid="order-total">
+                        {formatCurrency(selectedOrder.total)}
+                      </div>
+                      <div className="text-green-600">Total de la orden</div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          )}
         </DialogContent>
       </Dialog>
     </div>
