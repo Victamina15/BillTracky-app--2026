@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { FileText, LogOut, Home, Package, Users, Settings } from "lucide-react";
+import { FileText, LogOut, Home, Package, Users, Settings, CreditCard } from "lucide-react";
 import { type Employee, type Invoice } from "@shared/schema";
 import InvoiceForm from "./invoice-form";
 import OrdersTable from "./orders-table";
 import CustomersGrid from "./customers-grid";
 import ServicesConfig from "./services-config";
+import PaymentMethodsConfig from "./payment-methods-config";
 import { useQuery } from "@tanstack/react-query";
 
 interface DashboardProps {
@@ -42,6 +43,8 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
         return <CustomersGrid onNotification={onNotification} />;
       case "services":
         return <ServicesConfig onNotification={onNotification} />;
+      case "payment-methods":
+        return <PaymentMethodsConfig onNotification={onNotification} />;
       default:
         return (
           <div>
@@ -283,6 +286,16 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
           >
             <Settings className="w-4 h-4 mr-2" />
             Servicios
+          </button>
+          <button 
+            onClick={() => setActiveTab('payment-methods')} 
+            className={`tab-btn px-4 py-3 text-sm font-medium whitespace-nowrap ${
+              activeTab === 'payment-methods' ? 'tab-active' : ''
+            }`}
+            data-testid="tab-payment-methods"
+          >
+            <CreditCard className="w-4 h-4 mr-2" />
+            Métodos de Pago
           </button>
         </div>
       </nav>

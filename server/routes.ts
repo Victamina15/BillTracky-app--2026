@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertCustomerSchema, insertServiceSchema, insertInvoiceSchema, insertInvoiceItemSchema } from "@shared/schema";
+import { insertCustomerSchema, insertServiceSchema, insertInvoiceSchema, insertInvoiceItemSchema, insertPaymentMethodSchema, insertCompanySettingsSchema, insertMessageTemplateSchema, insertEmployeeSchema } from "@shared/schema";
 import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -207,6 +207,177 @@ export async function registerRoutes(app: Express): Promise<Server> {
         pendingPayment,
         pendingPaymentTotal: pendingPaymentTotal.toFixed(2)
       });
+    } catch (error) {
+      res.status(500).json({ message: "Server error" });
+    }
+  });
+
+  // Payment Methods
+  app.get("/api/payment-methods", async (req, res) => {
+    try {
+      const paymentMethods = await storage.getPaymentMethods();
+      res.json(paymentMethods);
+    } catch (error) {
+      res.status(500).json({ message: "Server error" });
+    }
+  });
+
+  app.post("/api/payment-methods", async (req, res) => {
+    try {
+      const methodData = insertPaymentMethodSchema.parse(req.body);
+      const method = await storage.createPaymentMethod(methodData);
+      res.json(method);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Server error" });
+    }
+  });
+
+  app.put("/api/payment-methods/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const updates = req.body;
+      const method = await storage.updatePaymentMethod(id, updates);
+      
+      if (!method) {
+        return res.status(404).json({ message: "Payment method not found" });
+      }
+      
+      res.json(method);
+    } catch (error) {
+      res.status(500).json({ message: "Server error" });
+    }
+  });
+
+  app.delete("/api/payment-methods/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      await storage.deletePaymentMethod(id);
+      res.json({ message: "Payment method deleted successfully" });
+    } catch (error) {
+      res.status(500).json({ message: "Server error" });
+    }
+  });
+
+  // Company Settings
+  app.get("/api/company-settings", async (req, res) => {
+    try {
+      const settings = await storage.getCompanySettings();
+      res.json(settings);
+    } catch (error) {
+      res.status(500).json({ message: "Server error" });
+    }
+  });
+
+  app.put("/api/company-settings", async (req, res) => {
+    try {
+      const settingsData = insertCompanySettingsSchema.parse(req.body);
+      const settings = await storage.updateCompanySettings(settingsData);
+      res.json(settings);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Server error" });
+    }
+  });
+
+  // Message Templates
+  app.get("/api/message-templates", async (req, res) => {
+    try {
+      const templates = await storage.getMessageTemplates();
+      res.json(templates);
+    } catch (error) {
+      res.status(500).json({ message: "Server error" });
+    }
+  });
+
+  app.get("/api/message-templates/type/:type", async (req, res) => {
+    try {
+      const { type } = req.params;
+      const template = await storage.getMessageTemplateByType(type);
+      res.json(template);
+    } catch (error) {
+      res.status(500).json({ message: "Server error" });
+    }
+  });
+
+  app.post("/api/message-templates", async (req, res) => {
+    try {
+      const templateData = insertMessageTemplateSchema.parse(req.body);
+      const template = await storage.createMessageTemplate(templateData);
+      res.json(template);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Server error" });
+    }
+  });
+
+  app.put("/api/message-templates/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const updates = req.body;
+      const template = await storage.updateMessageTemplate(id, updates);
+      
+      if (!template) {
+        return res.status(404).json({ message: "Message template not found" });
+      }
+      
+      res.json(template);
+    } catch (error) {
+      res.status(500).json({ message: "Server error" });
+    }
+  });
+
+  // Employee management routes
+  app.get("/api/employees", async (req, res) => {
+    try {
+      // Get all employees (for employee management)
+      const employees = await storage.getEmployees();
+      res.json(employees);
+    } catch (error) {
+      res.status(500).json({ message: "Server error" });
+    }
+  });
+
+  app.post("/api/employees", async (req, res) => {
+    try {
+      const employeeData = insertEmployeeSchema.parse(req.body);
+      const employee = await storage.createEmployee(employeeData);
+      res.json(employee);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Server error" });
+    }
+  });
+
+  app.put("/api/employees/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const updates = req.body;
+      const employee = await storage.updateEmployee(id, updates);
+      
+      if (!employee) {
+        return res.status(404).json({ message: "Employee not found" });
+      }
+      
+      res.json(employee);
+    } catch (error) {
+      res.status(500).json({ message: "Server error" });
+    }
+  });
+
+  app.delete("/api/employees/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      await storage.deleteEmployee(id);
+      res.json({ message: "Employee deleted successfully" });
     } catch (error) {
       res.status(500).json({ message: "Server error" });
     }
