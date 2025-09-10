@@ -1,0 +1,1012 @@
+import React, { useState } from 'react';
+import { 
+  FileText, 
+  Plus, 
+  Trash2, 
+  DollarSign, 
+  Calendar, 
+  User, 
+  Phone, 
+  Mail, 
+  Package, 
+  Search,
+  X,
+  Clock,
+  Check,
+  Users,
+  CreditCard,
+  Banknote,
+  Landmark,
+  MapPin,
+  Calculator,
+  Percent,
+  ShoppingCart,
+  Zap,
+  Star,
+  BarChart3,
+  Minus
+} from 'lucide-react';
+
+const SistemaFacturacion = () => {
+  const [facturaActual, setFacturaActual] = useState({
+    numero: 'FAC-010',
+    fecha: new Date().toISOString().split('T')[0],
+    cliente: '',
+    telefono: '',
+    correo: '',
+    fechaEntrega: '',
+    articulos: [],
+    subtotal: 0,
+    descuento: 0,
+    itbis: 0,
+    total: 0,
+    metodoPago: 'Efectivo',
+    urgente: false
+  });
+
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [showDateTimeSelector, setShowDateTimeSelector] = useState(false);
+  const [showClientesPanel, setShowClientesPanel] = useState(false);
+  const [showDiscountModal, setShowDiscountModal] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [filtroCliente, setFiltroCliente] = useState('');
+  const [clienteSugerido, setClienteSugerido] = useState(null);
+  const [selectedDateTime, setSelectedDateTime] = useState({
+    fecha: '',
+    hora: '12:00'
+  });
+  const [discountData, setDiscountData] = useState({
+    type: 'amount',
+    value: 0,
+    reason: ''
+  });
+
+  const clientesFrecuentes = [
+    { 
+      id: 1, 
+      nombre: 'Juan Pérez', 
+      telefono: '8091502025', 
+      correo: 'juan@email.com',
+      categoria: 'VIP',
+      totalCompras: 15,
+      descuentoPreferencial: 10
+    },
+    { 
+      id: 2, 
+      nombre: 'María García', 
+      telefono: '8097779999', 
+      correo: 'maria@email.com',
+      categoria: 'Frecuente',
+      totalCompras: 8,
+      descuentoPreferencial: 5
+    }
+  ];
+
+  const preciosServicios = [
+    { 
+      id: 1, 
+      nombre: 'PANTALONES', 
+      categoria: 'Ropa Casual',
+      imagen: '👖',
+      precios: { 
+        lavado: 80, 
+        planchado: 60, 
+        lavadoYPlanchado: 110
+      },
+      popular: true
+    },
+    { 
+      id: 2, 
+      nombre: 'CAMISAS', 
+      categoria: 'Ropa Formal',
+      imagen: '👔',
+      precios: { 
+        lavado: 60, 
+        planchado: 40, 
+        lavadoYPlanchado: 85
+      },
+      popular: true
+    },
+    { 
+      id: 3, 
+      nombre: 'VESTIDOS', 
+      categoria: 'Ropa Formal',
+      imagen: '👗',
+      precios: { 
+        lavado: 150, 
+        planchado: 120, 
+        lavadoYPlanchado: 220
+      },
+      popular: false
+    }
+  ];
+
+  const metodosPago = [
+    { id: 'efectivo', nombre: 'Efectivo', icon: Banknote, color: 'green' },
+    { id: 'tarjeta', nombre: 'Tarjeta de Crédito', icon: CreditCard, color: 'blue' },
+    { id: 'transferencia', nombre: 'Transferencia Bancaria', icon: Landmark, color: 'indigo' }
+  ];
+
+  const formatCurrency = (amount) => `RD$${amount.toFixed(2)}`;
+  
+  const formatDate = (dateStr) => {
+    return new Date(dateStr).toLocaleDateString('es-DO');
+  };
+
+  const openModal = (message) => {
+    setModalMessage(message);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setModalMessage('');
+  };
+
+  const calcularTotales = (articulos, descuento = facturaActual.descuento) => {
+    const subtotal = articulos.reduce((acc, item) => acc + (item.cantidad * item.precio), 0);
+    const descuentoAplicado = discountData.type === 'percentage' 
+      ? subtotal * (descuento / 100)
+      : descuento;
+    const subtotalConDescuento = subtotal - descuentoAplicado;
+    const itbis = subtotalConDescuento * 0.18;
+    const total = subtotalConDescuento + itbis;
+    
+    return { 
+      subtotal, 
+      descuento: descuentoAplicado, 
+      itbis, 
+      total: Math.max(0, total) 
+    };
+  };
+
+  const manejarCambioTelefono = (valor) => {
+    setFacturaActual({ ...facturaActual, telefono: valor });
+    
+    if (valor.length >= 4) {
+      const clienteEncontrado = clientesFrecuentes.find(cliente => 
+        cliente.telefono.includes(valor)
+      );
+      
+      if (clienteEncontrado) {
+        setClienteSugerido(clienteEncontrado);
+      } else {
+        setClienteSugerido(null);
+      }
+    }
+  };
+
+  const seleccionarClienteSugerido = (cliente) => {
+    setFacturaActual({ 
+      ...facturaActual, 
+      cliente: cliente.nombre,
+      telefono: cliente.telefono,
+      correo: cliente.correo || ''
+    });
+    setClienteSugerido(null);
+  };
+
+  const seleccionarClienteDelPanel = (cliente) => {
+    seleccionarClienteSugerido(cliente);
+    setShowClientesPanel(false);
+  };
+
+  const agregarArticulo = (prendaEspecifica = null) => {
+    const prenda = prendaEspecifica || preciosServicios[0];
+    const nuevoArticulo = {
+      id: Date.now(),
+      nombre: prenda.nombre,
+      categoria: prenda.categoria,
+      imagen: prenda.imagen,
+      servicio: 'lavado',
+      cantidad: 1,
+      precio: prenda.precios.lavado
+    };
+    
+    const nuevosArticulos = [...facturaActual.articulos, nuevoArticulo];
+    const totales = calcularTotales(nuevosArticulos);
+    
+    setFacturaActual({ 
+      ...facturaActual, 
+      articulos: nuevosArticulos, 
+      ...totales 
+    });
+  };
+
+  const eliminarArticulo = (id) => {
+    const nuevosArticulos = facturaActual.articulos.filter(item => item.id !== id);
+    const totales = calcularTotales(nuevosArticulos);
+    setFacturaActual({ 
+      ...facturaActual, 
+      articulos: nuevosArticulos, 
+      ...totales 
+    });
+  };
+
+  const manejarCambioArticulo = (id, campo, valor) => {
+    const nuevosArticulos = facturaActual.articulos.map(item => {
+      if (item.id === id) {
+        const updatedItem = { ...item, [campo]: valor };
+        const prenda = preciosServicios.find(p => p.nombre === updatedItem.nombre);
+        
+        if (prenda && (campo === 'nombre' || campo === 'servicio')) {
+          updatedItem.precio = prenda.precios[updatedItem.servicio] || 0;
+          updatedItem.categoria = prenda.categoria;
+          updatedItem.imagen = prenda.imagen;
+        }
+        return updatedItem;
+      }
+      return item;
+    });
+    
+    const totales = calcularTotales(nuevosArticulos);
+    setFacturaActual({ 
+      ...facturaActual, 
+      articulos: nuevosArticulos, 
+      ...totales 
+    });
+  };
+
+  const aplicarDescuento = (valor, tipo, razon) => {
+    const totales = calcularTotales(facturaActual.articulos, valor);
+    setFacturaActual({
+      ...facturaActual,
+      descuento: valor,
+      ...totales
+    });
+    setDiscountData({ type: tipo, value: valor, reason: razon });
+    setShowDiscountModal(false);
+  };
+
+  const abrirSelectorFechaHora = () => {
+    const fechaMinima = new Date();
+    fechaMinima.setDate(fechaMinima.getDate() + 1);
+    
+    setSelectedDateTime({
+      fecha: facturaActual.fechaEntrega || fechaMinima.toISOString().split('T')[0],
+      hora: '12:00'
+    });
+    setShowDateTimeSelector(true);
+  };
+
+  const confirmarFechaHora = () => {
+    setFacturaActual({
+      ...facturaActual,
+      fechaEntrega: selectedDateTime.fecha
+    });
+    setShowDateTimeSelector(false);
+  };
+
+  const guardarFactura = (esPendiente = false) => {
+    if (!facturaActual.cliente || !facturaActual.telefono || facturaActual.articulos.length === 0) {
+      openModal("Por favor complete todos los campos requeridos");
+      return;
+    }
+
+    const metodoPago = esPendiente ? 'Pendiente' : facturaActual.metodoPago;
+    const mensaje = `Factura ${facturaActual.numero} creada exitosamente!\nCliente: ${facturaActual.cliente}\nTotal: ${formatCurrency(facturaActual.total)}\nMétodo de pago: ${metodoPago}`;
+    
+    openModal(mensaje);
+    
+    // Reset form
+    setFacturaActual({
+      numero: 'FAC-011',
+      fecha: new Date().toISOString().split('T')[0],
+      cliente: '',
+      telefono: '',
+      correo: '',
+      fechaEntrega: '',
+      articulos: [],
+      subtotal: 0,
+      descuento: 0,
+      itbis: 0,
+      total: 0,
+      metodoPago: 'Efectivo',
+      urgente: false
+    });
+    
+    setShowPaymentModal(false);
+    setDiscountData({ type: 'amount', value: 0, reason: '' });
+  };
+
+  const Modal = () => {
+    if (!isModalOpen) return null;
+    
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl">
+          <div className="text-center">
+            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Check className="w-8 h-8 text-green-600" />
+            </div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">BILLTRACKY LAVANDERÍA</h3>
+            <div className="text-gray-600 mb-6 whitespace-pre-line">{modalMessage}</div>
+            <button
+              onClick={closeModal}
+              className="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 font-medium transition-all"
+            >
+              Aceptar
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const PaymentMethodModal = () => {
+    if (!showPaymentModal) return null;
+    
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl">
+          <div className="text-center mb-6">
+            <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <DollarSign className="w-8 h-8 text-blue-600" />
+            </div>
+            <h3 className="text-xl font-bold text-gray-900">Método de Pago</h3>
+            <div className="mt-3 p-4 bg-blue-50 rounded-lg">
+              <p className="text-lg text-gray-700">Total a cobrar:</p>
+              <p className="text-3xl font-bold text-blue-600">
+                {formatCurrency(facturaActual.total)}
+              </p>
+            </div>
+          </div>
+          
+          <div className="space-y-3 mb-6">
+            {metodosPago.map((metodo) => {
+              const IconComponent = metodo.icon;
+              
+              return (
+                <button
+                  key={metodo.id}
+                  onClick={() => {
+                    setFacturaActual({ ...facturaActual, metodoPago: metodo.nombre });
+                    guardarFactura(false);
+                  }}
+                  className="w-full p-4 rounded-xl border-2 border-gray-200 hover:border-blue-500 hover:bg-blue-50 transition-all flex items-center space-x-3"
+                >
+                  <IconComponent className="w-6 h-6 text-blue-600" />
+                  <span className="font-medium text-gray-900">{metodo.nombre}</span>
+                </button>
+              );
+            })}
+          </div>
+          
+          <div className="flex space-x-3">
+            <button
+              onClick={() => setShowPaymentModal(false)}
+              className="flex-1 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 font-medium"
+            >
+              Cancelar
+            </button>
+            <button
+              onClick={() => guardarFactura(true)}
+              className="flex-1 py-3 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 font-medium flex items-center justify-center space-x-2"
+            >
+              <Clock className="w-4 h-4" />
+              <span>Pago Pendiente</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const DateTimeSelector = () => {
+    if (!showDateTimeSelector) return null;
+    
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl">
+          <div className="text-center mb-6">
+            <Calendar className="w-12 h-12 text-blue-600 mx-auto mb-4" />
+            <h3 className="text-xl font-bold text-gray-900">Fecha de Entrega</h3>
+          </div>
+          
+          <div className="space-y-4 mb-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Fecha de Entrega</label>
+              <input
+                type="date"
+                value={selectedDateTime.fecha}
+                onChange={(e) => setSelectedDateTime({...selectedDateTime, fecha: e.target.value})}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                min={new Date().toISOString().split('T')[0]}
+              />
+            </div>
+          </div>
+          
+          <div className="flex space-x-3">
+            <button
+              onClick={() => setShowDateTimeSelector(false)}
+              className="flex-1 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 font-medium"
+            >
+              Cancelar
+            </button>
+            <button
+              onClick={confirmarFechaHora}
+              className="flex-1 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
+            >
+              Confirmar
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const ClientesPanel = () => {
+    if (!showClientesPanel) return null;
+    
+    const clientesFiltrados = clientesFrecuentes.filter(cliente =>
+      cliente.nombre.toLowerCase().includes(filtroCliente.toLowerCase()) ||
+      cliente.telefono.includes(filtroCliente)
+    );
+    
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="bg-white rounded-2xl max-w-2xl w-full max-h-96 shadow-2xl">
+          <div className="p-6 border-b">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-xl font-bold text-gray-900">Base de Clientes</h3>
+              <button
+                onClick={() => setShowClientesPanel(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+            
+            <div className="relative">
+              <Search className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" />
+              <input
+                type="text"
+                placeholder="Buscar cliente..."
+                value={filtroCliente}
+                onChange={(e) => setFiltroCliente(e.target.value)}
+                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg"
+              />
+            </div>
+          </div>
+          
+          <div className="max-h-64 overflow-y-auto p-4">
+            <div className="space-y-3">
+              {clientesFiltrados.map((cliente) => (
+                <button
+                  key={cliente.id}
+                  onClick={() => seleccionarClienteDelPanel(cliente)}
+                  className="w-full p-4 text-left hover:bg-gray-50 rounded-xl border border-gray-200 hover:border-blue-300 transition-all"
+                >
+                  <div className="flex justify-between items-start">
+                    <div className="flex-1">
+                      <div className="flex items-center space-x-2 mb-2">
+                        <h4 className="font-semibold text-gray-900">{cliente.nombre}</h4>
+                        <span className="text-xs px-2 py-1 rounded-full font-medium bg-blue-100 text-blue-800">
+                          {cliente.categoria}
+                        </span>
+                      </div>
+                      <div className="space-y-1 text-sm text-gray-600">
+                        <div className="flex items-center">
+                          <Phone className="w-3 h-3 mr-2" />
+                          {cliente.telefono}
+                        </div>
+                        <div className="flex items-center">
+                          <Mail className="w-3 h-3 mr-2" />
+                          {cliente.correo}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="text-right ml-4">
+                      <div className="flex items-center text-yellow-600 mb-1">
+                        <Star className="w-4 h-4 mr-1" />
+                        <span className="text-sm font-medium">{cliente.totalCompras} órdenes</span>
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const DiscountModal = () => {
+    if (!showDiscountModal) return null;
+    
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl">
+          <div className="text-center mb-6">
+            <Percent className="w-12 h-12 text-green-600 mx-auto mb-4" />
+            <h3 className="text-xl font-bold text-gray-900">Aplicar Descuento</h3>
+          </div>
+          
+          <div className="space-y-4 mb-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Tipo de Descuento</label>
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  onClick={() => setDiscountData({...discountData, type: 'amount'})}
+                  className={`p-3 rounded-lg border-2 transition-all ${
+                    discountData.type === 'amount' 
+                      ? 'border-green-500 bg-green-50 text-green-700' 
+                      : 'border-gray-200 hover:border-gray-300'
+                  }`}
+                >
+                  <DollarSign className="w-5 h-5 mx-auto mb-1" />
+                  <span className="text-sm font-medium">Monto Fijo</span>
+                </button>
+                <button
+                  onClick={() => setDiscountData({...discountData, type: 'percentage'})}
+                  className={`p-3 rounded-lg border-2 transition-all ${
+                    discountData.type === 'percentage' 
+                      ? 'border-green-500 bg-green-50 text-green-700' 
+                      : 'border-gray-200 hover:border-gray-300'
+                  }`}
+                >
+                  <Percent className="w-5 h-5 mx-auto mb-1" />
+                  <span className="text-sm font-medium">Porcentaje</span>
+                </button>
+              </div>
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Valor del Descuento
+              </label>
+              <input
+                type="number"
+                value={discountData.value}
+                onChange={(e) => setDiscountData({...discountData, value: parseFloat(e.target.value) || 0})}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+                placeholder="0"
+                min="0"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Motivo</label>
+              <input
+                type="text"
+                value={discountData.reason}
+                onChange={(e) => setDiscountData({...discountData, reason: e.target.value})}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+                placeholder="Cliente frecuente..."
+              />
+            </div>
+          </div>
+          
+          <div className="flex space-x-3">
+            <button
+              onClick={() => setShowDiscountModal(false)}
+              className="flex-1 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 font-medium"
+            >
+              Cancelar
+            </button>
+            <button
+              onClick={() => aplicarDescuento(discountData.value, discountData.type, discountData.reason)}
+              className="flex-1 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium"
+              disabled={discountData.value <= 0}
+            >
+              Aplicar Descuento
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50 p-6">
+      <div className="max-w-6xl mx-auto">
+        {/* Header */}
+        <div className="bg-white rounded-2xl shadow-sm border p-6 mb-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <div className="w-14 h-14 bg-blue-600 rounded-2xl flex items-center justify-center">
+                <FileText className="w-8 h-8 text-white" />
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900">Nueva Factura</h1>
+                <div className="flex items-center space-x-4 mt-1">
+                  <span className="text-gray-600">#{facturaActual.numero}</span>
+                  <span className="text-gray-400">•</span>
+                  <span className="text-gray-600">{formatDate(facturaActual.fecha)}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Panel Principal */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Información del Cliente */}
+            <div className="bg-white rounded-2xl shadow-sm border p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-semibold text-gray-900 flex items-center">
+                  <User className="w-6 h-6 mr-3 text-blue-600" />
+                  Información del Cliente
+                </h2>
+                <button
+                  onClick={() => setShowClientesPanel(true)}
+                  className="px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 text-sm font-medium flex items-center space-x-2"
+                >
+                  <Users className="w-4 h-4" />
+                  <span>Clientes</span>
+                </button>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Nombre Completo *
+                  </label>
+                  <input
+                    type="text"
+                    value={facturaActual.cliente}
+                    onChange={(e) => setFacturaActual({ ...facturaActual, cliente: e.target.value })}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    placeholder="Nombre del cliente"
+                  />
+                </div>
+                
+                <div className="relative">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Teléfono *
+                  </label>
+                  <div className="relative">
+                    <Phone className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" />
+                    <input
+                      type="tel"
+                      value={facturaActual.telefono}
+                      onChange={(e) => manejarCambioTelefono(e.target.value)}
+                      className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                      placeholder="809-000-0000"
+                    />
+                  </div>
+                  
+                  {clienteSugerido && (
+                    <div className="absolute top-full left-0 right-0 mt-1 z-10">
+                      <div className="bg-white border border-blue-200 rounded-lg shadow-lg p-3">
+                        <p className="text-xs text-blue-600 mb-2">Cliente encontrado:</p>
+                        <button
+                          onClick={() => seleccionarClienteSugerido(clienteSugerido)}
+                          className="w-full text-left p-2 hover:bg-blue-50 rounded-md"
+                        >
+                          <div className="font-medium text-gray-900">{clienteSugerido.nombre}</div>
+                          <div className="text-sm text-gray-600">{clienteSugerido.telefono}</div>
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Correo Electrónico
+                  </label>
+                  <div className="relative">
+                    <Mail className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" />
+                    <input
+                      type="email"
+                      value={facturaActual.correo}
+                      onChange={(e) => setFacturaActual({ ...facturaActual, correo: e.target.value })}
+                      className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                      placeholder="cliente@email.com"
+                    />
+                  </div>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Fecha de Entrega *
+                  </label>
+                  <button
+                    onClick={abrirSelectorFechaHora}
+                    className="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg hover:bg-gray-100 text-left flex items-center space-x-3"
+                  >
+                    <Calendar className="w-5 h-5 text-gray-600" />
+                    <div>
+                      <div className="font-medium text-gray-900">
+                        {facturaActual.fechaEntrega ? formatDate(facturaActual.fechaEntrega) : 'Seleccionar fecha'}
+                      </div>
+                    </div>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Lista de Artículos */}
+            <div className="bg-white rounded-2xl shadow-sm border p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-semibold text-gray-900 flex items-center">
+                  <ShoppingCart className="w-6 h-6 mr-3 text-green-600" />
+                  Artículos del Pedido
+                  {facturaActual.articulos.length > 0 && (
+                    <span className="ml-3 px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
+                      {facturaActual.articulos.length} artículo{facturaActual.articulos.length !== 1 ? 's' : ''}
+                    </span>
+                  )}
+                </h2>
+                <div className="flex items-center space-x-3">
+                  <button
+                    onClick={() => setShowDiscountModal(true)}
+                    className="px-4 py-2 bg-green-100 text-green-700 rounded-lg hover:bg-green-200 text-sm font-medium flex items-center space-x-2"
+                    disabled={facturaActual.articulos.length === 0}
+                  >
+                    <Percent className="w-4 h-4" />
+                    <span>Descuento</span>
+                  </button>
+                  <button
+                    onClick={() => agregarArticulo()}
+                    className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium flex items-center space-x-2"
+                  >
+                    <Plus className="w-5 h-5" />
+                    <span>Agregar Artículo</span>
+                  </button>
+                </div>
+              </div>
+              
+              {facturaActual.articulos.length === 0 ? (
+                <div className="text-center py-16 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
+                  <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Package className="w-8 h-8 text-blue-600" />
+                  </div>
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">Comienza agregando artículos</h3>
+                  <p className="text-gray-600 mb-6">Selecciona las prendas que el cliente desea procesar</p>
+                  
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3 max-w-md mx-auto">
+                    {preciosServicios.filter(p => p.popular).map((prenda) => (
+                      <button
+                        key={prenda.id}
+                        onClick={() => agregarArticulo(prenda)}
+                        className="p-4 bg-white border-2 border-gray-200 rounded-xl hover:border-blue-500 hover:bg-blue-50 transition-all"
+                      >
+                        <div className="text-2xl mb-2">{prenda.imagen}</div>
+                        <div className="text-sm font-medium text-gray-900">{prenda.nombre}</div>
+                        <div className="text-xs text-gray-600">{prenda.categoria}</div>
+                        <div className="text-xs text-blue-600 font-medium mt-1">
+                          desde {formatCurrency(Math.min(...Object.values(prenda.precios)))}
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {facturaActual.articulos.map((articulo) => (
+                    <div key={articulo.id} className="bg-gray-50 rounded-xl border border-gray-200 p-4">
+                      <div className="grid grid-cols-12 gap-4 items-center">
+                        <div className="col-span-1">
+                          <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center text-xl shadow-sm">
+                            {articulo.imagen}
+                          </div>
+                        </div>
+                        
+                        <div className="col-span-3">
+                          <select
+                            value={articulo.nombre}
+                            onChange={(e) => manejarCambioArticulo(articulo.id, 'nombre', e.target.value)}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 bg-white"
+                          >
+                            {preciosServicios.map((prenda) => (
+                              <option key={prenda.id} value={prenda.nombre}>
+                                {prenda.imagen} {prenda.nombre}
+                              </option>
+                            ))}
+                          </select>
+                          <div className="text-xs text-gray-500 mt-1">{articulo.categoria}</div>
+                        </div>
+                        
+                        <div className="col-span-2">
+                          <div className="flex items-center bg-white rounded-lg border border-gray-300">
+                            <button
+                              onClick={() => manejarCambioArticulo(articulo.id, 'cantidad', Math.max(1, articulo.cantidad - 1))}
+                              className="px-3 py-2 text-gray-600 hover:bg-gray-100 rounded-l-lg"
+                            >
+                              <Minus className="w-3 h-3" />
+                            </button>
+                            <input
+                              type="number"
+                              min="1"
+                              value={articulo.cantidad}
+                              onChange={(e) => manejarCambioArticulo(articulo.id, 'cantidad', parseInt(e.target.value) || 1)}
+                              className="w-12 px-2 py-2 text-center border-0 focus:ring-0 text-sm"
+                            />
+                            <button
+                              onClick={() => manejarCambioArticulo(articulo.id, 'cantidad', articulo.cantidad + 1)}
+                              className="px-3 py-2 text-gray-600 hover:bg-gray-100 rounded-r-lg"
+                            >
+                              <Plus className="w-3 h-3" />
+                            </button>
+                          </div>
+                        </div>
+                        
+                        <div className="col-span-4">
+                          <select
+                            value={articulo.servicio}
+                            onChange={(e) => manejarCambioArticulo(articulo.id, 'servicio', e.target.value)}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 bg-white"
+                          >
+                            {Object.entries(preciosServicios.find(p => p.nombre === articulo.nombre)?.precios || {}).map(([servicio, precio]) => (
+                              <option key={servicio} value={servicio}>
+                                {servicio === 'lavado' && 'Lavado'} 
+                                {servicio === 'planchado' && 'Planchado'}
+                                {servicio === 'lavadoYPlanchado' && 'Completo'}
+                                {' - ' + formatCurrency(precio)}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                        
+                        <div className="col-span-1">
+                          <div className="text-right">
+                            <div className="text-lg font-bold text-green-600">
+                              {formatCurrency(articulo.cantidad * articulo.precio)}
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div className="col-span-1">
+                          <button
+                            onClick={() => eliminarArticulo(articulo.id)}
+                            className="w-8 h-8 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 flex items-center justify-center"
+                            title="Eliminar artículo"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Panel Lateral - Resumen */}
+          <div className="lg:col-span-1">
+            <div className="sticky top-6 space-y-6">
+              {/* Resumen de Totales */}
+              <div className="bg-white rounded-2xl shadow-sm border p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                  <Calculator className="w-5 h-5 mr-2 text-blue-600" />
+                  Resumen de la Orden
+                </h3>
+                
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600">Subtotal:</span>
+                    <span className="font-medium">{formatCurrency(facturaActual.subtotal)}</span>
+                  </div>
+                  
+                  {facturaActual.descuento > 0 && (
+                    <div className="flex justify-between items-center text-green-600">
+                      <div className="flex items-center">
+                        <Percent className="w-4 h-4 mr-1" />
+                        <span>Descuento:</span>
+                      </div>
+                      <span className="font-medium">-{formatCurrency(facturaActual.descuento)}</span>
+                    </div>
+                  )}
+                  
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600">ITBIS (18%):</span>
+                    <span className="font-medium">{formatCurrency(facturaActual.itbis)}</span>
+                  </div>
+                  
+                  <div className="border-t pt-4">
+                    <div className="flex justify-between items-center">
+                      <span className="text-xl font-bold text-gray-900">Total:</span>
+                      <span className="text-2xl font-bold text-blue-600">
+                        {formatCurrency(facturaActual.total)}
+                      </span>
+                    </div>
+                  </div>
+                  
+                  {discountData.reason && (
+                    <div className="text-xs text-green-600 bg-green-50 p-2 rounded-lg">
+                      <strong>Motivo del descuento:</strong> {discountData.reason}
+                    </div>
+                  )}
+                </div>
+                
+                {facturaActual.articulos.length > 0 && (
+                  <div className="mt-6 space-y-3">
+                    <button
+                      onClick={() => setShowPaymentModal(true)}
+                      className="w-full bg-blue-600 text-white py-4 rounded-xl hover:bg-blue-700 font-semibold flex items-center justify-center space-x-2"
+                    >
+                      <DollarSign className="w-5 h-5" />
+                      <span>Procesar Pago</span>
+                    </button>
+                    
+                    <button
+                      onClick={() => guardarFactura(true)}
+                      className="w-full bg-yellow-500 text-white py-3 rounded-xl hover:bg-yellow-600 font-medium flex items-center justify-center space-x-2"
+                    >
+                      <Clock className="w-4 h-4" />
+                      <span>Guardar Pendiente</span>
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {/* Información del Cliente Seleccionado */}
+              {facturaActual.cliente && (
+                <div className="bg-white rounded-2xl shadow-sm border p-6">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                    <User className="w-5 h-5 mr-2 text-green-600" />
+                    Cliente Actual
+                  </h3>
+                  
+                  <div className="space-y-3">
+                    <div>
+                      <p className="font-medium text-gray-900">{facturaActual.cliente}</p>
+                      <p className="text-sm text-gray-600">{facturaActual.telefono}</p>
+                      {facturaActual.correo && (
+                        <p className="text-sm text-gray-600">{facturaActual.correo}</p>
+                      )}
+                    </div>
+                    
+                    {facturaActual.fechaEntrega && (
+                      <div className="p-3 bg-blue-50 rounded-lg">
+                        <div className="flex items-center text-blue-700">
+                          <Calendar className="w-4 h-4 mr-2" />
+                          <span className="font-medium">Entrega:</span>
+                        </div>
+                        <p className="text-blue-800 font-medium">
+                          {formatDate(facturaActual.fechaEntrega)}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Estadísticas Rápidas */}
+              <div className="bg-purple-50 rounded-2xl p-6 border">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                  <BarChart3 className="w-5 h-5 mr-2 text-purple-600" />
+                  Estadísticas de Hoy
+                </h3>
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-purple-600">12</div>
+                    <div className="text-xs text-gray-600">Facturas</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-xl font-bold text-green-600">RD$8,450</div>
+                    <div className="text-xs text-gray-600">Ventas</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-blue-600">45</div>
+                    <div className="text-xs text-gray-600">Artículos</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-orange-600">3</div>
+                    <div className="text-xs text-gray-600">Urgentes</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Todos los modales */}
+      <Modal />
+      <PaymentMethodModal />
+      <DateTimeSelector />
+      <ClientesPanel />
+      <DiscountModal />
+    </div>
+  );
+};
+
+export default SistemaFacturacion;
