@@ -223,7 +223,9 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
 
   const formatDate = (dateStr: string) => {
     if (!dateStr) return '';
-    return new Date(dateStr).toLocaleDateString('es-DO');
+    // Evitar problemas de zona horaria al parsear fechas ISO
+    const [year, month, day] = dateStr.split('-').map(Number);
+    return new Date(year, month - 1, day).toLocaleDateString('es-DO');
   };
 
   // Calcular totales
