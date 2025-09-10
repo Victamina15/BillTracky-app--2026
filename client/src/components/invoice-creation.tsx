@@ -652,25 +652,122 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
             </CardContent>
           </Card>
 
-          {/* Servicios */}
+          {/* Artículos del Pedido */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center">
-                <Calculator className="w-6 h-6 mr-3 text-green-600" />
-                Servicios
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {/* Botón para agregar artículo - Escalable para muchos servicios */}
-              <div className="mb-6">
+              <CardTitle className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <Calculator className="w-6 h-6 mr-3 text-green-600" />
+                  Artículos del Pedido
+                </div>
                 <Button
                   onClick={() => setShowAddItemModal(true)}
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3"
+                  className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4"
                   data-testid="button-add-item"
                 >
                   <Plus className="w-5 h-5 mr-2" />
                   Agregar Artículo
                 </Button>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {/* Interfaz directa para agregar artículos */}
+              <div className="space-y-4">
+                {/* Headers de columnas */}
+                <div className="grid grid-cols-6 gap-4 text-sm font-medium text-gray-600 dark:text-gray-400 pb-2 border-b">
+                  <div>Artículo</div>
+                  <div>Cantidad</div>
+                  <div className="col-span-2">Servicio</div>
+                  <div>Total</div>
+                  <div></div>
+                </div>
+
+                {/* Fila para agregar nuevo artículo */}
+                <div className="grid grid-cols-6 gap-4 items-center p-3 border rounded-lg bg-gray-50 dark:bg-gray-800">
+                  {/* Dropdown de Artículo */}
+                  <div>
+                    <Select value={selectedService?.id || ""} onValueChange={(value) => {
+                      const service = services.find(s => s.id === value);
+                      setSelectedService(service || null);
+                    }}>
+                      <SelectTrigger data-testid="select-article">
+                        <SelectValue placeholder="Seleccionar" />
+                      </SelectTrigger>
+                      <SelectContent className="max-h-48">
+                        {services.map(service => (
+                          <SelectItem key={service.id} value={service.id}>
+                            {service.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Campo de Cantidad */}
+                  <div>
+                    <Input
+                      type="number"
+                      min="1"
+                      value={itemQuantity}
+                      onChange={(e) => setItemQuantity(Math.max(1, parseInt(e.target.value) || 1))}
+                      className="text-center"
+                      data-testid="input-direct-quantity"
+                    />
+                  </div>
+
+                  {/* Dropdown de Servicio con precios */}
+                  <div className="col-span-2">
+                    <Select 
+                      value={selectedServiceType} 
+                      onValueChange={(value: 'wash' | 'iron' | 'both') => setSelectedServiceType(value)}
+                      disabled={!selectedService}
+                    >
+                      <SelectTrigger data-testid="select-service-type">
+                        <SelectValue placeholder="Seleccionar servicio" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {selectedService && (
+                          <>
+                            <SelectItem value="wash">
+                              Lavado - {formatCurrency(selectedService.washPrice)}
+                            </SelectItem>
+                            <SelectItem value="iron">
+                              Planchado - {formatCurrency(selectedService.ironPrice)}
+                            </SelectItem>
+                            <SelectItem value="both">
+                              Lavado y Planchado - {formatCurrency(selectedService.bothPrice)}
+                            </SelectItem>
+                          </>
+                        )}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Total calculado */}
+                  <div className="text-right font-bold text-green-600">
+                    {selectedService && (
+                      formatCurrency(
+                        parseFloat(
+                          selectedServiceType === 'wash' ? selectedService.washPrice :
+                          selectedServiceType === 'iron' ? selectedService.ironPrice :
+                          selectedService.bothPrice
+                        ) * itemQuantity
+                      )
+                    )}
+                  </div>
+
+                  {/* Botón para agregar */}
+                  <div>
+                    <Button
+                      onClick={addItemFromModal}
+                      disabled={!selectedService}
+                      size="sm"
+                      data-testid="button-add-direct"
+                    >
+                      <Plus className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
               </div>
 
               {/* Lista de artículos */}
