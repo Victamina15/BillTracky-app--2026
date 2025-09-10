@@ -33,11 +33,11 @@ export default function InvoiceForm({ user, onNotification }: InvoiceFormProps) 
     queryKey: ["/api/services"],
   });
 
-  const { data: nextNumber } = useQuery({
+  const { data: nextNumber } = useQuery<{number: string}>({
     queryKey: ["/api/invoices/next-number"],
   });
 
-  const { data: existingCustomer } = useQuery({
+  const { data: existingCustomer } = useQuery<Customer | null>({
     queryKey: ["/api/customers/phone", customerPhone],
     enabled: customerPhone.length >= 10,
   });

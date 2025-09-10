@@ -207,7 +207,8 @@ export class MemStorage implements IStorage {
     const newInvoice: Invoice = { 
       ...invoice, 
       id,
-      date: invoice.date || new Date()
+      date: invoice.date || new Date(),
+      status: invoice.status || 'received' as string
     };
     this.invoices.set(id, newInvoice);
     return newInvoice;

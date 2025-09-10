@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { FileText, LogOut, Home, Package, Users, Settings } from "lucide-react";
-import { type Employee } from "@shared/schema";
+import { type Employee, type Invoice } from "@shared/schema";
 import InvoiceForm from "./invoice-form";
 import OrdersTable from "./orders-table";
 import CustomersGrid from "./customers-grid";
@@ -16,11 +16,17 @@ interface DashboardProps {
 export default function Dashboard({ user, onLogout, onNotification }: DashboardProps) {
   const [activeTab, setActiveTab] = useState("overview");
 
-  const { data: metrics, isLoading: metricsLoading } = useQuery({
+  const { data: metrics, isLoading: metricsLoading } = useQuery<{
+    todayOrders: number;
+    todayRevenue: string;
+    inProgress: number;
+    pendingPayment: number;
+    pendingPaymentTotal: string;
+  }>({
     queryKey: ["/api/metrics/dashboard"],
   });
 
-  const { data: invoices = [] } = useQuery({
+  const { data: invoices = [] } = useQuery<Invoice[]>({
     queryKey: ["/api/invoices"],
   });
 
@@ -147,7 +153,7 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
               <div className="bg-card rounded-xl shadow-sm border border-border p-6">
                 <h3 className="text-lg font-semibold text-card-foreground mb-4">Órdenes Recientes</h3>
                 <div className="space-y-3">
-                  {recentOrders.map((order) => (
+                  {recentOrders.map((order: Invoice) => (
                     <div key={order.id} className="flex items-center justify-between p-3 bg-muted rounded-lg">
                       <div>
                         <p className="font-medium text-card-foreground" data-testid={`recent-order-${order.id}`}>

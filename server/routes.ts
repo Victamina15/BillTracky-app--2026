@@ -139,8 +139,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const customer = await storage.getCustomer(invoice.customerId);
         if (customer) {
           await storage.updateCustomer(invoice.customerId, {
-            totalSpent: (parseFloat(customer.totalSpent) + parseFloat(invoice.total)).toFixed(2),
-            ordersCount: customer.ordersCount + 1
+            totalSpent: (parseFloat(customer.totalSpent || "0") + parseFloat(invoice.total)).toFixed(2),
+            ordersCount: (customer.ordersCount || 0) + 1
           });
         }
       }
@@ -194,7 +194,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
       
       const todayRevenue = todayInvoices.reduce((sum, inv) => sum + parseFloat(inv.total), 0);
-      const inProcess = invoices.filter(inv => inv.status === 'in_process').length;
+      const inProgress = invoices.filter(inv => inv.status === 'in_process').length;
       const pendingPayment = invoices.filter(inv => inv.paymentMethod === 'pending').length;
       const pendingPaymentTotal = invoices
         .filter(inv => inv.paymentMethod === 'pending')

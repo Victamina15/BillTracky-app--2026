@@ -175,7 +175,7 @@ export default function CustomersGrid({ onNotification }: CustomersGridProps) {
                 Órdenes: <span data-testid={`customer-orders-${customer.id}`}>{customer.ordersCount}</span>
               </span>
               <span className="text-green-600 font-medium" data-testid={`customer-spent-${customer.id}`}>
-                RD${parseFloat(customer.totalSpent).toFixed(2)}
+                RD${parseFloat(customer.totalSpent || "0").toFixed(2)}
               </span>
             </div>
           </div>
