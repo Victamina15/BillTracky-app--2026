@@ -23,7 +23,8 @@ import {
   Calculator,
   Percent,
   Minus,
-  AlertCircle
+  AlertCircle,
+  Edit
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -134,6 +135,8 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
   const [showDiscountModal, setShowDiscountModal] = useState(false);
   const [showDateModal, setShowDateModal] = useState(false);
   const [showAddItemModal, setShowAddItemModal] = useState(false);
+  const [showEditItemModal, setShowEditItemModal] = useState(false);
+  const [editingItem, setEditingItem] = useState<InvoiceItemWithService | null>(null);
 
   // Estados para el nuevo selector de servicios escalable
   const [serviceSearchTerm, setServiceSearchTerm] = useState('');
@@ -661,6 +664,23 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
                           <span className="w-20 text-right font-medium" data-testid={`text-total-${item.id}`}>
                             {formatCurrency(item.total)}
                           </span>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              setEditingItem(item);
+                              setSelectedService(services.find(s => s.id === item.serviceId) || null);
+                              setSelectedServiceType(item.serviceType as 'wash' | 'iron' | 'both');
+                              setItemQuantity(item.quantity);
+                              setServiceSearchTerm('');
+                              setSelectedCategory('all');
+                              setShowEditItemModal(true);
+                            }}
+                            data-testid={`button-edit-item-${item.id}`}
+                            title="Cambiar servicio"
+                          >
+                            <Edit className="w-4 h-4 text-blue-500" />
+                          </Button>
                           <Button
                             variant="outline"
                             size="sm"
