@@ -115,6 +115,79 @@ export const messageTemplates = pgTable("message_templates", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+// Planes de suscripción
+export const subscriptionPlans = pgTable("subscription_plans", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  name: text("name").notNull(),
+  displayName: text("display_name").notNull(),
+  description: text("description"),
+  price: decimal("price", { precision: 10, scale: 2 }).notNull(),
+  billingPeriod: text("billing_period").notNull(), // 'monthly', 'yearly'
+  features: text("features").array(), // Array de características
+  maxOrganizations: integer("max_organizations").default(1),
+  maxUsers: integer("max_users").default(1),
+  maxInvoicesPerMonth: integer("max_invoices_per_month"),
+  supportLevel: text("support_level").default("basic"), // 'basic', 'priority', 'dedicated'
+  active: boolean("active").default(true),
+  sortOrder: integer("sort_order").default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Organizaciones/Empresas de usuarios
+export const organizations = pgTable("organizations", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  name: text("name").notNull(),
+  subdomain: text("subdomain").unique(),
+  email: text("email"),
+  phone: text("phone"),
+  address: text("address"),
+  city: text("city"),
+  country: text("country").default("Dominican Republic"),
+  logo: text("logo"),
+  planId: varchar("plan_id").references(() => subscriptionPlans.id),
+  subscriptionStatus: text("subscription_status").default("active"), // 'active', 'inactive', 'suspended', 'cancelled'
+  subscriptionStartDate: timestamp("subscription_start_date").defaultNow(),
+  subscriptionEndDate: timestamp("subscription_end_date"),
+  trialStartDate: timestamp("trial_start_date"),
+  trialEndDate: timestamp("trial_end_date"),
+  stripeCustomerId: text("stripe_customer_id"),
+  stripeSubscriptionId: text("stripe_subscription_id"),
+  isTrialActive: boolean("is_trial_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Usuarios externos (clientes del SaaS)
+export const users = pgTable("users", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  email: text("email").notNull().unique(),
+  firstName: text("first_name").notNull(),
+  lastName: text("last_name").notNull(),
+  password: text("password").notNull(), // Hash de la contraseña
+  organizationId: varchar("organization_id").references(() => organizations.id),
+  role: text("role").default("owner"), // 'owner', 'admin', 'user'
+  isActive: boolean("is_active").default(true),
+  isEmailVerified: boolean("is_email_verified").default(false),
+  emailVerificationToken: text("email_verification_token"),
+  passwordResetToken: text("password_reset_token"),
+  passwordResetExpires: timestamp("password_reset_expires"),
+  lastLoginAt: timestamp("last_login_at"),
+  avatar: text("avatar"),
+  preferences: text("preferences"), // JSON string de preferencias
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Sesiones de usuarios
+export const userSessions = pgTable("user_sessions", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").references(() => users.id).notNull(),
+  token: text("token").notNull().unique(),
+  expiresAt: timestamp("expires_at").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 // Insert schemas
 export const insertEmployeeSchema = createInsertSchema(employees).omit({
   id: true,
@@ -157,6 +230,29 @@ export const insertMessageTemplateSchema = createInsertSchema(messageTemplates).
   updatedAt: true,
 });
 
+export const insertSubscriptionPlanSchema = createInsertSchema(subscriptionPlans).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertOrganizationSchema = createInsertSchema(organizations).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertUserSchema = createInsertSchema(users).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertUserSessionSchema = createInsertSchema(userSessions).omit({
+  id: true,
+  createdAt: true,
+});
+
 // Types
 export type Employee = typeof employees.$inferSelect;
 export type InsertEmployee = z.infer<typeof insertEmployeeSchema>;
@@ -181,3 +277,15 @@ export type InsertCompanySettings = z.infer<typeof insertCompanySettingsSchema>;
 
 export type MessageTemplate = typeof messageTemplates.$inferSelect;
 export type InsertMessageTemplate = z.infer<typeof insertMessageTemplateSchema>;
+
+export type SubscriptionPlan = typeof subscriptionPlans.$inferSelect;
+export type InsertSubscriptionPlan = z.infer<typeof insertSubscriptionPlanSchema>;
+
+export type Organization = typeof organizations.$inferSelect;
+export type InsertOrganization = z.infer<typeof insertOrganizationSchema>;
+
+export type User = typeof users.$inferSelect;
+export type InsertUser = z.infer<typeof insertUserSchema>;
+
+export type UserSession = typeof userSessions.$inferSelect;
+export type InsertUserSession = z.infer<typeof insertUserSessionSchema>;
