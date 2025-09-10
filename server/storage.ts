@@ -159,6 +159,7 @@ export class MemStorage implements IStorage {
       {
         id: randomUUID(),
         name: 'Efectivo',
+        code: 'cash',
         icon: '💵',
         active: true,
         requiresReference: false,
@@ -171,6 +172,7 @@ export class MemStorage implements IStorage {
       {
         id: randomUUID(),
         name: 'Tarjeta de Crédito',
+        code: 'card',
         icon: '💳',
         active: true,
         requiresReference: true,
@@ -183,6 +185,7 @@ export class MemStorage implements IStorage {
       {
         id: randomUUID(),
         name: 'Transferencia Bancaria',
+        code: 'transfer',
         icon: '🏦',
         active: true,
         requiresReference: true,
@@ -195,6 +198,7 @@ export class MemStorage implements IStorage {
       {
         id: randomUUID(),
         name: 'Pago Móvil',
+        code: 'mobile_pay',
         icon: '📱',
         active: true,
         requiresReference: true,

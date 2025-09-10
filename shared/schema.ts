@@ -71,6 +71,7 @@ export const invoiceItems = pgTable("invoice_items", {
 export const paymentMethods = pgTable("payment_methods", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   name: text("name").notNull(),
+  code: text("code").notNull().unique(), // Stable code for mapping: 'cash', 'card', 'transfer', 'mobile_pay'
   icon: text("icon").notNull(),
   active: boolean("active").default(true),
   requiresReference: boolean("requires_reference").default(false),
