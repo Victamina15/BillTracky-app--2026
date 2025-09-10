@@ -2,7 +2,7 @@ import { useState } from "react";
 import { FileText, LogOut, Home, Package, Users, Settings, CreditCard } from "lucide-react";
 import { type Employee, type Invoice } from "@shared/schema";
 import InvoiceForm from "./invoice-form";
-import OrdersTable from "./orders-table";
+import OrderManagement from "./order-management";
 import CustomersGrid from "./customers-grid";
 import ServicesConfig from "./services-config";
 import PaymentMethodsConfig from "./payment-methods-config";
@@ -33,12 +33,39 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
 
   const recentOrders = invoices.slice(0, 3);
 
+  // Helper functions para obtener clases de estado de forma segura
+  const getStatusClasses = (status: string | null) => {
+    if (!status) return 'bg-gray-100 text-gray-800';
+    
+    switch(status) {
+      case 'received': return 'bg-blue-100 text-blue-800';
+      case 'in_process': return 'bg-yellow-100 text-yellow-800'; 
+      case 'ready': return 'bg-purple-100 text-purple-800';
+      case 'delivered': return 'bg-green-100 text-green-800';
+      case 'cancelled': return 'bg-red-100 text-red-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const getStatusText = (status: string | null) => {
+    if (!status) return 'Desconocido';
+    
+    switch(status) {
+      case 'received': return 'Recibido';
+      case 'in_process': return 'En Proceso';
+      case 'ready': return 'Listo';
+      case 'delivered': return 'Entregado';
+      case 'cancelled': return 'Cancelado';
+      default: return status;
+    }
+  };
+
   const renderTabContent = () => {
     switch (activeTab) {
       case "invoices":
         return <InvoiceForm user={user} onNotification={onNotification} />;
       case "orders":
-        return <OrdersTable onNotification={onNotification} />;
+        return <OrderManagement onNotification={onNotification} />;
       case "customers":
         return <CustomersGrid onNotification={onNotification} />;
       case "services":
@@ -165,15 +192,8 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
                         <p className="text-sm text-muted-foreground">{order.customerName}</p>
                       </div>
                       <div className="text-right">
-                        <span className={`inline-block px-2 py-1 text-xs font-medium rounded-full ${
-                          order.status === 'received' ? 'bg-blue-100 text-blue-800' :
-                          order.status === 'in_process' ? 'bg-yellow-100 text-yellow-800' :
-                          order.status === 'ready' ? 'bg-purple-100 text-purple-800' :
-                          'bg-green-100 text-green-800'
-                        }`}>
-                          {order.status === 'received' ? 'Recibido' :
-                           order.status === 'in_process' ? 'En Proceso' :
-                           order.status === 'ready' ? 'Listo' : 'Entregado'}
+                        <span className={`inline-block px-2 py-1 text-xs font-medium rounded-full ${getStatusClasses(order.status)}`}>
+                          {getStatusText(order.status)}
                         </span>
                         <p className="text-sm font-medium text-card-foreground mt-1">
                           RD${parseFloat(order.total).toFixed(2)}

@@ -32,7 +32,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { useToast } from '@/hooks/use-toast';
 import { apiRequest } from '@/lib/queryClient';
 import type { Invoice, InvoiceItem, PaymentMethod } from '@shared/schema';
 
@@ -60,7 +59,11 @@ interface OrderWithItems extends Invoice {
   items?: InvoiceItem[];
 }
 
-export default function OrderManagement() {
+interface OrderManagementProps {
+  onNotification: (message: string) => void;
+}
+
+export default function OrderManagement({ onNotification }: OrderManagementProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
   const [filterPayment, setFilterPayment] = useState('all');
@@ -73,7 +76,6 @@ export default function OrderManagement() {
   const [paymentReference, setPaymentReference] = useState('');
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string>('');
 
-  const { toast } = useToast();
   const queryClient = useQueryClient();
 
   // Obtener órdenes
@@ -120,17 +122,10 @@ export default function OrderManagement() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/invoices'] });
       setShowStatusModal(false);
-      toast({
-        title: "Estado actualizado",
-        description: "El estado de la orden se ha actualizado exitosamente.",
-      });
+      onNotification("Estado actualizado: El estado de la orden se ha actualizado exitosamente.");
     },
     onError: (error: any) => {
-      toast({
-        title: "Error",
-        description: error.message || "No se pudo actualizar el estado",
-        variant: "destructive",
-      });
+      onNotification("Error: " + (error.message || "No se pudo actualizar el estado"));
     },
   });
 
@@ -142,17 +137,10 @@ export default function OrderManagement() {
       setShowPaymentModal(false);
       setPaymentReference('');
       setSelectedPaymentMethod('');
-      toast({
-        title: "Pago procesado",
-        description: "El pago se ha procesado exitosamente.",
-      });
+      onNotification("Pago procesado: El pago se ha procesado exitosamente.");
     },
     onError: (error: any) => {
-      toast({
-        title: "Error",
-        description: error.message || "No se pudo procesar el pago",
-        variant: "destructive",
-      });
+      onNotification("Error: " + (error.message || "No se pudo procesar el pago"));
     },
   });
 
@@ -163,50 +151,31 @@ export default function OrderManagement() {
       queryClient.invalidateQueries({ queryKey: ['/api/invoices'] });
       setShowCancelModal(false);
       setCancelReason('');
-      toast({
-        title: "Orden cancelada",
-        description: "La orden se ha cancelado exitosamente.",
-      });
+      onNotification("Orden cancelada: La orden se ha cancelado exitosamente.");
     },
     onError: (error: any) => {
-      toast({
-        title: "Error",
-        description: error.message || "No se pudo cancelar la orden",
-        variant: "destructive",
-      });
+      onNotification("Error: " + (error.message || "No se pudo cancelar la orden"));
     },
   });
 
   // Error handling effects
   useEffect(() => {
     if (ordersError) {
-      toast({
-        title: "Error al cargar órdenes",
-        description: ordersError instanceof Error ? ordersError.message : "No se pudieron cargar las órdenes",
-        variant: "destructive",
-      });
+      onNotification("Error al cargar órdenes: " + (ordersError instanceof Error ? ordersError.message : "No se pudieron cargar las órdenes"));
     }
-  }, [ordersError, toast]);
+  }, [ordersError, onNotification]);
 
   useEffect(() => {
     if (paymentMethodsError) {
-      toast({
-        title: "Error al cargar métodos de pago",
-        description: paymentMethodsError instanceof Error ? paymentMethodsError.message : "No se pudieron cargar los métodos de pago",
-        variant: "destructive",
-      });
+      onNotification("Error al cargar métodos de pago: " + (paymentMethodsError instanceof Error ? paymentMethodsError.message : "No se pudieron cargar los métodos de pago"));
     }
-  }, [paymentMethodsError, toast]);
+  }, [paymentMethodsError, onNotification]);
 
   useEffect(() => {
     if (orderItemsError) {
-      toast({
-        title: "Error al cargar items de la orden",
-        description: orderItemsError instanceof Error ? orderItemsError.message : "No se pudieron cargar los items de la orden",
-        variant: "destructive",
-      });
+      onNotification("Error al cargar items de la orden: " + (orderItemsError instanceof Error ? orderItemsError.message : "No se pudieron cargar los items de la orden"));
     }
-  }, [orderItemsError, toast]);
+  }, [orderItemsError, onNotification]);
 
   // Configuración de estados
   const statusConfig = {
@@ -285,11 +254,7 @@ export default function OrderManagement() {
     
     const method = paymentMethods.find(pm => pm.id === selectedPaymentMethod);
     if (!method) {
-      toast({
-        title: "Error",
-        description: "Método de pago no encontrado",
-        variant: "destructive",
-      });
+      onNotification("Error: Método de pago no encontrado");
       return;
     }
 
