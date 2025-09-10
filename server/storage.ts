@@ -122,8 +122,13 @@ export class MemStorage implements IStorage {
         tax: '57.60',
         total: '377.60',
         paymentMethod: 'pending',
+        paymentReference: null,
         status: 'in_process',
-        employeeId: employees[0].id
+        employeeId: employees[0].id,
+        paid: false,
+        delivered: false,
+        cancelledAt: null,
+        cancellationReason: null
       },
       {
         id: randomUUID(),
@@ -138,8 +143,13 @@ export class MemStorage implements IStorage {
         tax: '44.24',
         total: '290.00',
         paymentMethod: 'cash',
+        paymentReference: null,
         status: 'ready',
-        employeeId: employees[1].id
+        employeeId: employees[1].id,
+        paid: true,
+        delivered: false,
+        cancelledAt: null,
+        cancellationReason: null
       }
     ];
     sampleInvoices.forEach(invoice => this.invoices.set(invoice.id, invoice));
@@ -180,6 +190,18 @@ export class MemStorage implements IStorage {
         description: 'Transferencia entre cuentas',
         showOnInvoice: true,
         color: '#F59E0B',
+        createdAt: new Date()
+      },
+      {
+        id: randomUUID(),
+        name: 'Pago Móvil',
+        icon: '📱',
+        active: true,
+        requiresReference: true,
+        commission: '0',
+        description: 'Pago móvil bancario',
+        showOnInvoice: true,
+        color: '#8B5CF6',
         createdAt: new Date()
       }
     ];
@@ -255,6 +277,7 @@ export class MemStorage implements IStorage {
     const newEmployee: Employee = { 
       ...employee, 
       id,
+      active: employee.active ?? true,
       createdAt: new Date(),
       lastAccess: null
     };
@@ -293,8 +316,10 @@ export class MemStorage implements IStorage {
     const newCustomer: Customer = { 
       ...customer, 
       id, 
+      email: customer.email ?? null,
       totalSpent: '0.00',
-      ordersCount: 0 
+      ordersCount: 0,
+      createdAt: new Date()
     };
     this.customers.set(id, newCustomer);
     return newCustomer;
@@ -320,7 +345,13 @@ export class MemStorage implements IStorage {
 
   async createService(service: InsertService): Promise<Service> {
     const id = randomUUID();
-    const newService: Service = { ...service, id };
+    const newService: Service = {
+      ...service,
+      id,
+      active: service.active ?? true,
+      category: service.category ?? 'Ropa Básica',
+      createdAt: new Date()
+    };
     this.services.set(id, newService);
     return newService;
   }
@@ -351,11 +382,21 @@ export class MemStorage implements IStorage {
 
   async createInvoice(invoice: InsertInvoice): Promise<Invoice> {
     const id = randomUUID();
-    const newInvoice: Invoice = { 
-      ...invoice, 
+    const newInvoice: Invoice = {
+      ...invoice,
       id,
+      customerId: invoice.customerId ?? null,
+      customerEmail: invoice.customerEmail ?? null,
+      deliveryDate: invoice.deliveryDate ?? null,
+      paymentMethod: invoice.paymentMethod ?? null,
+      paymentReference: invoice.paymentReference ?? null,
       date: invoice.date || new Date(),
-      status: invoice.status || 'received' as string
+      status: invoice.status || 'received',
+      employeeId: invoice.employeeId ?? null,
+      paid: invoice.paid ?? false,
+      delivered: invoice.delivered ?? false,
+      cancelledAt: invoice.cancelledAt ?? null,
+      cancellationReason: invoice.cancellationReason ?? null
     };
     this.invoices.set(id, newInvoice);
     return newInvoice;
@@ -407,6 +448,12 @@ export class MemStorage implements IStorage {
     const newMethod: PaymentMethod = { 
       ...method, 
       id,
+      active: method.active ?? true,
+      requiresReference: method.requiresReference ?? false,
+      commission: method.commission ?? '0',
+      description: method.description ?? null,
+      showOnInvoice: method.showOnInvoice ?? true,
+      color: method.color ?? '#3B82F6',
       createdAt: new Date()
     };
     this.paymentMethods.set(id, newMethod);
@@ -435,6 +482,22 @@ export class MemStorage implements IStorage {
     const updated: CompanySettings = {
       ...settings,
       id: this.companySettings?.id || randomUUID(),
+      email: settings.email ?? null,
+      commercialName: settings.commercialName ?? null,
+      phone2: settings.phone2 ?? null,
+      address: settings.address ?? null,
+      branch: settings.branch ?? null,
+      city: settings.city ?? null,
+      province: settings.province ?? null,
+      postalCode: settings.postalCode ?? null,
+      rnc: settings.rnc ?? null,
+      website: settings.website ?? null,
+      logo: settings.logo ?? null,
+      invoiceFooter: settings.invoiceFooter ?? null,
+      showRncOnInvoice: settings.showRncOnInvoice ?? true,
+      showAddressOnInvoice: settings.showAddressOnInvoice ?? true,
+      showPhoneOnInvoice: settings.showPhoneOnInvoice ?? true,
+      showEmailOnInvoice: settings.showEmailOnInvoice ?? true,
       updatedAt: new Date()
     };
     this.companySettings = updated;
@@ -459,6 +522,10 @@ export class MemStorage implements IStorage {
     const newTemplate: MessageTemplate = { 
       ...template, 
       id,
+      active: template.active ?? true,
+      autoSend: template.autoSend ?? false,
+      sendTime: template.sendTime ?? null,
+      reminderDays: template.reminderDays ?? null,
       updatedAt: new Date()
     };
     this.messageTemplates.set(id, newTemplate);

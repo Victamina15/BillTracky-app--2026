@@ -47,7 +47,8 @@ export const invoices = pgTable("invoices", {
   subtotal: decimal("subtotal", { precision: 10, scale: 2 }).notNull(),
   tax: decimal("tax", { precision: 10, scale: 2 }).notNull(),
   total: decimal("total", { precision: 10, scale: 2 }).notNull(),
-  paymentMethod: text("payment_method"), // 'cash', 'card', 'pending'
+  paymentMethod: text("payment_method"), // 'cash', 'card', 'transfer', 'mobile_pay', 'pending'
+  paymentReference: text("payment_reference"), // Referencia opcional para pagos
   status: text("status").default("received"), // 'received', 'in_process', 'ready', 'delivered', 'cancelled'
   employeeId: varchar("employee_id").references(() => employees.id),
   paid: boolean("paid").default(false),
