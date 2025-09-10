@@ -210,11 +210,30 @@ export default function OrderManagement() {
 
   // Configuración de estados
   const statusConfig = {
-    received: { name: 'Recibido', color: 'bg-blue-100 text-blue-800', icon: Package },
-    in_process: { name: 'En Proceso', color: 'bg-yellow-100 text-yellow-800', icon: RefreshCw },
-    ready: { name: 'Listo', color: 'bg-purple-100 text-purple-800', icon: CheckCircle },
-    delivered: { name: 'Entregado', color: 'bg-green-100 text-green-800', icon: Check },
-    cancelled: { name: 'Cancelado', color: 'bg-red-100 text-red-800', icon: XCircle },
+    received: { name: 'Recibido', colorClass: 'bg-blue-100 text-blue-800', icon: Package },
+    in_process: { name: 'En Proceso', colorClass: 'bg-yellow-100 text-yellow-800', icon: RefreshCw },
+    ready: { name: 'Listo', colorClass: 'bg-purple-100 text-purple-800', icon: CheckCircle },
+    delivered: { name: 'Entregado', colorClass: 'bg-green-100 text-green-800', icon: Check },
+    cancelled: { name: 'Cancelado', colorClass: 'bg-red-100 text-red-800', icon: XCircle },
+  };
+
+  // Helper function para obtener clases de estado de forma segura
+  const getStatusClasses = (status: string | null) => {
+    if (!status) return 'bg-gray-100 text-gray-800';
+    
+    switch(status) {
+      case 'received': return 'bg-blue-100 text-blue-800';
+      case 'in_process': return 'bg-yellow-100 text-yellow-800'; 
+      case 'ready': return 'bg-purple-100 text-purple-800';
+      case 'delivered': return 'bg-green-100 text-green-800';
+      case 'cancelled': return 'bg-red-100 text-red-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  // Helper function para obtener clases de pago de forma segura
+  const getPaymentClasses = (paid: boolean | null) => {
+    return paid ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800';
   };
 
   const paymentMethodConfig = {
@@ -435,7 +454,7 @@ export default function OrderManagement() {
                     </div>
                     
                     <div>
-                      <Badge className={status?.color} data-testid={`badge-status-${order.id}`}>
+                      <Badge className={getStatusClasses(order.status)} data-testid={`badge-status-${order.id}`}>
                         <StatusIcon className="h-3 w-3 mr-1" />
                         {status?.name || order.status}
                       </Badge>
@@ -452,8 +471,7 @@ export default function OrderManagement() {
                     
                     <div>
                       <Badge 
-                        variant={order.paid ? "default" : "secondary"} 
-                        className={order.paid ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800"}
+                        className={getPaymentClasses(order.paid)}
                         data-testid={`badge-payment-${order.id}`}
                       >
                         {order.paid ? "Pagado" : "Pendiente"}
@@ -590,7 +608,7 @@ export default function OrderManagement() {
                     <div>
                       <Label className="text-sm font-medium">Estado</Label>
                       <div className="mt-1">
-                        <Badge className={statusConfig[selectedOrder.status as keyof typeof statusConfig]?.color}>
+                        <Badge className={getStatusClasses(selectedOrder.status)}>
                           {statusConfig[selectedOrder.status as keyof typeof statusConfig]?.name || selectedOrder.status}
                         </Badge>
                       </div>
