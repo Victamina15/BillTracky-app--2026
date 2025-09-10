@@ -522,13 +522,12 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
     setItemQuantity(1);
   };
 
-  // Agregar artículo desde el modal mejorado
+  // Agregar artículo desde la interfaz directa
   const addItemFromModal = () => {
     if (!selectedService) return;
     
     addItem(selectedService, selectedServiceType, itemQuantity);
     resetItemSelection();
-    setShowAddItemModal(false);
   };
 
   // Actualizar artículo desde el modal de edición
@@ -655,19 +654,9 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
           {/* Artículos del Pedido */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <Calculator className="w-6 h-6 mr-3 text-green-600" />
-                  Artículos del Pedido
-                </div>
-                <Button
-                  onClick={() => setShowAddItemModal(true)}
-                  className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4"
-                  data-testid="button-add-item"
-                >
-                  <Plus className="w-5 h-5 mr-2" />
-                  Agregar Artículo
-                </Button>
+              <CardTitle className="flex items-center">
+                <Calculator className="w-6 h-6 mr-3 text-green-600" />
+                Artículos del Pedido
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -770,76 +759,50 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
                 </div>
               </div>
 
-              {/* Lista de artículos */}
+              {/* Lista de artículos agregados */}
               {currentInvoice.items.length > 0 && (
-                <div className="border rounded-lg">
-                  <div className="bg-gray-50 dark:bg-gray-700 px-4 py-3 rounded-t-lg border-b">
-                    <h4 className="font-medium text-gray-900 dark:text-white">Artículos Agregados</h4>
-                  </div>
-                  <div className="divide-y">
-                    {currentInvoice.items.map((item) => (
-                      <div key={item.id} className="p-4 flex items-center justify-between">
-                        <div className="flex-1">
-                          <h5 className="font-medium text-gray-900 dark:text-white">{item.serviceName}</h5>
-                          <p className="text-sm text-gray-600 dark:text-gray-400">
-                            {item.serviceType === 'wash' && 'Lavado'}
-                            {item.serviceType === 'iron' && 'Planchado'}
-                            {item.serviceType === 'both' && 'Lavado y Planchado'}
-                            {' - '}{formatCurrency(item.unitPrice)} c/u
-                          </p>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => updateItemQuantity(item.id, item.quantity - 1)}
-                            data-testid={`button-decrease-quantity-${item.id}`}
-                          >
-                            <Minus className="w-4 h-4" />
-                          </Button>
-                          <span className="w-8 text-center font-medium" data-testid={`text-quantity-${item.id}`}>
-                            {item.quantity}
-                          </span>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => updateItemQuantity(item.id, item.quantity + 1)}
-                            data-testid={`button-increase-quantity-${item.id}`}
-                          >
-                            <Plus className="w-4 h-4" />
-                          </Button>
-                          <span className="w-20 text-right font-medium" data-testid={`text-total-${item.id}`}>
-                            {formatCurrency(item.total)}
-                          </span>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => {
-                              setEditingItem(item);
-                              setSelectedService(services.find(s => s.id === item.serviceId) || null);
-                              setSelectedServiceType(item.serviceType as 'wash' | 'iron' | 'both');
-                              setItemQuantity(item.quantity);
-                              setServiceSearchTerm('');
-                              setSelectedCategory('all');
-                              setShowEditItemModal(true);
-                            }}
-                            data-testid={`button-edit-item-${item.id}`}
-                            title="Cambiar servicio"
-                          >
-                            <Edit className="w-4 h-4 text-blue-500" />
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => removeItem(item.id)}
-                            data-testid={`button-remove-item-${item.id}`}
-                          >
-                            <Trash2 className="w-4 h-4 text-red-500" />
-                          </Button>
-                        </div>
+                <div className="space-y-2 mt-4">
+                  {currentInvoice.items.map((item) => (
+                    <div key={item.id} className="grid grid-cols-6 gap-4 items-center p-3 border rounded-lg bg-white dark:bg-gray-800">
+                      {/* Artículo */}
+                      <div className="font-medium text-gray-900 dark:text-white">
+                        {item.serviceName}
                       </div>
-                    ))}
-                  </div>
+
+                      {/* Cantidad */}
+                      <div className="text-center">
+                        {item.quantity}
+                      </div>
+
+                      {/* Servicio con precio */}
+                      <div className="col-span-2">
+                        <span className="text-gray-700 dark:text-gray-300">
+                          {item.serviceType === 'wash' && 'Lavado'}
+                          {item.serviceType === 'iron' && 'Planchado'}
+                          {item.serviceType === 'both' && 'Lavado y Planchado'}
+                          {' - '}{formatCurrency(item.unitPrice)}
+                        </span>
+                      </div>
+
+                      {/* Total */}
+                      <div className="text-right font-bold text-green-600">
+                        {formatCurrency(item.total)}
+                      </div>
+
+                      {/* Botón de eliminar */}
+                      <div className="text-center">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => removeItem(item.id)}
+                          data-testid={`button-remove-item-${item.id}`}
+                          className="text-red-500 hover:text-red-700"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               )}
             </CardContent>
