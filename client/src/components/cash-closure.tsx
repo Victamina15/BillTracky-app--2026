@@ -207,7 +207,12 @@ export default function CashClosure({ onBack }: CashClosureProps) {
     const printWindow = window.open('', '_blank');
     if (!printWindow) return;
     
-    printWindow.document.write(`
+    // Crear documento de forma segura usando DOM
+    const doc = printWindow.document;
+    doc.open();
+    
+    // Crear estructura HTML base
+    doc.write(`
       <html>
         <head>
           <title>Cierre de Caja - ${selectedDate}</title>
@@ -253,49 +258,111 @@ export default function CashClosure({ onBack }: CashClosureProps) {
           <div class="header">
             <h2>BILLTRACKY LAVANDERÍA</h2>
             <h3>CIERRE DE CAJA</h3>
-            <p>Fecha: ${new Date(selectedDate).toLocaleDateString('es-DO')}</p>
-            <p>Empleado: ${currentEmployee?.name || 'Desconocido'}</p>
-            <p>Hora: ${new Date().toLocaleTimeString('es-DO')}</p>
-          </div>
-          
-          <div class="section">
-            <div class="subtitle">RESUMEN GENERAL</div>
-            <div class="item"><span>Total Facturas:</span><span>${dailySummary.totalInvoices}</span></div>
-            <div class="item"><span>Entregadas:</span><span>${dailySummary.deliveredInvoices}</span></div>
-            <div class="item"><span>Pendientes:</span><span>${dailySummary.pendingInvoices}</span></div>
-          </div>
-          
-          <div class="section">
-            <div class="subtitle">MÉTODOS DE PAGO</div>
-            ${Object.entries(dailySummary.paymentSummary)
-              .filter(([_, data]) => data.quantity > 0)
-              .map(([method, data]) => 
-                `<div class="item"><span>${method} (${data.quantity}):</span><span>${formatCurrency(data.total)}</span></div>`
-              ).join('')}
-          </div>
-          
-          <div class="section">
-            <div class="subtitle">EMPLEADOS</div>
-            ${Object.entries(dailySummary.employeeStats)
-              .map(([employee, data]) => 
-                `<div class="item"><span>${employee} (${data.sales}):</span><span>${formatCurrency(data.total)}</span></div>`
-              ).join('')}
-          </div>
-          
-          <div class="total">
-            <div class="item"><span>TOTAL INGRESOS:</span><span>${formatCurrency(dailySummary.totalRevenue)}</span></div>
-            <div class="item"><span>Subtotal:</span><span>${formatCurrency(dailySummary.totalSubtotal)}</span></div>
-            <div class="item"><span>ITBIS (18%):</span><span>${formatCurrency(dailySummary.totalTax)}</span></div>
-          </div>
-          
-          <div style="text-align: center; margin-top: 20px; font-size: 10px;">
-            <p>Reporte generado por Billtracky</p>
-            <p>${new Date().toLocaleString('es-DO')}</p>
           </div>
         </body>
       </html>
     `);
-    printWindow.document.close();
+    
+    // Agregar contenido dinámico de forma segura
+    const body = doc.body;
+    const header = body.querySelector('.header');
+    
+    // Información del header
+    const fechaP = doc.createElement('p');
+    fechaP.textContent = `Fecha: ${new Date(selectedDate).toLocaleDateString('es-DO')}`;
+    header?.appendChild(fechaP);
+    
+    const empleadoP = doc.createElement('p');
+    empleadoP.textContent = `Empleado: ${currentEmployee?.name || 'Desconocido'}`;
+    header?.appendChild(empleadoP);
+    
+    const horaP = doc.createElement('p');
+    horaP.textContent = `Hora: ${new Date().toLocaleTimeString('es-DO')}`;
+    header?.appendChild(horaP);
+    
+    // Sección resumen general
+    const resumenSection = doc.createElement('div');
+    resumenSection.className = 'section';
+    
+    const resumenTitle = doc.createElement('div');
+    resumenTitle.className = 'subtitle';
+    resumenTitle.textContent = 'RESUMEN GENERAL';
+    resumenSection.appendChild(resumenTitle);
+    
+    // Items de resumen
+    const createItem = (label: string, value: string | number) => {
+      const item = doc.createElement('div');
+      item.className = 'item';
+      const labelSpan = doc.createElement('span');
+      const valueSpan = doc.createElement('span');
+      labelSpan.textContent = label;
+      valueSpan.textContent = value.toString();
+      item.appendChild(labelSpan);
+      item.appendChild(valueSpan);
+      return item;
+    };
+    
+    resumenSection.appendChild(createItem('Total Facturas:', dailySummary.totalInvoices));
+    resumenSection.appendChild(createItem('Entregadas:', dailySummary.deliveredInvoices));
+    resumenSection.appendChild(createItem('Pendientes:', dailySummary.pendingInvoices));
+    body.appendChild(resumenSection);
+    
+    // Sección métodos de pago
+    const pagosSection = doc.createElement('div');
+    pagosSection.className = 'section';
+    
+    const pagosTitle = doc.createElement('div');
+    pagosTitle.className = 'subtitle';
+    pagosTitle.textContent = 'MÉTODOS DE PAGO';
+    pagosSection.appendChild(pagosTitle);
+    
+    Object.entries(dailySummary.paymentSummary)
+      .filter(([_, data]) => data.quantity > 0)
+      .forEach(([method, data]) => {
+        pagosSection.appendChild(createItem(`${method} (${data.quantity}):`, formatCurrency(data.total)));
+      });
+    body.appendChild(pagosSection);
+    
+    // Sección empleados
+    const empleadosSection = doc.createElement('div');
+    empleadosSection.className = 'section';
+    
+    const empleadosTitle = doc.createElement('div');
+    empleadosTitle.className = 'subtitle';
+    empleadosTitle.textContent = 'EMPLEADOS';
+    empleadosSection.appendChild(empleadosTitle);
+    
+    Object.entries(dailySummary.employeeStats).forEach(([employee, data]) => {
+      empleadosSection.appendChild(createItem(`${employee} (${data.sales}):`, formatCurrency(data.total)));
+    });
+    body.appendChild(empleadosSection);
+    
+    // Sección totales
+    const totalSection = doc.createElement('div');
+    totalSection.className = 'total';
+    
+    totalSection.appendChild(createItem('TOTAL INGRESOS:', formatCurrency(dailySummary.totalRevenue)));
+    totalSection.appendChild(createItem('Subtotal:', formatCurrency(dailySummary.totalSubtotal)));
+    totalSection.appendChild(createItem('ITBIS (18%):', formatCurrency(dailySummary.totalTax)));
+    body.appendChild(totalSection);
+    
+    // Footer
+    const footer = doc.createElement('div');
+    footer.style.textAlign = 'center';
+    footer.style.marginTop = '20px';
+    footer.style.fontSize = '10px';
+    
+    const footerP1 = doc.createElement('p');
+    footerP1.textContent = 'Reporte generado por Billtracky';
+    footer.appendChild(footerP1);
+    
+    const footerP2 = doc.createElement('p');
+    footerP2.textContent = new Date().toLocaleString('es-DO');
+    footer.appendChild(footerP2);
+    
+    body.appendChild(footer);
+    
+    doc.close();
     printWindow.print();
     
     setModalMessage('Cierre de caja enviado a impresora correctamente');
