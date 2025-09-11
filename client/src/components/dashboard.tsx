@@ -213,10 +213,11 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="bg-card shadow-sm border-b border-border px-6 py-4">
-        <div className="flex justify-between items-center">
+    <div className="min-h-screen bg-background flex">
+      {/* Sidebar Navigation */}
+      <nav className="w-64 bg-card shadow-sm border-r border-border flex flex-col">
+        {/* Header in Sidebar */}
+        <div className="p-6 border-b border-border">
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center shadow-md">
               <FileText className="w-6 h-6 text-primary-foreground" />
@@ -226,23 +227,124 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
               <p className="text-sm text-muted-foreground">CleanWash Lavandería</p>
             </div>
           </div>
-          
-          <div className="flex items-center space-x-4">
-            <div className="text-right">
-              <div className="flex items-center space-x-2 mb-1">
-                <div className="w-2 h-2 bg-green-500 rounded-full pulse-animation"></div>
-                <span className="text-sm text-green-600 font-medium">En línea</span>
+        </div>
+        
+        {/* Navigation Menu */}
+        <div className="flex-1 p-4">
+          <div className="space-y-2">
+            <button 
+              onClick={() => setActiveTab('overview')} 
+              className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
+                activeTab === 'overview' 
+                  ? 'bg-primary text-primary-foreground shadow-sm' 
+                  : 'text-muted-foreground hover:bg-muted hover:text-card-foreground'
+              }`}
+              data-testid="tab-overview"
+            >
+              <Home className="w-4 h-4 mr-3" />
+              Dashboard
+            </button>
+            
+            <button 
+              onClick={() => setActiveTab('invoices')} 
+              className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
+                activeTab === 'invoices' 
+                  ? 'bg-primary text-primary-foreground shadow-sm' 
+                  : 'text-muted-foreground hover:bg-muted hover:text-card-foreground'
+              }`}
+              data-testid="tab-invoices"
+            >
+              <FileText className="w-4 h-4 mr-3" />
+              Nueva Factura
+            </button>
+            
+            <button 
+              onClick={() => setActiveTab('orders')} 
+              className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
+                activeTab === 'orders' 
+                  ? 'bg-primary text-primary-foreground shadow-sm' 
+                  : 'text-muted-foreground hover:bg-muted hover:text-card-foreground'
+              }`}
+              data-testid="tab-orders"
+            >
+              <Package className="w-4 h-4 mr-3" />
+              Órdenes
+            </button>
+            
+            <button 
+              onClick={() => setActiveTab('cash-closure')} 
+              className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
+                activeTab === 'cash-closure' 
+                  ? 'bg-primary text-primary-foreground shadow-sm' 
+                  : 'text-muted-foreground hover:bg-muted hover:text-card-foreground'
+              }`}
+              data-testid="tab-cash-closure"
+            >
+              <BarChart3 className="w-4 h-4 mr-3" />
+              Cierre de Caja
+            </button>
+            
+            <button 
+              onClick={() => setActiveTab('services')} 
+              className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
+                activeTab === 'services' 
+                  ? 'bg-primary text-primary-foreground shadow-sm' 
+                  : 'text-muted-foreground hover:bg-muted hover:text-card-foreground'
+              }`}
+              data-testid="tab-services"
+            >
+              <Settings className="w-4 h-4 mr-3" />
+              Servicios
+            </button>
+            
+            <button 
+              onClick={() => setActiveTab('payment-methods')} 
+              className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
+                activeTab === 'payment-methods' 
+                  ? 'bg-primary text-primary-foreground shadow-sm' 
+                  : 'text-muted-foreground hover:bg-muted hover:text-card-foreground'
+              }`}
+              data-testid="tab-payment-methods"
+            >
+              <CreditCard className="w-4 h-4 mr-3" />
+              Métodos de Pago
+            </button>
+            
+            <button 
+              onClick={() => setActiveTab('customers')} 
+              className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
+                activeTab === 'customers' 
+                  ? 'bg-primary text-primary-foreground shadow-sm' 
+                  : 'text-muted-foreground hover:bg-muted hover:text-card-foreground'
+              }`}
+              data-testid="tab-customers"
+            >
+              <Users className="w-4 h-4 mr-3" />
+              Clientes
+            </button>
+          </div>
+        </div>
+        
+        {/* User Info and Logout */}
+        <div className="p-4 border-t border-border">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="text-left">
+                <div className="flex items-center space-x-2 mb-1">
+                  <div className="w-2 h-2 bg-green-500 rounded-full pulse-animation"></div>
+                  <span className="text-xs text-green-600 font-medium">En línea</span>
+                </div>
+                <p className="text-sm font-medium text-card-foreground" data-testid="user-name">
+                  {user.name}
+                </p>
+                <span className={`inline-block px-2 py-1 text-xs font-medium rounded-full mt-1 ${
+                  user.role === 'manager' ? 'bg-secondary/10 text-secondary' : 
+                  'bg-green-100 text-green-800'
+                }`}>
+                  {user.role === 'manager' ? 'Gerente' : 
+                   user.role === 'supervisor' ? 'Supervisor' : 'Empleado'}
+                </span>
               </div>
-              <p className="text-sm font-medium text-card-foreground" data-testid="user-name">
-                {user.name}
-              </p>
-              <span className={`inline-block px-2 py-1 text-xs font-medium rounded-full mt-1 ${
-                user.role === 'manager' ? 'bg-secondary/10 text-secondary' : 
-                'bg-green-100 text-green-800'
-              }`}>
-                {user.role === 'manager' ? 'Gerente' : 
-                 user.role === 'supervisor' ? 'Supervisor' : 'Empleado'}
-              </span>
             </div>
             
             <button
@@ -255,86 +357,10 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
             </button>
           </div>
         </div>
-      </header>
-
-      {/* Navigation Tabs */}
-      <nav className="bg-card border-b border-border px-6">
-        <div className="flex space-x-1 overflow-x-auto">
-          <button 
-            onClick={() => setActiveTab('overview')} 
-            className={`tab-btn px-4 py-3 text-sm font-medium whitespace-nowrap ${
-              activeTab === 'overview' ? 'tab-active' : ''
-            }`}
-            data-testid="tab-overview"
-          >
-            <Home className="w-4 h-4 mr-2" />
-            Dashboard
-          </button>
-          <button 
-            onClick={() => setActiveTab('orders')} 
-            className={`tab-btn px-4 py-3 text-sm font-medium whitespace-nowrap ${
-              activeTab === 'orders' ? 'tab-active' : ''
-            }`}
-            data-testid="tab-orders"
-          >
-            <Package className="w-4 h-4 mr-2" />
-            Órdenes
-          </button>
-          <button 
-            onClick={() => setActiveTab('invoices')} 
-            className={`tab-btn px-4 py-3 text-sm font-medium whitespace-nowrap ${
-              activeTab === 'invoices' ? 'tab-active' : ''
-            }`}
-            data-testid="tab-invoices"
-          >
-            <FileText className="w-4 h-4 mr-2" />
-            Nueva Factura
-          </button>
-          <button 
-            onClick={() => setActiveTab('customers')} 
-            className={`tab-btn px-4 py-3 text-sm font-medium whitespace-nowrap ${
-              activeTab === 'customers' ? 'tab-active' : ''
-            }`}
-            data-testid="tab-customers"
-          >
-            <Users className="w-4 h-4 mr-2" />
-            Clientes
-          </button>
-          <button 
-            onClick={() => setActiveTab('services')} 
-            className={`tab-btn px-4 py-3 text-sm font-medium whitespace-nowrap ${
-              activeTab === 'services' ? 'tab-active' : ''
-            }`}
-            data-testid="tab-services"
-          >
-            <Settings className="w-4 h-4 mr-2" />
-            Servicios
-          </button>
-          <button 
-            onClick={() => setActiveTab('payment-methods')} 
-            className={`tab-btn px-4 py-3 text-sm font-medium whitespace-nowrap ${
-              activeTab === 'payment-methods' ? 'tab-active' : ''
-            }`}
-            data-testid="tab-payment-methods"
-          >
-            <CreditCard className="w-4 h-4 mr-2" />
-            Métodos de Pago
-          </button>
-          <button 
-            onClick={() => setActiveTab('cash-closure')} 
-            className={`tab-btn px-4 py-3 text-sm font-medium whitespace-nowrap ${
-              activeTab === 'cash-closure' ? 'tab-active' : ''
-            }`}
-            data-testid="tab-cash-closure"
-          >
-            <BarChart3 className="w-4 h-4 mr-2" />
-            Cierre de Caja
-          </button>
-        </div>
       </nav>
 
       {/* Main Content */}
-      <main className="p-6">
+      <main className="flex-1 p-6 overflow-auto">
         {renderTabContent()}
       </main>
     </div>
