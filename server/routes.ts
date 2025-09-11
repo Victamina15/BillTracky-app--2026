@@ -156,8 +156,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
         deliveryDate: invoiceData.deliveryDate ? new Date(invoiceData.deliveryDate) : null,
       };
       
+      // Generate a new invoice number atomically (ignore the one from frontend)
+      console.log('[DEBUG] Generating new invoice number for creation...');
+      const uniqueInvoiceNumber = await storage.getNextInvoiceNumber();
+      console.log(`[DEBUG] Generated unique invoice number: ${uniqueInvoiceNumber}`);
+      
+      // Override the invoice number with the newly generated one
+      const invoiceWithUniqueNumber = {
+        ...processedInvoiceData,
+        number: uniqueInvoiceNumber
+      };
+      
       // Validate invoice data
-      const validatedInvoice = insertInvoiceSchema.parse(processedInvoiceData);
+      const validatedInvoice = insertInvoiceSchema.parse(invoiceWithUniqueNumber);
       
       // Create invoice
       const invoice = await storage.createInvoice(validatedInvoice);

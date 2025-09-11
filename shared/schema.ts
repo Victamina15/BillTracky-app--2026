@@ -190,6 +190,13 @@ export const userSessions = pgTable("user_sessions", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+// Contadores para números secuenciales
+export const counters = pgTable("counters", {
+  id: varchar("id").primaryKey(),
+  value: integer("value").notNull().default(0),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 // Insert schemas
 export const insertEmployeeSchema = createInsertSchema(employees).omit({
   id: true,
@@ -255,6 +262,10 @@ export const insertUserSessionSchema = createInsertSchema(userSessions).omit({
   createdAt: true,
 });
 
+export const insertCounterSchema = createInsertSchema(counters).omit({
+  updatedAt: true,
+});
+
 // Types
 export type Employee = typeof employees.$inferSelect;
 export type InsertEmployee = z.infer<typeof insertEmployeeSchema>;
@@ -291,6 +302,9 @@ export type InsertUser = z.infer<typeof insertUserSchema>;
 
 export type UserSession = typeof userSessions.$inferSelect;
 export type InsertUserSession = z.infer<typeof insertUserSessionSchema>;
+
+export type Counter = typeof counters.$inferSelect;
+export type InsertCounter = z.infer<typeof insertCounterSchema>;
 
 // PATCH request schemas for order management
 export const patchOrderStatusSchema = z.object({

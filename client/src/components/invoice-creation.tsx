@@ -195,9 +195,14 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
 
   // Mutación para crear factura
   const createInvoiceMutation = useMutation({
-    mutationFn: async (payload: { invoice: InsertInvoice, items: InsertInvoiceItem[] }) =>
-      authenticatedRequest('/api/invoices', 'POST', payload),
+    mutationFn: async (payload: { invoice: InsertInvoice, items: InsertInvoiceItem[] }) => {
+      console.log('[DEBUG] Starting invoice creation mutation...');
+      const result = await authenticatedRequest('/api/invoices', 'POST', payload);
+      console.log('[DEBUG] Invoice creation mutation completed successfully');
+      return result;
+    },
     onSuccess: (data) => {
+      console.log('[DEBUG] Invoice creation onSuccess called');
       queryClient.invalidateQueries({ queryKey: ['/api/invoices'] });
       queryClient.invalidateQueries({ queryKey: ['/api/customers'] });
       
@@ -209,8 +214,10 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
       // Resetear formulario
       resetForm();
       setShowPaymentModal(false);
+      console.log('[DEBUG] Invoice creation onSuccess completed');
     },
     onError: (error: any) => {
+      console.error('[ERROR] Invoice creation failed:', error);
       toast({
         title: "Error al crear factura",
         description: error.message || "No se pudo crear la factura",
@@ -852,7 +859,7 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
               <div className="space-y-3 pt-4 border-t">
                 <Button
                   variant="outline"
-                  className="w-full"
+                  className="w-full bg-red-500 text-white border-red-600 hover:bg-red-600 hover:border-red-700 transition-all duration-300 transform hover:scale-105 hover:shadow-lg active:scale-95"
                   onClick={() => setShowDiscountModal(true)}
                   data-testid="button-apply-discount"
                 >
@@ -876,12 +883,12 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
 
                 <Button
                   variant="outline"
-                  className="w-full"
+                  className="w-full bg-black text-white border-gray-800 hover:bg-gray-900 hover:border-black transition-all duration-300 transform hover:scale-105 hover:shadow-xl active:scale-95 shadow-lg hover:shadow-2xl"
                   onClick={() => setShowActionsModal(true)}
                   disabled={currentInvoice.items.length === 0}
                   data-testid="button-invoice-actions"
                 >
-                  <MoreVertical className="w-4 h-4 mr-2" />
+                  <span className="text-lg mr-2">⚡</span>
                   Acciones de Factura
                 </Button>
               </div>

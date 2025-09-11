@@ -1,4 +1,4 @@
-import { type Employee, type InsertEmployee, type Customer, type InsertCustomer, type Service, type InsertService, type Invoice, type InsertInvoice, type InvoiceItem, type InsertInvoiceItem, type PaymentMethod, type InsertPaymentMethod, type CompanySettings, type InsertCompanySettings, type MessageTemplate, type InsertMessageTemplate, employees, customers, services, invoices, invoiceItems, paymentMethods, companySettings, messageTemplates } from "@shared/schema";
+import { type Employee, type InsertEmployee, type Customer, type InsertCustomer, type Service, type InsertService, type Invoice, type InsertInvoice, type InvoiceItem, type InsertInvoiceItem, type PaymentMethod, type InsertPaymentMethod, type CompanySettings, type InsertCompanySettings, type MessageTemplate, type InsertMessageTemplate, type Counter, type InsertCounter, employees, customers, services, invoices, invoiceItems, paymentMethods, companySettings, messageTemplates, counters } from "@shared/schema";
 import { randomUUID } from "crypto";
 import { db } from "./db";
 import { eq, desc, sql } from "drizzle-orm";
@@ -418,8 +418,9 @@ export class MemStorage implements IStorage {
   }
 
   async getNextInvoiceNumber(): Promise<string> {
-    const number = `FAC-${String(this.invoiceCounter).padStart(3, '0')}`;
-    this.invoiceCounter++;
+    // Incrementar primero para evitar race conditions
+    const nextNumber = this.invoiceCounter++;
+    const number = `FAC-${String(nextNumber).padStart(3, '0')}`;
     return number;
   }
 
@@ -663,11 +664,49 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getNextInvoiceNumber(): Promise<string> {
-    const result = await db
-      .select({ count: sql<number>`count(*)` })
-      .from(invoices);
-    const count = result[0]?.count || 0;
-    return `FAC-${String(count + 1).padStart(3, '0')}`;
+    console.log('[DEBUG] Generating next invoice number...');
+    const counterId = 'invoice_number';
+    
+    try {
+      // Intentar crear el contador si no existe (usando INSERT ... ON CONFLICT DO NOTHING)
+      // Esto evita el race condition en la inicialización
+      const existingInvoices = await db
+        .select({ count: sql<number>`count(*)` })
+        .from(invoices);
+      const currentCount = existingInvoices[0]?.count || 0;
+      
+      console.log(`[DEBUG] Current invoice count: ${currentCount}`);
+      
+      // Usar raw SQL para INSERT ... ON CONFLICT DO NOTHING 
+      await db.execute(sql`
+        INSERT INTO counters (id, value, updated_at) 
+        VALUES (${counterId}, ${currentCount}, NOW()) 
+        ON CONFLICT (id) DO NOTHING
+      `);
+      
+      // Incrementar contador de manera atómica usando UPDATE con RETURNING
+      const result = await db.execute(sql`
+        UPDATE counters 
+        SET value = value + 1, updated_at = NOW() 
+        WHERE id = ${counterId} 
+        RETURNING value
+      `);
+      
+      const updatedValue = result.rows[0]?.value;
+      console.log(`[DEBUG] Updated counter value: ${updatedValue}`);
+      
+      if (!updatedValue) {
+        throw new Error(`Failed to update counter for ${counterId}`);
+      }
+      
+      const invoiceNumber = `FAC-${String(updatedValue).padStart(3, '0')}`;
+      console.log(`[DEBUG] Generated invoice number: ${invoiceNumber}`);
+      
+      return invoiceNumber;
+    } catch (error) {
+      console.error('[ERROR] Failed to generate invoice number:', error);
+      throw error;
+    }
   }
 
   // Invoice Items
