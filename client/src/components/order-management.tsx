@@ -132,7 +132,7 @@ export default function OrderManagement({ onNotification }: OrderManagementProps
 
   const paymentMutation = useMutation({
     mutationFn: ({ id, paymentMethod, paymentReference }: { id: string; paymentMethod: string; paymentReference?: string }) =>
-      authenticatedRequest(`/api/invoices/${id}/payment`, 'PATCH', { paymentMethod, paymentReference }),
+      authenticatedRequest(`/api/invoices/${id}/pay`, 'PATCH', { paymentMethod, paymentReference }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/invoices'] });
       setShowPaymentModal(false);
