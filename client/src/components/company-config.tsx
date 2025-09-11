@@ -123,6 +123,7 @@ export default function CompanyConfig({ onBack }: CompanyConfigProps) {
       });
       return;
     }
+    
     setHasChanges(false);
     toast({
       title: "Configuración guardada",

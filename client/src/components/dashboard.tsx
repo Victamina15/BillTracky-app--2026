@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FileText, LogOut, Home, Package, Users, Settings, CreditCard, BarChart3 } from "lucide-react";
+import { FileText, LogOut, Home, Package, Users, Settings, CreditCard, BarChart3, Building2 } from "lucide-react";
 import { type Employee, type Invoice } from "@shared/schema";
 import InvoiceCreation from "./invoice-creation";
 import OrderManagement from "./order-management";
@@ -7,6 +7,7 @@ import CustomersGrid from "./customers-grid";
 import ServicesConfig from "./services-config";
 import PaymentMethodsConfig from "./payment-methods-config";
 import CashClosure from "./cash-closure";
+import CompanyConfig from "./company-config";
 import { useQuery } from "@tanstack/react-query";
 
 interface DashboardProps {
@@ -75,6 +76,8 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
         return <PaymentMethodsConfig onNotification={onNotification} />;
       case "cash-closure":
         return <CashClosure onBack={() => setActiveTab('overview')} />;
+      case "company-config":
+        return <CompanyConfig onBack={() => setActiveTab('overview')} />;
       default:
         return (
           <div>
@@ -321,6 +324,19 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
             >
               <Users className="w-4 h-4 mr-3" />
               Clientes
+            </button>
+            
+            <button 
+              onClick={() => setActiveTab('company-config')} 
+              className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
+                activeTab === 'company-config' 
+                  ? 'bg-primary text-primary-foreground shadow-sm' 
+                  : 'text-muted-foreground hover:bg-muted hover:text-card-foreground'
+              }`}
+              data-testid="tab-company-config"
+            >
+              <Building2 className="w-4 h-4 mr-3" />
+              Configuración Empresa
             </button>
           </div>
         </div>
