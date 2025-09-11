@@ -1,0 +1,670 @@
+import React, { useState } from 'react';
+import { 
+  Building2, 
+  Save, 
+  X, 
+  Check, 
+  Mail, 
+  Phone, 
+  MapPin, 
+  Camera, 
+  Upload, 
+  Settings, 
+  AlertCircle, 
+  Eye 
+} from 'lucide-react';
+
+const ConfiguracionEmpresa = () => {
+  const [configuracion, setConfiguracion] = useState({
+    nombre: 'CleanWash Lavandería',
+    nombreComercial: 'CleanWash',
+    email: 'admin@cleanwash.com',
+    telefono: '809-555-0123',
+    telefono2: '809-555-0124',
+    direccion: 'Av. Principal #123, Santo Domingo',
+    sucursal: 'Sucursal Centro',
+    ciudad: 'Santo Domingo',
+    provincia: 'Distrito Nacional',
+    codigoPostal: '10101',
+    rnc: '131-12345-6',
+    website: 'www.cleanwash.com',
+    redesSociales: {
+      facebook: '@cleanwashrd',
+      instagram: '@cleanwash_rd',
+      whatsapp: '8095550123'
+    },
+    horarios: {
+      lunes: { apertura: '08:00', cierre: '18:00', activo: true },
+      martes: { apertura: '08:00', cierre: '18:00', activo: true },
+      miercoles: { apertura: '08:00', cierre: '18:00', activo: true },
+      jueves: { apertura: '08:00', cierre: '18:00', activo: true },
+      viernes: { apertura: '08:00', cierre: '18:00', activo: true },
+      sabado: { apertura: '08:00', cierre: '16:00', activo: true },
+      domingo: { apertura: '09:00', cierre: '14:00', activo: false }
+    },
+    configuracionFactura: {
+      mostrarRnc: true,
+      mostrarDireccion: true,
+      mostrarTelefono: true,
+      mostrarEmail: true,
+      mensajePie: 'Gracias por preferirnos - CleanWash Lavandería'
+    }
+  });
+
+  const [activeTab, setActiveTab] = useState('general');
+  const [modalMessage, setModalMessage] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
+  const [hasChanges, setHasChanges] = useState(false);
+  const [logoPreview, setLogoPreview] = useState(null);
+
+  const openModal = (message) => {
+    setModalMessage(message);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setModalMessage('');
+  };
+
+  const updateField = (field, value) => {
+    setHasChanges(true);
+    setConfiguracion(prev => ({ ...prev, [field]: value }));
+  };
+
+  const updateSocial = (field, value) => {
+    setHasChanges(true);
+    setConfiguracion(prev => ({
+      ...prev,
+      redesSociales: { ...prev.redesSociales, [field]: value }
+    }));
+  };
+
+  const updateFactura = (field, value) => {
+    setHasChanges(true);
+    setConfiguracion(prev => ({
+      ...prev,
+      configuracionFactura: { ...prev.configuracionFactura, [field]: value }
+    }));
+  };
+
+  const updateHorario = (dia, campo, valor) => {
+    setHasChanges(true);
+    setConfiguracion(prev => ({
+      ...prev,
+      horarios: {
+        ...prev.horarios,
+        [dia]: { ...prev.horarios[dia], [campo]: valor }
+      }
+    }));
+  };
+
+  const saveConfig = () => {
+    if (!configuracion.nombre || !configuracion.telefono) {
+      openModal('Complete al menos el nombre y teléfono de la empresa.');
+      return;
+    }
+    setHasChanges(false);
+    openModal('Configuración actualizada exitosamente.');
+  };
+
+  const handleFileUpload = (event) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        openModal('Archivo muy grande. Máximo 5MB.');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setLogoPreview(e.target?.result);
+        setHasChanges(true);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const diasSemana = {
+    lunes: 'Lunes',
+    martes: 'Martes',
+    miercoles: 'Miércoles',
+    jueves: 'Jueves',
+    viernes: 'Viernes',
+    sabado: 'Sábado',
+    domingo: 'Domingo'
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50 p-6">
+      <div className="max-w-6xl mx-auto">
+        <div className="bg-white rounded-xl shadow-sm border p-6 mb-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center">
+                <Building2 className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">Configuración de Empresa</h1>
+                <p className="text-gray-600">Datos generales y configuración del negocio</p>
+              </div>
+            </div>
+            
+            <div className="flex space-x-3">
+              <button
+                onClick={() => setShowPreview(true)}
+                className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 font-medium flex items-center space-x-2"
+              >
+                <Eye className="w-4 h-4" />
+                <span>Vista Previa</span>
+              </button>
+              <button
+                onClick={saveConfig}
+                disabled={!hasChanges}
+                className={`px-6 py-3 rounded-lg font-medium flex items-center space-x-2 ${
+                  hasChanges 
+                    ? 'bg-blue-600 text-white hover:bg-blue-700' 
+                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                }`}
+              >
+                <Save className="w-5 h-5" />
+                <span>Guardar Cambios</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-xl shadow-sm border mb-6">
+          <div className="border-b">
+            <nav className="flex space-x-8 px-6">
+              <button
+                onClick={() => setActiveTab('general')}
+                className={`py-4 px-2 border-b-2 font-medium text-sm flex items-center space-x-2 ${
+                  activeTab === 'general'
+                    ? 'border-blue-500 text-blue-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700'
+                }`}
+              >
+                <Building2 className="w-4 h-4" />
+                <span>Información General</span>
+              </button>
+              <button
+                onClick={() => setActiveTab('contacto')}
+                className={`py-4 px-2 border-b-2 font-medium text-sm flex items-center space-x-2 ${
+                  activeTab === 'contacto'
+                    ? 'border-blue-500 text-blue-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700'
+                }`}
+              >
+                <Phone className="w-4 h-4" />
+                <span>Contacto y Ubicación</span>
+              </button>
+              <button
+                onClick={() => setActiveTab('horarios')}
+                className={`py-4 px-2 border-b-2 font-medium text-sm flex items-center space-x-2 ${
+                  activeTab === 'horarios'
+                    ? 'border-blue-500 text-blue-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700'
+                }`}
+              >
+                <Settings className="w-4 h-4" />
+                <span>Horarios de Atención</span>
+              </button>
+              <button
+                onClick={() => setActiveTab('facturacion')}
+                className={`py-4 px-2 border-b-2 font-medium text-sm flex items-center space-x-2 ${
+                  activeTab === 'facturacion'
+                    ? 'border-blue-500 text-blue-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700'
+                }`}
+              >
+                <Settings className="w-4 h-4" />
+                <span>Configuración de Factura</span>
+              </button>
+            </nav>
+          </div>
+
+          <div className="p-6">
+            {activeTab === 'general' && (
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Nombre de la Empresa *</label>
+                    <input
+                      type="text"
+                      value={configuracion.nombre}
+                      onChange={(e) => updateField('nombre', e.target.value)}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                      placeholder="CleanWash Lavandería S.R.L."
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Nombre Comercial</label>
+                    <input
+                      type="text"
+                      value={configuracion.nombreComercial}
+                      onChange={(e) => updateField('nombreComercial', e.target.value)}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                      placeholder="CleanWash"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">RNC</label>
+                    <input
+                      type="text"
+                      value={configuracion.rnc}
+                      onChange={(e) => updateField('rnc', e.target.value)}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                      placeholder="131-12345-6"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Sitio Web</label>
+                    <input
+                      type="text"
+                      value={configuracion.website}
+                      onChange={(e) => updateField('website', e.target.value)}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                      placeholder="www.empresa.com"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Logo de la Empresa</label>
+                  <div className="flex items-center space-x-4">
+                    <div className="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-300">
+                      {logoPreview ? (
+                        <img src={logoPreview} alt="Logo" className="w-full h-full object-contain rounded-lg" />
+                      ) : (
+                        <Camera className="w-8 h-8 text-gray-400" />
+                      )}
+                    </div>
+                    <div>
+                      <input type="file" id="logo" accept="image/*" onChange={handleFileUpload} className="hidden" />
+                      <label htmlFor="logo" className="px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 cursor-pointer flex items-center space-x-2">
+                        <Upload className="w-4 h-4" />
+                        <span>Subir Logo</span>
+                      </label>
+                      <p className="text-xs text-gray-500 mt-1">PNG, JPG hasta 5MB</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'contacto' && (
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Email Principal *</label>
+                    <div className="relative">
+                      <Mail className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" />
+                      <input
+                        type="email"
+                        value={configuracion.email}
+                        onChange={(e) => updateField('email', e.target.value)}
+                        className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                        placeholder="admin@empresa.com"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Teléfono Principal *</label>
+                    <div className="relative">
+                      <Phone className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" />
+                      <input
+                        type="tel"
+                        value={configuracion.telefono}
+                        onChange={(e) => updateField('telefono', e.target.value)}
+                        className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                        placeholder="809-000-0000"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Teléfono Secundario</label>
+                    <div className="relative">
+                      <Phone className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" />
+                      <input
+                        type="tel"
+                        value={configuracion.telefono2}
+                        onChange={(e) => updateField('telefono2', e.target.value)}
+                        className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                        placeholder="809-000-0001"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Sucursal</label>
+                    <input
+                      type="text"
+                      value={configuracion.sucursal}
+                      onChange={(e) => updateField('sucursal', e.target.value)}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                      placeholder="Sucursal Centro"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Dirección Completa</label>
+                  <div className="relative">
+                    <MapPin className="w-5 h-5 text-gray-400 absolute left-3 top-3" />
+                    <textarea
+                      value={configuracion.direccion}
+                      onChange={(e) => updateField('direccion', e.target.value)}
+                      rows={3}
+                      className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                      placeholder="Av. Principal #123, Sector Centro"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Ciudad</label>
+                    <input
+                      type="text"
+                      value={configuracion.ciudad}
+                      onChange={(e) => updateField('ciudad', e.target.value)}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                      placeholder="Santo Domingo"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Provincia</label>
+                    <input
+                      type="text"
+                      value={configuracion.provincia}
+                      onChange={(e) => updateField('provincia', e.target.value)}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                      placeholder="Distrito Nacional"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Código Postal</label>
+                    <input
+                      type="text"
+                      value={configuracion.codigoPostal}
+                      onChange={(e) => updateField('codigoPostal', e.target.value)}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                      placeholder="10101"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Redes Sociales</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Facebook</label>
+                      <input
+                        type="text"
+                        value={configuracion.redesSociales.facebook}
+                        onChange={(e) => updateSocial('facebook', e.target.value)}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                        placeholder="@empresa"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Instagram</label>
+                      <input
+                        type="text"
+                        value={configuracion.redesSociales.instagram}
+                        onChange={(e) => updateSocial('instagram', e.target.value)}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                        placeholder="@empresa"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">WhatsApp Business</label>
+                      <input
+                        type="text"
+                        value={configuracion.redesSociales.whatsapp}
+                        onChange={(e) => updateSocial('whatsapp', e.target.value)}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                        placeholder="8095550000"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'horarios' && (
+              <div className="space-y-6">
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Horarios de Atención</h3>
+                  <div className="space-y-4">
+                    {Object.entries(configuracion.horarios).map(([dia, horario]) => (
+                      <div key={dia} className="flex items-center space-x-4 p-4 bg-gray-50 rounded-lg">
+                        <div className="w-24">
+                          <span className="font-medium text-gray-900">{diasSemana[dia]}</span>
+                        </div>
+                        
+                        <div className="flex items-center space-x-2">
+                          <input
+                            type="checkbox"
+                            checked={horario.activo}
+                            onChange={(e) => updateHorario(dia, 'activo', e.target.checked)}
+                            className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                          />
+                          <span className="text-sm text-gray-600">Abierto</span>
+                        </div>
+                        
+                        {horario.activo && (
+                          <div className="flex space-x-4">
+                            <div>
+                              <label className="block text-xs text-gray-600 mb-1">Apertura</label>
+                              <input
+                                type="time"
+                                value={horario.apertura}
+                                onChange={(e) => updateHorario(dia, 'apertura', e.target.value)}
+                                className="px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                              />
+                            </div>
+                            
+                            <div>
+                              <label className="block text-xs text-gray-600 mb-1">Cierre</label>
+                              <input
+                                type="time"
+                                value={horario.cierre}
+                                onChange={(e) => updateHorario(dia, 'cierre', e.target.value)}
+                                className="px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                              />
+                            </div>
+                          </div>
+                        )}
+                        
+                        {!horario.activo && (
+                          <span className="text-red-600 text-sm font-medium">Cerrado</span>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'facturacion' && (
+              <div className="space-y-6">
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Configuración de Factura</h3>
+                  
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                      <div>
+                        <p className="font-medium text-gray-900">Mostrar RNC en facturas</p>
+                        <p className="text-sm text-gray-600">Incluir número de RNC en las facturas impresas</p>
+                      </div>
+                      <label className="flex items-center cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={configuracion.configuracionFactura.mostrarRnc}
+                          onChange={(e) => updateFactura('mostrarRnc', e.target.checked)}
+                          className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                        />
+                      </label>
+                    </div>
+                    
+                    <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                      <div>
+                        <p className="font-medium text-gray-900">Mostrar dirección en facturas</p>
+                        <p className="text-sm text-gray-600">Incluir dirección completa en las facturas</p>
+                      </div>
+                      <label className="flex items-center cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={configuracion.configuracionFactura.mostrarDireccion}
+                          onChange={(e) => updateFactura('mostrarDireccion', e.target.checked)}
+                          className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                        />
+                      </label>
+                    </div>
+                    
+                    <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                      <div>
+                        <p className="font-medium text-gray-900">Mostrar teléfono en facturas</p>
+                        <p className="text-sm text-gray-600">Incluir número de teléfono en las facturas</p>
+                      </div>
+                      <label className="flex items-center cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={configuracion.configuracionFactura.mostrarTelefono}
+                          onChange={(e) => updateFactura('mostrarTelefono', e.target.checked)}
+                          className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                        />
+                      </label>
+                    </div>
+                    
+                    <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                      <div>
+                        <p className="font-medium text-gray-900">Mostrar email en facturas</p>
+                        <p className="text-sm text-gray-600">Incluir dirección de email en las facturas</p>
+                      </div>
+                      <label className="flex items-center cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={configuracion.configuracionFactura.mostrarEmail}
+                          onChange={(e) => updateFactura('mostrarEmail', e.target.checked)}
+                          className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                        />
+                      </label>
+                    </div>
+                  </div>
+                  
+                  <div className="mt-6">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Mensaje al pie de factura</label>
+                    <textarea
+                      value={configuracion.configuracionFactura.mensajePie}
+                      onChange={(e) => updateFactura('mensajePie', e.target.value)}
+                      rows={3}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                      placeholder="Mensaje que aparecerá al final de cada factura"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">Este mensaje aparecerá al final de todas las facturas impresas</p>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {hasChanges && (
+          <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
+            <div className="flex">
+              <AlertCircle className="w-5 h-5 text-yellow-600 mr-3 mt-0.5" />
+              <div>
+                <h3 className="text-sm font-medium text-yellow-800">Cambios sin guardar</h3>
+                <p className="text-sm text-yellow-700 mt-1">
+                  Has realizado cambios en la configuración. No olvides guardar para aplicar los cambios.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Check className="w-8 h-8 text-green-600" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Configuración de Empresa</h3>
+              <p className="text-gray-600 mb-6">{modalMessage}</p>
+              <button
+                onClick={closeModal}
+                className="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 font-medium transition-colors"
+              >
+                Aceptar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showPreview && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-xl font-bold text-gray-900">Vista Previa de Factura</h3>
+              <button
+                onClick={() => setShowPreview(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+            
+            <div className="border rounded-lg p-4 bg-gray-50">
+              <div className="text-center border-b pb-4 mb-4">
+                <h2 className="text-xl font-bold">{configuracion.nombreComercial}</h2>
+                <p className="text-sm text-gray-600">{configuracion.nombre}</p>
+                {configuracion.configuracionFactura.mostrarRnc && (
+                  <p className="text-xs">RNC: {configuracion.rnc}</p>
+                )}
+              </div>
+              
+              <div className="space-y-1 text-xs">
+                {configuracion.configuracionFactura.mostrarDireccion && (
+                  <p>{configuracion.direccion}</p>
+                )}
+                {configuracion.configuracionFactura.mostrarTelefono && (
+                  <p>Tel: {configuracion.telefono}</p>
+                )}
+                {configuracion.configuracionFactura.mostrarEmail && (
+                  <p>Email: {configuracion.email}</p>
+                )}
+              </div>
+              
+              <div className="border-t pt-4 mt-4">
+                <p className="text-xs font-medium">FACTURA #FAC-001</p>
+                <p className="text-xs">Cliente: Juan Pérez</p>
+                <p className="text-xs">Fecha: {new Date().toLocaleDateString()}</p>
+              </div>
+              
+              <div className="border-t pt-2 mt-4 text-center">
+                <p className="text-xs italic">{configuracion.configuracionFactura.mensajePie}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default ConfiguracionEmpresa;
