@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FileText, LogOut, Home, Package, Users, Settings, CreditCard, BarChart3, Building2 } from "lucide-react";
+import { FileText, LogOut, Home, Package, Users, Settings, CreditCard, BarChart3, Building2, MessageCircle } from "lucide-react";
 import { type Employee, type Invoice } from "@shared/schema";
 import InvoiceCreation from "./invoice-creation";
 import OrderManagement from "./order-management";
@@ -8,6 +8,7 @@ import ServicesConfig from "./services-config";
 import PaymentMethodsConfig from "./payment-methods-config";
 import CashClosure from "./cash-closure";
 import CompanyConfig from "./company-config";
+import WhatsAppConfig from "./whatsapp-config";
 import { useQuery } from "@tanstack/react-query";
 
 interface DashboardProps {
@@ -78,6 +79,8 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
         return <CashClosure onBack={() => setActiveTab('overview')} />;
       case "company-config":
         return <CompanyConfig onBack={() => setActiveTab('overview')} />;
+      case "whatsapp-config":
+        return <WhatsAppConfig onBack={() => setActiveTab('overview')} />;
       default:
         return (
           <div>
@@ -337,6 +340,19 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
             >
               <Building2 className="w-4 h-4 mr-3" />
               Configuración Empresa
+            </button>
+            
+            <button 
+              onClick={() => setActiveTab('whatsapp-config')} 
+              className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
+                activeTab === 'whatsapp-config' 
+                  ? 'bg-primary text-primary-foreground shadow-sm' 
+                  : 'text-muted-foreground hover:bg-muted hover:text-card-foreground'
+              }`}
+              data-testid="tab-whatsapp-config"
+            >
+              <MessageCircle className="w-4 h-4 mr-3" />
+              Mensajes WhatsApp
             </button>
           </div>
         </div>
