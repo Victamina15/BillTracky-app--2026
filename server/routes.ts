@@ -1,7 +1,7 @@
 import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertCustomerSchema, insertServiceSchema, insertInvoiceSchema, insertInvoiceItemSchema, insertPaymentMethodSchema, insertCompanySettingsSchema, insertMessageTemplateSchema, insertEmployeeSchema, patchOrderStatusSchema, patchOrderPaymentSchema, patchOrderCancelSchema } from "@shared/schema";
+import { insertCustomerSchema, insertServiceSchema, insertInvoiceSchema, insertInvoiceItemSchema, insertPaymentMethodSchema, insertCompanySettingsSchema, insertMessageTemplateSchema, insertEmployeeSchema, patchOrderStatusSchema, patchOrderPaymentSchema, patchOrderCancelSchema, patchInvoicePaySchema } from "@shared/schema";
 import { z } from "zod";
 
 // Authentication middleware
@@ -227,6 +227,48 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.json(invoice);
     } catch (error) {
+      res.status(500).json({ message: "Server error" });
+    }
+  });
+
+  // Finalize payment for draft invoices
+  app.patch("/api/invoices/:id/pay", requireAuthentication, async (req: AuthenticatedRequest, res) => {
+    try {
+      const { id } = req.params;
+      
+      // Validate request body
+      const validationResult = patchInvoicePaySchema.safeParse(req.body);
+      if (!validationResult.success) {
+        return res.status(400).json({ 
+          message: "Invalid request data", 
+          errors: validationResult.error.errors 
+        });
+      }
+      
+      const { paymentMethod, paymentReference } = validationResult.data;
+      
+      // Check if invoice exists and is unpaid
+      const invoice = await storage.getInvoice(id);
+      if (!invoice) {
+        return res.status(404).json({ message: "Invoice not found" });
+      }
+      
+      if (invoice.paid) {
+        return res.status(400).json({ message: "Invoice is already paid" });
+      }
+      
+      // Update invoice to mark as paid
+      const updatedInvoice = await storage.updateInvoice(id, {
+        paid: true,
+        paymentMethod,
+        paymentReference: paymentReference || null,
+      });
+      
+      console.log(`[DEBUG] Invoice ${invoice.number} finalized with payment method: ${paymentMethod}`);
+      
+      res.json(updatedInvoice);
+    } catch (error) {
+      console.error("Error finalizing invoice payment:", (error as Error).message);
       res.status(500).json({ message: "Server error" });
     }
   });

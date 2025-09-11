@@ -320,6 +320,13 @@ export const patchOrderCancelSchema = z.object({
   reason: z.string().min(1, "Cancellation reason is required").trim(),
 });
 
+// Schema for finalizing payment on draft invoices
+export const patchInvoicePaySchema = z.object({
+  paymentMethod: z.string().min(1, "Payment method is required"),
+  paymentReference: z.string().optional(),
+});
+
 export type PatchOrderStatus = z.infer<typeof patchOrderStatusSchema>;
 export type PatchOrderPayment = z.infer<typeof patchOrderPaymentSchema>;
 export type PatchOrderCancel = z.infer<typeof patchOrderCancelSchema>;
+export type PatchInvoicePay = z.infer<typeof patchInvoicePaySchema>;

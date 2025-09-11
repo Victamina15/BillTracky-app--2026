@@ -16,6 +16,7 @@ import {
   X,
   Clock,
   Check,
+  CheckCircle,
   Users,
   CreditCard,
   Banknote,
@@ -27,7 +28,8 @@ import {
   Edit,
   Printer,
   MessageCircle,
-  MoreVertical
+  MoreVertical,
+  Save
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -133,7 +135,6 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
   });
 
   // Estados de modales
-  const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [showCustomerSearchModal, setShowCustomerSearchModal] = useState(false);
   const [showDiscountModal, setShowDiscountModal] = useState(false);
   const [showDateModal, setShowDateModal] = useState(false);
@@ -141,6 +142,11 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
   const [showEditItemModal, setShowEditItemModal] = useState(false);
   const [showActionsModal, setShowActionsModal] = useState(false);
   const [editingItem, setEditingItem] = useState<InvoiceItemWithService | null>(null);
+
+  // Estados para el flujo de pago estilo Shopify POS
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string>('');
+  const [savedInvoiceId, setSavedInvoiceId] = useState<string | null>(null);
+  const [isDraft, setIsDraft] = useState(false);
 
   // Estados para el nuevo selector de servicios escalable
   const [serviceSearchTerm, setServiceSearchTerm] = useState('');
@@ -206,14 +212,17 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
       queryClient.invalidateQueries({ queryKey: ['/api/invoices'] });
       queryClient.invalidateQueries({ queryKey: ['/api/customers'] });
       
+      // Guardar ID de la factura creada y marcar como borrador o pagada
+      setSavedInvoiceId(data.invoice.id);
+      setIsDraft(!data.invoice.paid);
+      
       toast({
-        title: "Factura creada exitosamente",
-        description: `Factura ${data.invoice.number} por ${formatCurrency(data.invoice.total)} ha sido creada.`,
+        title: data.invoice.paid ? "Factura pagada exitosamente" : "Pedido guardado exitosamente",
+        description: `Factura ${data.invoice.number} por ${formatCurrency(data.invoice.total)} ha sido ${data.invoice.paid ? 'pagada' : 'guardada como borrador'}.`,
       });
 
-      // Resetear formulario
-      resetForm();
-      setShowPaymentModal(false);
+      // Abrir modal de acciones post-guardado
+      setShowActionsModal(true);
       console.log('[DEBUG] Invoice creation onSuccess completed');
     },
     onError: (error: any) => {
@@ -418,11 +427,123 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
       paymentMethodId: '',
     });
     
+    // Resetear estados del flujo POS
+    setSelectedPaymentMethod('');
+    setSavedInvoiceId(null);
+    setIsDraft(false);
+    
     invoiceForm.reset();
     setDiscountData({ type: 'amount', value: 0, reason: '' });
   };
 
-  // Crear factura
+  // Guardar pedido como borrador (nuevo flujo estilo Shopify POS)
+  const saveOrderDraft = () => {
+    const formData = invoiceForm.getValues();
+    
+    if (!formData.customerName || !formData.customerPhone || currentInvoice.items.length === 0) {
+      toast({
+        title: "Campos incompletos",
+        description: "Complete todos los campos requeridos y agregue al menos un artículo",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Preparar datos de factura como borrador
+    const invoiceData: InsertInvoice = {
+      number: nextInvoiceNumber?.number || 'FAC-001',
+      customerId: null,
+      customerName: formData.customerName,
+      customerPhone: formData.customerPhone,
+      customerEmail: formData.customerEmail || null,
+      date: new Date(),
+      deliveryDate: formData.deliveryDate ? new Date(formData.deliveryDate) : null,
+      subtotal: currentInvoice.subtotal.toString(),
+      tax: currentInvoice.tax.toString(),
+      total: currentInvoice.total.toString(),
+      paymentMethod: 'pending',
+      paymentReference: null,
+      status: 'received',
+      employeeId: localStorage.getItem('employeeId'),
+      paid: false, // Borrador no pagado
+      delivered: false,
+      cancelledAt: null,
+      cancellationReason: null,
+    };
+
+    const items: InsertInvoiceItem[] = currentInvoice.items.map(item => ({
+      invoiceId: 'temp',
+      serviceId: item.serviceId,
+      serviceName: item.serviceName,
+      serviceType: item.serviceType,
+      quantity: item.quantity,
+      unitPrice: item.unitPrice,
+      total: item.total,
+    }));
+
+    const payload = { invoice: invoiceData, items: items };
+    createInvoiceMutation.mutate(payload);
+  };
+
+  // Procesar pago (nuevo flujo estilo Shopify POS)
+  const processPayment = () => {
+    if (!selectedPaymentMethod) {
+      toast({
+        title: "Método de pago requerido",
+        description: "Seleccione un método de pago antes de procesar",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const formData = invoiceForm.getValues();
+    
+    if (!formData.customerName || !formData.customerPhone || currentInvoice.items.length === 0) {
+      toast({
+        title: "Campos incompletos",
+        description: "Complete todos los campos requeridos y agregue al menos un artículo",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Preparar datos de factura pagada
+    const invoiceData: InsertInvoice = {
+      number: nextInvoiceNumber?.number || 'FAC-001',
+      customerId: null,
+      customerName: formData.customerName,
+      customerPhone: formData.customerPhone,
+      customerEmail: formData.customerEmail || null,
+      date: new Date(),
+      deliveryDate: formData.deliveryDate ? new Date(formData.deliveryDate) : null,
+      subtotal: currentInvoice.subtotal.toString(),
+      tax: currentInvoice.tax.toString(),
+      total: currentInvoice.total.toString(),
+      paymentMethod: selectedPaymentMethod,
+      paymentReference: null,
+      status: 'received',
+      employeeId: localStorage.getItem('employeeId'),
+      paid: true, // Factura pagada
+      delivered: false,
+      cancelledAt: null,
+      cancellationReason: null,
+    };
+
+    const items: InsertInvoiceItem[] = currentInvoice.items.map(item => ({
+      invoiceId: 'temp',
+      serviceId: item.serviceId,
+      serviceName: item.serviceName,
+      serviceType: item.serviceType,
+      quantity: item.quantity,
+      unitPrice: item.unitPrice,
+      total: item.total,
+    }));
+
+    const payload = { invoice: invoiceData, items: items };
+    createInvoiceMutation.mutate(payload);
+  };
+
+  // Crear factura (función original mantenida para compatibilidad)
   const createInvoice = (paymentMethodCode: string, isPending = false) => {
     const formData = invoiceForm.getValues();
     
@@ -856,7 +977,9 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
                 </div>
               </div>
 
-              <div className="space-y-3 pt-4 border-t">
+              {/* Sección de Checkout estilo Shopify POS */}
+              <div className="space-y-4 pt-4 border-t">
+                {/* Botón aplicar descuento */}
                 <Button
                   variant="outline"
                   className="w-full bg-red-500 text-white border-red-600 hover:bg-red-600 hover:border-red-700 transition-all duration-300 transform hover:scale-105 hover:shadow-lg active:scale-95"
@@ -867,25 +990,79 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
                   Aplicar Descuento
                 </Button>
                 
-                <Button
-                  className="w-full"
-                  onClick={() => setShowPaymentModal(true)}
-                  disabled={currentInvoice.items.length === 0 || createInvoiceMutation.isPending}
-                  data-testid="button-process-payment"
-                >
-                  {createInvoiceMutation.isPending ? (
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                  ) : (
-                    <CreditCard className="w-4 h-4 mr-2" />
-                  )}
-                  Procesar Pago
-                </Button>
+                {/* Selector de método de pago */}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Método de Pago
+                  </label>
+                  <select
+                    value={selectedPaymentMethod}
+                    onChange={(e) => setSelectedPaymentMethod(e.target.value)}
+                    className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-800 dark:border-gray-600 dark:text-white"
+                    data-testid="select-payment-method"
+                  >
+                    <option value="">Seleccionar método de pago...</option>
+                    {paymentMethods.filter(pm => pm.active).map((method) => (
+                      <option key={method.id} value={method.code}>
+                        {method.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
+                {/* Botones de acción estilo Shopify POS */}
+                <div className="grid grid-cols-2 gap-3">
+                  {/* Botón Guardar Pedido - Estilo 3D */}
+                  <Button
+                    variant="outline"
+                    className="h-12 bg-gradient-to-r from-blue-600 to-blue-700 text-white border-none shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 transition-all duration-300 hover:from-blue-700 hover:to-blue-800 relative overflow-hidden"
+                    onClick={saveOrderDraft}
+                    disabled={currentInvoice.items.length === 0 || createInvoiceMutation.isPending || !!savedInvoiceId}
+                    data-testid="button-save-order"
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 transform -translate-x-full hover:translate-x-full transition-transform duration-1000"></div>
+                    {createInvoiceMutation.isPending ? (
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    ) : (
+                      <Save className="w-4 h-4 mr-2" />
+                    )}
+                    Guardar Pedido
+                  </Button>
+
+                  {/* Botón Procesar Pago */}
+                  <Button
+                    className="h-12 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 transition-all duration-300"
+                    onClick={processPayment}
+                    disabled={currentInvoice.items.length === 0 || !selectedPaymentMethod || createInvoiceMutation.isPending || !!savedInvoiceId}
+                    data-testid="button-process-payment"
+                  >
+                    {createInvoiceMutation.isPending ? (
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    ) : (
+                      <CreditCard className="w-4 h-4 mr-2" />
+                    )}
+                    Procesar Pago
+                  </Button>
+                </div>
+
+                {/* Estado del pedido guardado */}
+                {savedInvoiceId && (
+                  <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg dark:bg-blue-900/20 dark:border-blue-800">
+                    <div className="flex items-center space-x-2">
+                      <CheckCircle className="w-5 h-5 text-blue-600" />
+                      <span className="text-sm font-medium text-blue-800 dark:text-blue-200">
+                        {isDraft ? 'Pedido guardado como borrador' : 'Factura pagada exitosamente'}
+                      </span>
+                    </div>
+                  </div>
+                )}
+
+                {/* Botón de acciones */}
                 <Button
                   variant="outline"
                   className="w-full bg-black text-white border-gray-800 hover:bg-gray-900 hover:border-black transition-all duration-300 transform hover:scale-105 hover:shadow-xl active:scale-95 shadow-lg hover:shadow-2xl"
                   onClick={() => setShowActionsModal(true)}
-                  disabled={currentInvoice.items.length === 0}
+                  disabled={!savedInvoiceId}
                   data-testid="button-invoice-actions"
                 >
                   <span className="text-lg mr-2">⚡</span>
@@ -896,71 +1073,6 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
           </Card>
         </div>
       </div>
-
-      {/* Modal de Métodos de Pago */}
-      <Dialog open={showPaymentModal} onOpenChange={setShowPaymentModal}>
-        <DialogContent className="max-w-lg" data-testid="modal-payment-method">
-          <DialogHeader>
-            <DialogTitle className="text-center">
-              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <DollarSign className="w-8 h-8 text-blue-600" />
-              </div>
-              Método de Pago
-            </DialogTitle>
-          </DialogHeader>
-          
-          <div className="text-center mb-6">
-            <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-              <p className="text-lg text-gray-700 dark:text-gray-300">Total a cobrar:</p>
-              <p className="text-3xl font-bold text-blue-600" data-testid="text-payment-total">
-                {formatCurrency(currentInvoice.total)}
-              </p>
-            </div>
-          </div>
-          
-          <div className="space-y-3 mb-6">
-            {paymentMethods.filter(pm => pm.active).map((method) => (
-              <Button
-                key={method.id}
-                variant="outline"
-                className="w-full p-4 h-auto justify-start"
-                onClick={() => createInvoice(method.code, false)}
-                disabled={createInvoiceMutation.isPending}
-                data-testid={`button-payment-${method.code}`}
-              >
-                <div className="flex items-center space-x-3">
-                  {method.code === 'cash' && <Banknote className="w-6 h-6 text-green-600" />}
-                  {method.code === 'card' && <CreditCard className="w-6 h-6 text-blue-600" />}
-                  {method.code === 'transfer' && <Landmark className="w-6 h-6 text-indigo-600" />}
-                  {method.code === 'mobile_pay' && <Phone className="w-6 h-6 text-purple-600" />}
-                  <span className="font-medium">{method.name}</span>
-                </div>
-              </Button>
-            ))}
-          </div>
-          
-          <div className="flex space-x-3">
-            <Button
-              variant="outline"
-              className="flex-1"
-              onClick={() => setShowPaymentModal(false)}
-              data-testid="button-cancel-payment"
-            >
-              Cancelar
-            </Button>
-            <Button
-              variant="outline"
-              className="flex-1 bg-yellow-500 hover:bg-yellow-600 text-white"
-              onClick={() => createInvoice('pending', true)}
-              disabled={createInvoiceMutation.isPending}
-              data-testid="button-pending-payment"
-            >
-              <Clock className="w-4 h-4 mr-2" />
-              Pago Pendiente
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
 
       {/* Modal de Búsqueda de Clientes */}
       <Dialog open={showCustomerSearchModal} onOpenChange={setShowCustomerSearchModal}>
@@ -1492,20 +1604,38 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
         </DialogContent>
       </Dialog>
 
-      {/* Modal de Acciones de Factura */}
+      {/* Modal de Acciones Post-Guardado (Estilo Shopify POS) */}
       <Dialog open={showActionsModal} onOpenChange={setShowActionsModal}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-lg">
           <DialogHeader>
             <DialogTitle className="text-center">
-              <MoreVertical className="w-12 h-12 text-blue-600 mx-auto mb-4" />
-              Acciones de Factura
+              <div className="w-16 h-16 bg-gradient-to-r from-blue-100 to-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <CheckCircle className="w-8 h-8 text-green-600" />
+              </div>
+              {isDraft ? 'Pedido Guardado Exitosamente' : 'Factura Procesada Exitosamente'}
             </DialogTitle>
+            <div className="text-center">
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                {isDraft 
+                  ? 'El pedido ha sido guardado como borrador. Puede procesar el pago más tarde.' 
+                  : 'La factura ha sido pagada y procesada correctamente.'}
+              </p>
+              <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg dark:bg-blue-900/20 dark:border-blue-800">
+                <p className="text-lg font-semibold text-blue-800 dark:text-blue-200">
+                  Total: {formatCurrency(currentInvoice.total)}
+                </p>
+                <p className="text-sm text-blue-600 dark:text-blue-300">
+                  Cliente: {currentInvoice.customerName}
+                </p>
+              </div>
+            </div>
           </DialogHeader>
           
           <div className="space-y-3">
+            {/* Botón Imprimir */}
             <Button
               variant="outline"
-              className="w-full p-4 h-auto justify-start bg-green-50 hover:bg-green-100 border-green-200"
+              className="w-full p-4 h-auto justify-start bg-gray-50 hover:bg-gray-100 border-gray-200 shadow-sm hover:shadow-md transition-all duration-200"
               onClick={() => {
                 window.print();
                 setShowActionsModal(false);
@@ -1513,20 +1643,25 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
               data-testid="button-print-invoice"
             >
               <div className="flex items-center space-x-3">
-                <Printer className="w-6 h-6 text-green-600" />
+                <div className="p-2 bg-gray-100 rounded-lg">
+                  <Printer className="w-5 h-5 text-gray-700" />
+                </div>
                 <div className="text-left">
-                  <div className="font-medium text-green-700">Imprimir Factura</div>
-                  <div className="text-sm text-green-600">Generar versión impresa</div>
+                  <div className="font-medium text-gray-800">Imprimir Recibo</div>
+                  <div className="text-sm text-gray-600">Generar versión impresa para el cliente</div>
                 </div>
               </div>
             </Button>
 
+            {/* Botón WhatsApp */}
             <Button
               variant="outline"
-              className="w-full p-4 h-auto justify-start bg-green-50 hover:bg-green-100 border-green-200"
+              className="w-full p-4 h-auto justify-start bg-green-50 hover:bg-green-100 border-green-200 shadow-sm hover:shadow-md transition-all duration-200"
               onClick={() => {
                 const phoneNumber = currentInvoice.customerPhone.replace(/[^\d]/g, '');
-                const message = `¡Hola ${currentInvoice.customerName}! Tu factura está lista. Total: ${formatCurrency(currentInvoice.total)}. Fecha de entrega: ${formatDate(currentInvoice.deliveryDate)}`;
+                const message = isDraft 
+                  ? `¡Hola ${currentInvoice.customerName}! Hemos recibido tu pedido de lavandería. Total: ${formatCurrency(currentInvoice.total)}. Te notificaremos cuando esté listo para recoger.`
+                  : `¡Hola ${currentInvoice.customerName}! Tu pedido de lavandería está listo para recoger. Total: ${formatCurrency(currentInvoice.total)}. ${currentInvoice.deliveryDate ? `Fecha de entrega: ${formatDate(currentInvoice.deliveryDate)}` : 'Puedes pasar a recogerlo cuando gustes.'}`;
                 const whatsappUrl = `https://wa.me/1${phoneNumber}?text=${encodeURIComponent(message)}`;
                 window.open(whatsappUrl, '_blank');
                 setShowActionsModal(false);
@@ -1535,20 +1670,27 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
               data-testid="button-whatsapp-invoice"
             >
               <div className="flex items-center space-x-3">
-                <MessageCircle className="w-6 h-6 text-green-600" />
+                <div className="p-2 bg-green-100 rounded-lg">
+                  <MessageCircle className="w-5 h-5 text-green-700" />
+                </div>
                 <div className="text-left">
-                  <div className="font-medium text-green-700">Enviar por WhatsApp</div>
-                  <div className="text-sm text-green-600">Notificar al cliente directamente</div>
+                  <div className="font-medium text-green-800">Enviar por WhatsApp</div>
+                  <div className="text-sm text-green-600">
+                    {currentInvoice.customerPhone ? 'Notificar al cliente directamente' : 'Teléfono no disponible'}
+                  </div>
                 </div>
               </div>
             </Button>
 
+            {/* Botón Email */}
             <Button
               variant="outline"
-              className="w-full p-4 h-auto justify-start bg-blue-50 hover:bg-blue-100 border-blue-200"
+              className="w-full p-4 h-auto justify-start bg-blue-50 hover:bg-blue-100 border-blue-200 shadow-sm hover:shadow-md transition-all duration-200"
               onClick={() => {
-                const subject = `Factura de Billtracky - ${currentInvoice.customerName}`;
-                const body = `Estimado/a ${currentInvoice.customerName},%0D%0A%0D%0ASu factura está lista para recoger.%0D%0A%0D%0ATotal: ${formatCurrency(currentInvoice.total)}%0D%0AFecha de entrega: ${formatDate(currentInvoice.deliveryDate)}%0D%0A%0D%0AGracias por confiar en Billtracky.`;
+                const subject = `${isDraft ? 'Pedido Recibido' : 'Factura de Lavandería'} - Billtracky`;
+                const body = isDraft
+                  ? `Estimado/a ${currentInvoice.customerName},%0D%0A%0D%0AHemos recibido su pedido de lavandería.%0D%0A%0D%0ATotal: ${formatCurrency(currentInvoice.total)}%0D%0A%0D%0ALe notificaremos cuando esté listo para recoger.%0D%0A%0D%0AGracias por confiar en Billtracky.`
+                  : `Estimado/a ${currentInvoice.customerName},%0D%0A%0D%0ASu pedido está listo para recoger.%0D%0A%0D%0ATotal: ${formatCurrency(currentInvoice.total)}%0D%0A${currentInvoice.deliveryDate ? `Fecha de entrega: ${formatDate(currentInvoice.deliveryDate)}%0D%0A` : ''}%0D%0AGracias por confiar en Billtracky.`;
                 const mailtoUrl = `mailto:${currentInvoice.customerEmail}?subject=${subject}&body=${body}`;
                 window.location.href = mailtoUrl;
                 setShowActionsModal(false);
@@ -1557,9 +1699,11 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
               data-testid="button-email-invoice"
             >
               <div className="flex items-center space-x-3">
-                <Mail className="w-6 h-6 text-blue-600" />
+                <div className="p-2 bg-blue-100 rounded-lg">
+                  <Mail className="w-5 h-5 text-blue-700" />
+                </div>
                 <div className="text-left">
-                  <div className="font-medium text-blue-700">Enviar por Correo</div>
+                  <div className="font-medium text-blue-800">Enviar por Correo</div>
                   <div className="text-sm text-blue-600">
                     {currentInvoice.customerEmail ? 'Notificar por email' : 'Email no disponible'}
                   </div>
@@ -1568,13 +1712,28 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
             </Button>
           </div>
 
-          <div className="flex justify-center pt-4 border-t">
+          <div className="flex space-x-3 pt-4 border-t">
+            {/* Botón Nuevo Pedido */}
+            <Button
+              className="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 transition-all duration-300"
+              onClick={() => {
+                resetForm();
+                setShowActionsModal(false);
+              }}
+              data-testid="button-new-order"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Nuevo Pedido
+            </Button>
+            
+            {/* Botón Cerrar */}
             <Button
               variant="outline"
+              className="flex-1"
               onClick={() => setShowActionsModal(false)}
               data-testid="button-close-actions"
             >
-              Cerrar
+              Finalizar
             </Button>
           </div>
         </DialogContent>
