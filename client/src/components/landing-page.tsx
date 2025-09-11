@@ -1,6 +1,8 @@
 import { useState } from "react";
-import { Check, Star, Users, Building, CreditCard, Clock, Shield, HeadphonesIcon, Menu, X, ChevronRight } from "lucide-react";
+import { Check, Star, Users, Building, CreditCard, Clock, Shield, HeadphonesIcon, Menu, X, ChevronRight, Zap, TrendingUp, Smartphone, MessageCircle, FileText, Award, Globe, BarChart3, Sparkles, ArrowRight, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import logoPath from "@assets/logo lavanderia_1757617450334.jpg";
 
 interface LandingPageProps {
   onGetStarted: () => void;
@@ -9,6 +11,13 @@ interface LandingPageProps {
 
 export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const stats = [
+    { label: "Lavanderías activas", value: "500+", icon: Building },
+    { label: "Facturas procesadas", value: "50,000+", icon: FileText },
+    { label: "Ahorro de tiempo", value: "75%", icon: Clock },
+    { label: "Satisfacción del cliente", value: "98%", icon: Award }
+  ];
 
   const plans = [
     {
@@ -65,34 +74,58 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
 
   const features = [
     {
-      icon: <CreditCard className="w-6 h-6" />,
+      icon: <CreditCard className="w-8 h-8" />,
       title: "Facturación Inteligente",
-      description: "Crea facturas profesionales en segundos con cálculos automáticos de ITBIS y totales."
+      description: "Crea facturas profesionales en segundos con cálculos automáticos de ITBIS y totales. Sistema completo de gestión de pagos.",
+      category: "Gestión"
     },
     {
-      icon: <Users className="w-6 h-6" />,
+      icon: <Users className="w-8 h-8" />,
       title: "Gestión de Clientes",
-      description: "Mantén un registro completo de tus clientes con historial de órdenes y preferencias."
+      description: "Mantén un registro completo de tus clientes con historial de órdenes, preferencias y comunicación automatizada.",
+      category: "Clientes"
+    },
+    {
+      icon: <BarChart3 className="w-8 h-8" />,
+      title: "Analytics Avanzados",
+      description: "Reportes detallados, métricas en tiempo real y análisis de rendimiento para tomar mejores decisiones de negocio.",
+      category: "Analytics"
+    },
+    {
+      icon: <MessageCircle className="w-8 h-8" />,
+      title: "WhatsApp Automático",
+      description: "Envía notificaciones automáticas por WhatsApp: pedidos listos, recordatorios y confirmaciones de pago.",
+      category: "Comunicación"
+    },
+    {
+      icon: <Smartphone className="w-8 h-8" />,
+      title: "Sistema Móvil",
+      description: "Accede desde cualquier dispositivo. Interface optimizada para tablet y móvil con funcionamiento offline.",
+      category: "Tecnología"
+    },
+    {
+      icon: <Shield className="w-8 h-8" />,
+      title: "Datos Seguros",
+      description: "Tus datos están protegidos con la más alta seguridad, respaldos automáticos y cumplimiento de normativas.",
+      category: "Seguridad"
+    }
+  ];
+
+  const benefits = [
+    {
+      icon: <TrendingUp className="w-6 h-6" />,
+      title: "Aumenta tus ingresos hasta 40%",
+      description: "Optimiza operaciones, reduce tiempos de espera y mejora la experiencia del cliente"
     },
     {
       icon: <Clock className="w-6 h-6" />,
-      title: "Seguimiento en Tiempo Real",
-      description: "Monitorea el estado de todas las órdenes desde recepción hasta entrega."
+      title: "Ahorra 6 horas diarias",
+      description: "Automatiza procesos manuales y elimina el papeleo innecesario"
     },
     {
-      icon: <Building className="w-6 h-6" />,
-      title: "Multi-sucursales",
-      description: "Gestiona múltiples ubicaciones desde una sola plataforma centralizada."
-    },
-    {
-      icon: <Shield className="w-6 h-6" />,
-      title: "Datos Seguros",
-      description: "Tus datos están protegidos con la más alta seguridad y respaldos automáticos."
-    },
-    {
-      icon: <HeadphonesIcon className="w-6 h-6" />,
-      title: "Soporte 24/7",
-      description: "Equipo de soporte dedicado para ayudarte en cualquier momento que lo necesites."
+      icon: <Sparkles className="w-6 h-6" />,
+      title: "100% Profesional",
+      description: "Impresiona a tus clientes con un sistema moderno y eficiente"
     }
   ];
 
@@ -124,9 +157,7 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center shadow-md">
-                <CreditCard className="w-6 h-6 text-primary-foreground" />
-              </div>
+              <img src={logoPath} alt="Lavandería Nueva Isabela" className="w-10 h-10 rounded-lg" />
               <div>
                 <h1 className="text-xl font-bold text-foreground">Billtracky</h1>
                 <p className="text-xs text-muted-foreground">Sistema de Gestión para Lavanderías</p>
@@ -196,66 +227,150 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
       </header>
 
       {/* Hero Section */}
-      <section className="py-20 lg:py-32">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-4xl mx-auto">
-            <h1 className="text-4xl md:text-6xl font-bold text-foreground mb-6">
-              Gestiona tu lavandería
-              <span className="text-secondary block">de manera inteligente</span>
+      <section className="relative py-20 lg:py-32 overflow-hidden">
+        {/* Background gradient */}
+        <div className="absolute inset-0 hero-gradient opacity-5"></div>
+        
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
+          <div className="text-center max-w-5xl mx-auto">
+            {/* Badge */}
+            <Badge className="mb-6 bg-secondary/10 text-secondary border-secondary/20 hover:bg-secondary/20">
+              🚀 Nuevo: Mensajes WhatsApp automatizados
+            </Badge>
+            
+            <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold text-foreground mb-8 leading-tight">
+              Lleva tu lavandería al
+              <span className="text-transparent bg-gradient-to-r from-primary to-secondary bg-clip-text block">
+                siguiente nivel
+              </span>
             </h1>
-            <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-              Automatiza facturación, controla inventario y mejora la experiencia de tus clientes
-              con la plataforma más completa para lavanderías en República Dominicana.
+            
+            <p className="text-xl md:text-2xl text-muted-foreground mb-12 max-w-3xl mx-auto leading-relaxed">
+              La plataforma completa que necesitas para automatizar tu negocio, 
+              aumentar ingresos y brindar una experiencia excepcional a tus clientes.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+
+            {/* CTA Buttons */}
+            <div className="flex flex-col sm:flex-row gap-6 justify-center mb-12">
               <Button 
                 onClick={onGetStarted}
                 size="lg"
-                className="bg-secondary text-secondary-foreground hover:bg-secondary/90 text-lg px-8 py-4"
+                className="hero-gradient text-white hover:opacity-90 text-xl px-10 py-6 rounded-2xl shadow-2xl transform hover:scale-105 transition-all duration-200"
                 data-testid="hero-signup-button"
               >
-                Empezar gratis por 30 días
-                <ChevronRight className="ml-2 w-5 h-5" />
+                <Sparkles className="mr-3 w-6 h-6" />
+                Probar Gratis 30 Días
+                <ArrowRight className="ml-3 w-6 h-6" />
               </Button>
               <Button 
                 variant="outline" 
                 size="lg"
                 onClick={onLogin}
-                className="text-lg px-8 py-4"
+                className="text-xl px-10 py-6 rounded-2xl border-2 border-primary/20 hover:border-primary/40 hover:bg-primary/5 transition-all duration-200"
                 data-testid="hero-login-button"
               >
-                Ver Demo
+                <Play className="mr-3 w-6 h-6" />
+                Ver Demo en Vivo
               </Button>
             </div>
-            <p className="text-sm text-muted-foreground mt-4">
-              ✅ Sin tarjeta de crédito requerida • ✅ Configuración en 5 minutos • ✅ Soporte en español
+
+            {/* Trust indicators */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-6 text-sm text-muted-foreground">
+              <div className="flex items-center gap-2">
+                <Check className="w-5 h-5 text-green-500" />
+                <span>Sin tarjeta de crédito</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Check className="w-5 h-5 text-green-500" />
+                <span>Configuración en 5 minutos</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Check className="w-5 h-5 text-green-500" />
+                <span>Soporte en español 24/7</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Stats Section */}
+          <div className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
+            {stats.map((stat, index) => {
+              const IconComponent = stat.icon;
+              return (
+                <div key={index} className="text-center">
+                  <div className="w-16 h-16 mx-auto mb-4 bg-secondary/10 rounded-2xl flex items-center justify-center floating-card">
+                    <IconComponent className="w-8 h-8 text-secondary" />
+                  </div>
+                  <div className="text-3xl font-bold text-foreground mb-2">{stat.value}</div>
+                  <div className="text-sm text-muted-foreground">{stat.label}</div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* Benefits Section */}
+      <section className="py-20 laundry-bg">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <Badge className="mb-4 bg-primary/10 text-primary border-primary/20">
+              🎯 Resultados Comprobados
+            </Badge>
+            <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
+              Transforma tu negocio en
+              <span className="text-primary block">30 días o menos</span>
+            </h2>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              Únete a más de 500 lavanderías que ya están viendo resultados extraordinarios
             </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto mb-20">
+            {benefits.map((benefit, index) => (
+              <div key={index} className="text-center">
+                <div className="w-16 h-16 mx-auto mb-6 bg-gradient-to-br from-primary to-secondary rounded-2xl flex items-center justify-center text-white">
+                  {benefit.icon}
+                </div>
+                <h3 className="text-2xl font-bold text-foreground mb-4">
+                  {benefit.title}
+                </h3>
+                <p className="text-muted-foreground text-lg">
+                  {benefit.description}
+                </p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
       {/* Features Section */}
-      <section id="features" className="py-20 bg-muted/50">
+      <section id="features" className="py-20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Todo lo que necesitas en una sola plataforma
+            <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
+              La plataforma más completa
+              <span className="text-secondary block">para lavanderías</span>
             </h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Diseñado específicamente para lavanderías en República Dominicana
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              Cada función está diseñada específicamente para resolver los desafíos diarios de tu lavandería
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {features.map((feature, index) => (
-              <div key={index} className="bg-background p-6 rounded-xl shadow-sm border border-border hover:shadow-md transition-shadow">
-                <div className="w-12 h-12 bg-secondary/10 rounded-lg flex items-center justify-center mb-4 text-secondary">
-                  {feature.icon}
+              <div key={index} className="group feature-card p-8 rounded-3xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2">
+                <div className="w-16 h-16 bg-gradient-to-br from-primary to-secondary rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <span className="text-white">{feature.icon}</span>
                 </div>
-                <h3 className="text-xl font-semibold text-foreground mb-2">
+                
+                <Badge className="mb-4 bg-secondary/10 text-secondary border-secondary/20 text-xs">
+                  {feature.category}
+                </Badge>
+                
+                <h3 className="text-2xl font-bold text-foreground mb-4 group-hover:text-primary transition-colors">
                   {feature.title}
                 </h3>
-                <p className="text-muted-foreground">
+                <p className="text-muted-foreground leading-relaxed">
                   {feature.description}
                 </p>
               </div>
@@ -265,188 +380,306 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
       </section>
 
       {/* Pricing Section */}
-      <section id="pricing" className="py-20">
+      <section id="pricing" className="py-20 laundry-bg">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Planes que se adaptan a tu negocio
+            <Badge className="mb-4 bg-secondary/10 text-secondary border-secondary/20">
+              💰 Precios Transparentes
+            </Badge>
+            <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
+              Invierte en el crecimiento
+              <span className="text-secondary block">de tu lavandería</span>
             </h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Comienza gratis y actualiza cuando tu negocio crezca
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              Planes diseñados para lavanderías de cualquier tamaño. Comienza gratis y escala conforme creces.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
             {plans.map((plan, index) => (
               <div 
                 key={index} 
-                className={`bg-background p-8 rounded-xl shadow-sm border-2 ${plan.color} relative hover:shadow-lg transition-shadow`}
+                className={`relative feature-card p-8 rounded-3xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 ${
+                  plan.popular ? 'ring-2 ring-secondary ring-opacity-50 scale-105' : ''
+                }`}
               >
                 {plan.popular && (
                   <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                    <span className="bg-secondary text-secondary-foreground px-4 py-1 rounded-full text-sm font-medium">
-                      Más Popular
-                    </span>
+                    <Badge className="bg-gradient-to-r from-primary to-secondary text-white px-4 py-2 text-sm font-medium rounded-full shadow-lg">
+                      ⭐ Más Popular
+                    </Badge>
                   </div>
                 )}
                 
-                <div className="text-center mb-6">
-                  <h3 className="text-2xl font-bold text-foreground mb-2">
+                <div className="text-center mb-8">
+                  <h3 className="text-2xl font-bold text-foreground mb-4">
                     {plan.name}
                   </h3>
-                  <div className="mb-2">
-                    <span className="text-4xl font-bold text-foreground">
+                  <div className="mb-4">
+                    <span className="text-5xl font-bold text-transparent bg-gradient-to-r from-primary to-secondary bg-clip-text">
                       ${plan.price}
                     </span>
-                    <span className="text-muted-foreground">/mes</span>
+                    <span className="text-muted-foreground text-lg">/mes</span>
                   </div>
-                  <p className="text-muted-foreground">
+                  <p className="text-muted-foreground text-lg">
                     {plan.description}
                   </p>
                 </div>
 
-                <ul className="space-y-3 mb-8">
+                <ul className="space-y-4 mb-8">
                   {plan.features.map((feature, featureIndex) => (
-                    <li key={featureIndex} className="flex items-center">
-                      <Check className="w-5 h-5 text-green-500 mr-3 flex-shrink-0" />
-                      <span className="text-sm text-foreground">{feature}</span>
+                    <li key={featureIndex} className="flex items-start">
+                      <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 mr-3 mt-0.5">
+                        <Check className="w-4 h-4 text-green-600" />
+                      </div>
+                      <span className="text-foreground">{feature}</span>
                     </li>
                   ))}
                 </ul>
 
                 <Button 
                   onClick={onGetStarted}
-                  className={`w-full ${plan.popular 
-                    ? 'bg-secondary text-secondary-foreground hover:bg-secondary/90' 
-                    : 'bg-primary text-primary-foreground hover:bg-primary/90'
+                  className={`w-full py-4 text-lg rounded-xl font-semibold transition-all duration-200 ${
+                    plan.popular 
+                      ? 'hero-gradient text-white hover:opacity-90 shadow-lg hover:shadow-xl' 
+                      : 'bg-background border-2 border-primary text-primary hover:bg-primary hover:text-white'
                   }`}
                   data-testid={`plan-${plan.name.toLowerCase()}-button`}
                 >
                   {plan.cta}
+                  <ArrowRight className="ml-2 w-5 h-5" />
                 </Button>
               </div>
             ))}
           </div>
 
-          <div className="text-center mt-12">
-            <p className="text-muted-foreground">
-              ¿Necesitas más? <a href="#" className="text-secondary hover:underline">Contáctanos para planes empresariales</a>
-            </p>
+          <div className="text-center mt-16">
+            <div className="bg-background/80 backdrop-blur rounded-2xl p-8 max-w-2xl mx-auto">
+              <h3 className="text-2xl font-bold text-foreground mb-4">¿Empresa con múltiples sucursales?</h3>
+              <p className="text-muted-foreground mb-6">
+                Tenemos planes especiales para cadenas de lavanderías con descuentos por volumen y funciones empresariales.
+              </p>
+              <Button variant="outline" className="border-primary text-primary hover:bg-primary hover:text-white">
+                Solicitar Cotización Empresarial
+              </Button>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Testimonials Section */}
-      <section id="testimonials" className="py-20 bg-muted/50">
+      <section id="testimonials" className="py-20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Lo que dicen nuestros clientes
+            <Badge className="mb-4 bg-green-100 text-green-700 border-green-200">
+              🌟 Testimonios Reales
+            </Badge>
+            <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
+              Historias de éxito
+              <span className="text-secondary block">que nos motivan</span>
             </h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Más de 100 lavanderías confían en Billtracky
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              Más de 500 lavanderías han transformado su negocio con Billtracky. Aquí tienes algunas de sus historias.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
             {testimonials.map((testimonial, index) => (
-              <div key={index} className="bg-background p-6 rounded-xl shadow-sm border border-border">
-                <div className="flex items-center mb-4">
+              <div key={index} className="feature-card p-8 rounded-3xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2">
+                {/* Rating Stars */}
+                <div className="flex items-center mb-6">
                   {[...Array(testimonial.rating)].map((_, i) => (
-                    <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
+                    <Star key={i} className="w-6 h-6 text-yellow-400 fill-current" />
                   ))}
                 </div>
-                <p className="text-foreground mb-4 italic">
+                
+                {/* Quote */}
+                <blockquote className="text-lg text-foreground mb-6 italic leading-relaxed">
                   "{testimonial.text}"
-                </p>
-                <div>
-                  <p className="font-semibold text-foreground">
-                    {testimonial.name}
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    {testimonial.business}
-                  </p>
+                </blockquote>
+                
+                {/* Profile */}
+                <div className="flex items-center">
+                  <div className="w-12 h-12 bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center text-white font-bold text-lg mr-4">
+                    {testimonial.name.charAt(0)}
+                  </div>
+                  <div>
+                    <p className="font-bold text-foreground text-lg">
+                      {testimonial.name}
+                    </p>
+                    <p className="text-muted-foreground">
+                      Propietario, {testimonial.business}
+                    </p>
+                  </div>
                 </div>
               </div>
             ))}
+          </div>
+
+          {/* Social Proof */}
+          <div className="mt-20 text-center">
+            <div className="bg-background/80 backdrop-blur rounded-2xl p-8 max-w-4xl mx-auto">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-secondary mb-2">500+</div>
+                  <div className="text-muted-foreground">Lavanderías activas</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-secondary mb-2">98%</div>
+                  <div className="text-muted-foreground">Satisfacción</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-secondary mb-2">75%</div>
+                  <div className="text-muted-foreground">Ahorro de tiempo</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-secondary mb-2">24/7</div>
+                  <div className="text-muted-foreground">Soporte</div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="py-20">
+      <section className="py-20 laundry-bg">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-secondary/10 rounded-2xl p-12 text-center">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              ¿Listo para transformar tu lavandería?
-            </h2>
-            <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-              Únete a cientos de lavanderías que ya están aumentando sus ingresos con Billtracky
-            </p>
-            <Button 
-              onClick={onGetStarted}
-              size="lg"
-              className="bg-secondary text-secondary-foreground hover:bg-secondary/90 text-lg px-8 py-4"
-              data-testid="cta-signup-button"
-            >
-              Empezar prueba gratuita
-              <ChevronRight className="ml-2 w-5 h-5" />
-            </Button>
-            <p className="text-sm text-muted-foreground mt-4">
-              30 días gratis • Sin compromiso • Cancela cuando quieras
-            </p>
+          <div className="hero-gradient rounded-3xl p-12 md:p-16 text-center relative overflow-hidden">
+            {/* Background decorations */}
+            <div className="absolute top-0 left-0 w-40 h-40 bg-white/10 rounded-full -translate-x-20 -translate-y-20"></div>
+            <div className="absolute bottom-0 right-0 w-40 h-40 bg-white/10 rounded-full translate-x-20 translate-y-20"></div>
+            
+            <div className="relative z-10">
+              <Badge className="mb-6 bg-white/20 text-white border-white/30">
+                🚀 ¡Únete a la Revolución Digital!
+              </Badge>
+              
+              <h2 className="text-4xl md:text-6xl font-bold text-white mb-6">
+                ¿Listo para transformar
+                <span className="block">tu lavandería?</span>
+              </h2>
+              
+              <p className="text-xl md:text-2xl text-white/90 mb-12 max-w-3xl mx-auto leading-relaxed">
+                Únete a más de 500 lavanderías que ya están aumentando sus ingresos, 
+                ahorrando tiempo y brindando un mejor servicio con Billtracky.
+              </p>
+              
+              <div className="flex flex-col sm:flex-row gap-6 justify-center">
+                <Button 
+                  onClick={onGetStarted}
+                  size="lg"
+                  className="bg-white text-primary hover:bg-gray-100 text-xl px-10 py-6 rounded-2xl shadow-2xl transform hover:scale-105 transition-all duration-200"
+                  data-testid="cta-signup-button"
+                >
+                  <Sparkles className="mr-3 w-6 h-6" />
+                  Empezar Gratis Ahora
+                  <ArrowRight className="ml-3 w-6 h-6" />
+                </Button>
+                
+                <Button 
+                  variant="outline"
+                  size="lg"
+                  onClick={onLogin}
+                  className="border-white/30 text-white hover:bg-white/10 text-xl px-10 py-6 rounded-2xl backdrop-blur"
+                  data-testid="cta-demo-button"
+                >
+                  <Play className="mr-3 w-6 h-6" />
+                  Ver Demo
+                </Button>
+              </div>
+              
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-6 text-white/80 mt-8">
+                <div className="flex items-center gap-2">
+                  <Check className="w-5 h-5" />
+                  <span>30 días gratis</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Check className="w-5 h-5" />
+                  <span>Sin tarjeta de crédito</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Check className="w-5 h-5" />
+                  <span>Cancela cuando quieras</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="bg-background border-t border-border py-12">
+      <footer className="bg-primary text-white py-16">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+          {/* Main Footer Content */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+            {/* Brand Column */}
+            <div className="md:col-span-2">
+              <div className="flex items-center space-x-3 mb-6">
+                <img src={logoPath} alt="Lavandería Nueva Isabela" className="w-10 h-10 rounded-lg" />
+                <div>
+                  <h3 className="text-2xl font-bold text-white">Billtracky</h3>
+                  <p className="text-secondary/80">Sistema de Gestión para Lavanderías</p>
+                </div>
+              </div>
+              <p className="text-white/80 leading-relaxed mb-6 max-w-md">
+                La plataforma completa que necesitas para automatizar tu lavandería, 
+                aumentar ingresos y brindar una experiencia excepcional a tus clientes.
+              </p>
+              <div className="flex space-x-4">
+                <Badge className="bg-secondary/20 text-secondary border-secondary/30">
+                  🇩🇴 Hecho en República Dominicana
+                </Badge>
+              </div>
+            </div>
+            
+            {/* Product Links */}
             <div>
-              <h3 className="font-semibold text-foreground mb-4">Producto</h3>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><a href="#" className="hover:text-foreground">Características</a></li>
-                <li><a href="#" className="hover:text-foreground">Precios</a></li>
-                <li><a href="#" className="hover:text-foreground">Actualizaciones</a></li>
+              <h4 className="font-semibold text-white mb-6 text-lg">Producto</h4>
+              <ul className="space-y-3">
+                <li><a href="#features" className="text-white/70 hover:text-white transition-colors">Características</a></li>
+                <li><a href="#pricing" className="text-white/70 hover:text-white transition-colors">Precios</a></li>
+                <li><a href="#testimonials" className="text-white/70 hover:text-white transition-colors">Testimonios</a></li>
+                <li><a href="#" className="text-white/70 hover:text-white transition-colors">Actualizaciones</a></li>
+                <li><a href="#" className="text-white/70 hover:text-white transition-colors">Roadmap</a></li>
               </ul>
             </div>
+            
+            {/* Support Links */}
             <div>
-              <h3 className="font-semibold text-foreground mb-4">Empresa</h3>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><a href="#" className="hover:text-foreground">Acerca de</a></li>
-                <li><a href="#" className="hover:text-foreground">Blog</a></li>
-                <li><a href="#" className="hover:text-foreground">Carreras</a></li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-semibold text-foreground mb-4">Soporte</h3>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><a href="#" className="hover:text-foreground">Centro de ayuda</a></li>
-                <li><a href="#" className="hover:text-foreground">Contacto</a></li>
-                <li><a href="#" className="hover:text-foreground">Estado del servicio</a></li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-semibold text-foreground mb-4">Legal</h3>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><a href="#" className="hover:text-foreground">Privacidad</a></li>
-                <li><a href="#" className="hover:text-foreground">Términos</a></li>
-                <li><a href="#" className="hover:text-foreground">Cookies</a></li>
+              <h4 className="font-semibold text-white mb-6 text-lg">Soporte</h4>
+              <ul className="space-y-3">
+                <li><a href="#" className="text-white/70 hover:text-white transition-colors">Centro de ayuda</a></li>
+                <li><a href="#" className="text-white/70 hover:text-white transition-colors">Contacto</a></li>
+                <li><a href="#" className="text-white/70 hover:text-white transition-colors">WhatsApp: (809) 555-0123</a></li>
+                <li><a href="#" className="text-white/70 hover:text-white transition-colors">Estado del servicio</a></li>
+                <li><a href="#" className="text-white/70 hover:text-white transition-colors">Documentación</a></li>
               </ul>
             </div>
           </div>
-          
-          <div className="border-t border-border mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
-            <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                <CreditCard className="w-4 h-4 text-primary-foreground" />
+
+          {/* Bottom Footer */}
+          <div className="border-t border-white/20 pt-8">
+            <div className="flex flex-col md:flex-row justify-between items-center">
+              <div className="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-6">
+                <p className="text-white/70 text-sm">
+                  © 2025 Billtracky. Todos los derechos reservados.
+                </p>
+                <div className="flex space-x-4 text-sm">
+                  <a href="#" className="text-white/70 hover:text-white transition-colors">Privacidad</a>
+                  <span className="text-white/40">•</span>
+                  <a href="#" className="text-white/70 hover:text-white transition-colors">Términos</a>
+                  <span className="text-white/40">•</span>
+                  <a href="#" className="text-white/70 hover:text-white transition-colors">Cookies</a>
+                </div>
               </div>
-              <span className="font-semibold text-foreground">Billtracky</span>
+              
+              <div className="mt-4 md:mt-0">
+                <p className="text-white/70 text-sm">
+                  Diseñado con ❤️ para lavanderías dominicanas
+                </p>
+              </div>
             </div>
-            <p className="text-sm text-muted-foreground mt-4 md:mt-0">
-              © 2025 Billtracky. Todos los derechos reservados.
-            </p>
           </div>
         </div>
       </footer>
