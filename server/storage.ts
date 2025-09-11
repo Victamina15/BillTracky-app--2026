@@ -209,6 +209,19 @@ export class MemStorage implements IStorage {
         showOnInvoice: true,
         color: '#8B5CF6',
         createdAt: new Date()
+      },
+      {
+        id: randomUUID(),
+        name: 'Pago Pendiente',
+        code: 'pending',
+        icon: '⏳',
+        active: true,
+        requiresReference: false,
+        commission: '0',
+        description: 'Pago a realizar posteriormente',
+        showOnInvoice: true,
+        color: '#F97316',
+        createdAt: new Date()
       }
     ];
     paymentMethods.forEach(method => this.paymentMethods.set(method.id, method));
