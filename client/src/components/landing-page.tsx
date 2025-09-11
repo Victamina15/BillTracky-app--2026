@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Check, Star, Users, Building, CreditCard, Clock, Shield, HeadphonesIcon, Menu, X, ChevronRight, Zap, TrendingUp, Smartphone, MessageCircle, FileText, Award, Globe, BarChart3, Sparkles, ArrowRight, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import logoPath from "@assets/logo lavanderia_1757617450334.jpg";
+import logoPath from "@assets/logo demo 2_1757619097947.png";
 
 interface LandingPageProps {
   onGetStarted: () => void;
@@ -157,7 +157,7 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center space-x-3">
-              <img src={logoPath} alt="Lavandería Nueva Isabela" className="w-10 h-10 rounded-lg" />
+              <img src={logoPath} alt="Billtracky Logo" className="w-10 h-10" />
               <div>
                 <h1 className="text-xl font-bold text-foreground">Billtracky</h1>
                 <p className="text-xs text-muted-foreground">Sistema de Gestión para Lavanderías</p>
@@ -616,7 +616,7 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
             {/* Brand Column */}
             <div className="md:col-span-2">
               <div className="flex items-center space-x-3 mb-6">
-                <img src={logoPath} alt="Lavandería Nueva Isabela" className="w-10 h-10 rounded-lg" />
+                <img src={logoPath} alt="Billtracky Logo" className="w-10 h-10" />
                 <div>
                   <h3 className="text-2xl font-bold text-white">Billtracky</h3>
                   <p className="text-secondary/80">Sistema de Gestión para Lavanderías</p>
