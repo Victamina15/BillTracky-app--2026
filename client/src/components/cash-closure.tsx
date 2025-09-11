@@ -334,12 +334,24 @@ export default function CashClosure({ onBack }: CashClosureProps) {
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     const url = URL.createObjectURL(blob);
+    
     link.setAttribute('href', url);
     link.setAttribute('download', `cierre-caja-${selectedDate}.csv`);
     link.style.visibility = 'hidden';
+    
+    // Agregar al DOM de forma segura
     document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    
+    try {
+      link.click();
+    } finally {
+      // Cleanup seguro: verificar si el elemento aún está en el DOM antes de eliminarlo
+      if (link.parentNode === document.body) {
+        document.body.removeChild(link);
+      }
+      // Liberar la URL del blob para evitar memory leaks
+      URL.revokeObjectURL(url);
+    }
     
     setModalMessage('Reporte exportado correctamente');
     setShowConfirmModal(true);
