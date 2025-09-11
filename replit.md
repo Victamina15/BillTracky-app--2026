@@ -2,6 +2,12 @@
 
 This is a laundry management system called "Billtracky" built as a full-stack web application. The system handles invoice creation, customer management, service configuration, and order tracking for laundry businesses. It provides employee authentication via access codes and supports different service types (wash, iron, both) with dynamic pricing.
 
+**Recent Updates (January 2025):**
+- ✨ **Landing Page Rediseño Completo**: Transformación total de la landing page con diseño moderno inspirado en las mejores aplicaciones SaaS
+- 🎨 **Nueva Paleta de Colores**: Actualizada para coincidir con el logo de "Lavandería Nueva Isabela" (azul navy y turquesa)
+- 📱 **UX/UI Moderna**: Hero section impactante, secciones de beneficios, características mejoradas, precios rediseñados
+- 🚀 **Enfoque de Conversión**: Copywriting persuasivo y estructura optimizada para generar más clientes potenciales
+
 # User Preferences
 
 Preferred communication style: Simple, everyday language.
