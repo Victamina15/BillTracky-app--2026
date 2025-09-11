@@ -7,6 +7,7 @@ This is a laundry management system called "Billtracky" built as a full-stack we
 - 🎨 **Nueva Paleta de Colores**: Actualizada para coincidir con el logo de "Lavandería Nueva Isabela" (azul navy y turquesa)
 - 📱 **UX/UI Moderna**: Hero section impactante, secciones de beneficios, características mejoradas, precios rediseñados
 - 🚀 **Enfoque de Conversión**: Copywriting persuasivo y estructura optimizada para generar más clientes potenciales
+- 🏷️ **Nuevo Logo BT**: Integrado logo oficial de Billtracky con diseño "BT" y percha, visible en header y footer
 
 # User Preferences
 
