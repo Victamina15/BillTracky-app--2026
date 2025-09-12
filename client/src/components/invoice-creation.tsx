@@ -678,8 +678,8 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
     return (
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
-          <p className="text-gray-600">Cargando...</p>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 dark:border-blue-400 mx-auto mb-2"></div>
+          <p className="text-gray-600 dark:text-gray-400">Cargando...</p>
         </div>
       </div>
     );
@@ -688,10 +688,10 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="bg-card dark:bg-gray-800/50 rounded-2xl shadow-lg tech-glow border border-border dark:border-cyan-500/20 p-6 backdrop-blur-sm">
+      <div className="bg-card dark:bg-gray-800/50 rounded-2xl dark:shadow-lg dark:tech-glow border border-border dark:border-cyan-500/20 p-6 backdrop-blur-sm">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            <div className="w-14 h-14 bg-gradient-to-br from-cyan-400 to-purple-500 rounded-2xl flex items-center justify-center shadow-lg tech-glow">
+            <div className="w-14 h-14 bg-gradient-to-br from-cyan-400 to-purple-500 rounded-2xl flex items-center justify-center dark:shadow-lg dark:tech-glow">
               <FileText className="w-8 h-8 text-white" />
             </div>
             <div>
@@ -710,11 +710,11 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
         {/* Panel Principal */}
         <div className="lg:col-span-2 space-y-6">
           {/* Información del Cliente */}
-          <Card className="bg-card dark:bg-gray-800/50 border border-border dark:border-cyan-500/20 shadow-lg tech-glow backdrop-blur-sm">
+          <Card className="bg-card dark:bg-gray-800/50 border border-border dark:border-cyan-500/20 dark:shadow-lg dark:tech-glow backdrop-blur-sm">
             <CardHeader>
               <CardTitle className="flex items-center justify-between">
                 <div className="flex items-center">
-                  <User className="w-6 h-6 mr-3 text-blue-600" />
+                  <User className="w-6 h-6 mr-3 text-blue-600 dark:text-blue-400" />
                   Información del Cliente
                 </div>
                 <Button
@@ -790,7 +790,7 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Calculator className="w-6 h-6 mr-3 text-green-600" />
+                <Calculator className="w-6 h-6 mr-3 text-green-600 dark:text-green-400" />
                 Artículos del Pedido
               </CardTitle>
             </CardHeader>
@@ -798,7 +798,7 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
               {/* Interfaz directa para agregar artículos */}
               <div className="space-y-4">
                 {/* Headers de columnas */}
-                <div className="grid grid-cols-6 gap-4 text-sm font-medium text-gray-600 dark:text-gray-400 pb-2 border-b">
+                <div className="grid grid-cols-6 gap-4 text-sm font-medium text-gray-600 dark:text-gray-400 pb-2 border-b dark:border-gray-700">
                   <div>Artículo</div>
                   <div>Cantidad</div>
                   <div className="col-span-2">Servicio</div>
@@ -868,7 +868,7 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
                   </div>
 
                   {/* Total calculado */}
-                  <div className="text-right font-bold text-green-600">
+                  <div className="text-right font-bold text-green-600 dark:text-green-400">
                     {selectedService && (
                       formatCurrency(
                         parseFloat(
@@ -920,7 +920,7 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
                       </div>
 
                       {/* Total */}
-                      <div className="text-right font-bold text-green-600">
+                      <div className="text-right font-bold text-green-600 dark:text-green-400">
                         {formatCurrency(item.total)}
                       </div>
 
@@ -950,7 +950,7 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <DollarSign className="w-6 h-6 mr-3 text-green-600" />
+                <DollarSign className="w-6 h-6 mr-3 text-green-600 dark:text-green-400" />
                 Resumen
               </CardTitle>
             </CardHeader>
@@ -983,7 +983,7 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
                 {/* Botón aplicar descuento */}
                 <Button
                   variant="outline"
-                  className="w-full bg-red-500 text-white border-red-600 hover:bg-red-600 hover:border-red-700 transition-all duration-300 transform hover:scale-105 hover:shadow-lg active:scale-95"
+                  className="w-full bg-red-500 text-white border-red-600 hover:bg-red-600 hover:border-red-700 transition-all duration-300 transform hover:scale-105 dark:hover:shadow-lg active:scale-95"
                   onClick={() => setShowDiscountModal(true)}
                   data-testid="button-apply-discount"
                 >
@@ -1016,7 +1016,7 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
                   {/* Botón Guardar Pedido - Estilo 3D */}
                   <Button
                     variant="outline"
-                    className="h-12 bg-gradient-to-r from-blue-600 to-blue-700 text-white border-none shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 transition-all duration-300 hover:from-blue-700 hover:to-blue-800 relative overflow-hidden"
+                    className="h-12 bg-gradient-to-r from-blue-600 to-blue-700 text-white border-none dark:shadow-lg dark:hover:shadow-xl transform hover:scale-105 active:scale-95 transition-all duration-300 hover:from-blue-700 hover:to-blue-800 relative overflow-hidden"
                     onClick={saveOrderDraft}
                     disabled={currentInvoice.items.length === 0 || createInvoiceMutation.isPending || !!savedInvoiceId}
                     data-testid="button-save-order"
@@ -1032,7 +1032,7 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
 
                   {/* Botón Procesar Pago */}
                   <Button
-                    className="h-12 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 transition-all duration-300"
+                    className="h-12 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 dark:shadow-lg dark:hover:shadow-xl transform hover:scale-105 active:scale-95 transition-all duration-300"
                     onClick={processPayment}
                     disabled={currentInvoice.items.length === 0 || !selectedPaymentMethod || createInvoiceMutation.isPending || !!savedInvoiceId}
                     data-testid="button-process-payment"
@@ -1050,7 +1050,7 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
                 {savedInvoiceId && (
                   <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg dark:bg-blue-900/20 dark:border-blue-800">
                     <div className="flex items-center space-x-2">
-                      <CheckCircle className="w-5 h-5 text-blue-600" />
+                      <CheckCircle className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                       <span className="text-sm font-medium text-blue-800 dark:text-blue-200">
                         {isDraft ? 'Pedido guardado como borrador' : 'Factura pagada exitosamente'}
                       </span>
@@ -1061,7 +1061,7 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
                 {/* Botón de acciones */}
                 <Button
                   variant="outline"
-                  className="w-full bg-black text-white border-gray-800 hover:bg-gray-900 hover:border-black transition-all duration-300 transform hover:scale-105 hover:shadow-xl active:scale-95 shadow-lg hover:shadow-2xl"
+                  className="w-full bg-black text-white border-gray-800 hover:bg-gray-900 hover:border-black transition-all duration-300 transform hover:scale-105 dark:hover:shadow-xl active:scale-95 dark:shadow-lg dark:hover:shadow-2xl"
                   onClick={() => setShowActionsModal(true)}
                   disabled={!savedInvoiceId}
                   data-testid="button-invoice-actions"
@@ -1118,7 +1118,7 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
                         <h4 className="font-semibold">{customer.name}</h4>
                         <Badge variant="secondary">{customer.ordersCount || 0} órdenes</Badge>
                       </div>
-                      <div className="space-y-1 text-sm text-gray-600">
+                      <div className="space-y-1 text-sm text-gray-600 dark:text-gray-400">
                         <div className="flex items-center">
                           <Phone className="w-3 h-3 mr-2" />
                           {customer.phone}
@@ -1144,7 +1144,7 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
         <DialogContent className="max-w-md" data-testid="modal-discount">
           <DialogHeader>
             <DialogTitle className="text-center">
-              <Percent className="w-12 h-12 text-green-600 mx-auto mb-4" />
+              <Percent className="w-12 h-12 text-green-600 dark:text-green-400 mx-auto mb-4" />
               Aplicar Descuento
             </DialogTitle>
           </DialogHeader>
@@ -1223,7 +1223,7 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
         <DialogContent className="max-w-md" data-testid="modal-delivery-date">
           <DialogHeader>
             <DialogTitle className="text-center">
-              <Calendar className="w-12 h-12 text-blue-600 mx-auto mb-4" />
+              <Calendar className="w-12 h-12 text-blue-600 dark:text-blue-400 mx-auto mb-4" />
               Fecha de Entrega
             </DialogTitle>
           </DialogHeader>
@@ -1273,7 +1273,7 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
         <DialogContent className="max-w-2xl max-h-[80vh] overflow-hidden flex flex-col" data-testid="modal-add-item">
           <DialogHeader>
             <DialogTitle className="text-center">
-              <Plus className="w-12 h-12 text-blue-600 mx-auto mb-4" />
+              <Plus className="w-12 h-12 text-blue-600 dark:text-blue-400 mx-auto mb-4" />
               Agregar Artículo
             </DialogTitle>
           </DialogHeader>
@@ -1636,7 +1636,7 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
             {/* Botón Imprimir */}
             <Button
               variant="outline"
-              className="w-full p-4 h-auto justify-start bg-gray-50 hover:bg-gray-100 border-gray-200 shadow-sm hover:shadow-md transition-all duration-200"
+              className="w-full p-4 h-auto justify-start bg-gray-50 hover:bg-gray-100 border-gray-200 dark:shadow-sm dark:hover:shadow-md transition-all duration-200"
               onClick={() => {
                 window.print();
                 setShowActionsModal(false);
@@ -1657,7 +1657,7 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
             {/* Botón WhatsApp */}
             <Button
               variant="outline"
-              className="w-full p-4 h-auto justify-start bg-green-50 hover:bg-green-100 border-green-200 shadow-sm hover:shadow-md transition-all duration-200"
+              className="w-full p-4 h-auto justify-start bg-green-50 hover:bg-green-100 border-green-200 dark:shadow-sm dark:hover:shadow-md transition-all duration-200"
               onClick={() => {
                 const phoneNumber = currentInvoice.customerPhone.replace(/[^\d]/g, '');
                 const message = isDraft 
@@ -1686,7 +1686,7 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
             {/* Botón Email */}
             <Button
               variant="outline"
-              className="w-full p-4 h-auto justify-start bg-blue-50 hover:bg-blue-100 border-blue-200 shadow-sm hover:shadow-md transition-all duration-200"
+              className="w-full p-4 h-auto justify-start bg-blue-50 hover:bg-blue-100 border-blue-200 dark:shadow-sm dark:hover:shadow-md transition-all duration-200"
               onClick={() => {
                 const subject = `${isDraft ? 'Pedido Recibido' : 'Factura de Lavandería'} - Billtracky`;
                 const body = isDraft
@@ -1716,7 +1716,7 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
           <div className="flex space-x-3 pt-4 border-t">
             {/* Botón Nuevo Pedido */}
             <Button
-              className="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 transition-all duration-300"
+              className="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 dark:shadow-lg dark:hover:shadow-xl transform hover:scale-105 active:scale-95 transition-all duration-300"
               onClick={() => {
                 resetForm();
                 setShowActionsModal(false);

@@ -557,7 +557,7 @@ export default function CashClosure({ onBack }: CashClosureProps) {
                   </div>
                 ))}
                 {Object.keys(dailySummary.employeeStats).length === 0 && (
-                  <p className="text-center text-gray-500 py-4">No hay ventas registradas para esta fecha</p>
+                  <p className="text-center text-gray-500 dark:text-gray-400 py-4">No hay ventas registradas para esta fecha</p>
                 )}
               </div>
             </CardContent>
