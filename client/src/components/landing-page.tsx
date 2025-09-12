@@ -402,10 +402,10 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
                 
                 {/* Floating tech badges */}
                 <div className="absolute top-8 -left-4 bg-gradient-to-r from-cyan-500 to-blue-600 text-white px-6 py-3 rounded-2xl text-sm font-bold shadow-2xl interactive-badge">
-                  💻 DASHBOARD HD
+                  💻 DASHBOARD
                 </div>
                 <div className="absolute top-1/2 -right-8 bg-gradient-to-r from-purple-500 to-pink-600 text-white px-6 py-3 rounded-2xl text-sm font-bold shadow-2xl interactive-badge" style={{animationDelay: '1s'}}>
-                  📱 GESTIÓN 3D
+                  📱 GESTIÓN DE ÓRDENES
                 </div>
                 <div className="absolute bottom-8 left-8 bg-gradient-to-r from-emerald-500 to-cyan-500 text-white px-6 py-3 rounded-2xl text-sm font-bold shadow-2xl interactive-badge" style={{animationDelay: '2s'}}>
                   📄 FACTURACIÓN
