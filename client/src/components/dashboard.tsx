@@ -227,6 +227,8 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
       <button
         onClick={() => setSidebarOpen(!sidebarOpen)}
         className="fixed top-4 left-4 z-50 lg:hidden tech-button-3d p-2 rounded-lg bg-card border border-border"
+        aria-expanded={sidebarOpen}
+        aria-label={sidebarOpen ? "Cerrar menú" : "Abrir menú"}
         data-testid="hamburger-menu"
       >
         {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -257,6 +259,8 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
               onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
               className="hidden lg:block tech-button-3d p-2 text-gray-300 hover:text-cyan-400 rounded-lg transition-all duration-300 ml-2"
               title={sidebarCollapsed ? "Expandir panel" : "Colapsar panel"}
+              aria-expanded={!sidebarCollapsed}
+              aria-label={sidebarCollapsed ? "Expandir panel lateral" : "Colapsar panel lateral"}
               data-testid="sidebar-collapse-toggle"
             >
               {sidebarCollapsed ? <Menu className="w-4 h-4" /> : <X className="w-4 h-4" />}
@@ -311,15 +315,16 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
             
             <button 
               onClick={() => setActiveTab('cash-closure')} 
-              className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-300 ${
+              className={`w-full flex items-center ${sidebarCollapsed ? 'justify-center px-2 py-3' : 'px-4 py-3'} text-sm font-medium rounded-lg transition-all duration-300 ${
                 activeTab === 'cash-closure' 
                   ? 'tech-button-3d tech-button-active text-cyan-400 shadow-lg' 
                   : 'tech-button-3d text-gray-300 hover:text-cyan-400'
               }`}
+              title={sidebarCollapsed ? "Cierre de Caja" : ""}
               data-testid="tab-cash-closure"
             >
-              <BarChart3 className="w-4 h-4 mr-3" />
-              Cierre de Caja
+              <BarChart3 className={`w-4 h-4 ${!sidebarCollapsed ? 'mr-3' : ''}`} />
+              {!sidebarCollapsed && 'Cierre de Caja'}
             </button>
             
             <button 
