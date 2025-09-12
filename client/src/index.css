@@ -75,21 +75,54 @@
 }
 
 .gradient-bg {
-  background: linear-gradient(135deg, hsl(219, 78%, 25%) 0%, hsl(199, 89%, 48%) 100%);
+  background: linear-gradient(135deg, #1e40af 0%, #7c3aed 50%, #2563eb 100%);
 }
 
 .hero-gradient {
-  background: linear-gradient(135deg, hsl(219, 78%, 25%) 0%, hsl(199, 89%, 48%) 100%);
+  background: linear-gradient(135deg, #1e40af 0%, #7c3aed 50%, #2563eb 100%);
 }
 
 .laundry-bg {
   background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
 }
 
+/* Modern gradients for landing page */
+.modern-hero-gradient {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.modern-blue-gradient {
+  background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+}
+
+.modern-purple-gradient {
+  background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%);
+}
+
 .feature-card {
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(20px);
   background: rgba(255, 255, 255, 0.95);
   border: 1px solid rgba(219, 234, 254, 0.5);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+}
+
+/* Modern glass effect */
+.glass-card {
+  backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+/* Modern card hover effects */
+.modern-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateY(0);
+}
+
+.modern-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 32px 64px -12px rgba(0, 0, 0, 0.15);
 }
 
 .stats-counter {
@@ -108,6 +141,67 @@
   50% {
     transform: translateY(-10px);
   }
+}
+
+/* Modern animations */
+.fade-in-up {
+  animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.scale-in {
+  animation: scaleIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Modern gradient text effect */
+.gradient-text {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Modern button effects */
+.modern-button {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.modern-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.modern-button:hover::before {
+  left: 100%;
 }
 
 .dashboard-preview {
@@ -163,4 +257,41 @@
 
 .tab-active {
   @apply text-secondary border-secondary bg-transparent;
+}
+
+/* Modern spacing and layout utilities */
+.container-modern {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+@media (max-width: 640px) {
+  .container-modern {
+    padding: 0 1rem;
+  }
+}
+
+/* Modern shadow utilities */
+.shadow-modern {
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+.shadow-modern-lg {
+  box-shadow: 0 35px 60px -12px rgba(0, 0, 0, 0.35);
+}
+
+/* Modern border radius */
+.rounded-modern {
+  border-radius: 1.5rem;
+}
+
+.rounded-modern-lg {
+  border-radius: 2rem;
+}
+
+/* Modern backdrop blur effects */
+.backdrop-modern {
+  backdrop-filter: blur(20px) saturate(180%);
+  background: rgba(255, 255, 255, 0.1);
 }
