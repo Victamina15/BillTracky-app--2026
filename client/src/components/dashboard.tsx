@@ -21,7 +21,6 @@ interface DashboardProps {
 export default function Dashboard({ user, onLogout, onNotification }: DashboardProps) {
   const [activeTab, setActiveTab] = useState("overview");
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   const { data: metrics, isLoading: metricsLoading } = useQuery<{
     todayOrders: number;
@@ -237,7 +236,7 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
       {/* Sidebar Navigation */}
       <nav className={`${
         sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-      } fixed lg:relative lg:translate-x-0 ${sidebarCollapsed ? 'w-16' : 'w-64'} h-full bg-gradient-to-b from-gray-900 via-purple-900/20 to-blue-900/20 backdrop-blur-xl border-r border-cyan-500/20 flex flex-col z-40 transition-all duration-300 tech-gradient-bg`}>
+      } fixed lg:relative lg:translate-x-0 w-64 h-full bg-gradient-to-b from-gray-900 via-purple-900/20 to-blue-900/20 backdrop-blur-xl border-r border-cyan-500/20 flex flex-col z-40 transition-transform duration-300 lg:transition-none tech-gradient-bg`}>
         {/* Header in Sidebar */}
         <div className="p-6 border-b border-cyan-500/20">
           <div className="flex items-center justify-between">
@@ -245,26 +244,12 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
               <div className="w-10 h-10 bg-gradient-to-br from-cyan-400 to-purple-500 rounded-lg flex items-center justify-center dark:shadow-lg dark:tech-glow">
                 <FileText className="w-6 h-6 text-white" />
               </div>
-              {!sidebarCollapsed && (
-                <div>
-                  <h1 className="text-xl font-bold text-white tech-text-glow">Billtracky</h1>
-                  <p className="text-sm text-cyan-200">CleanWash Lavandería</p>
-                </div>
-              )}
+              <div>
+                <h1 className="text-xl font-bold text-white tech-text-glow">Billtracky</h1>
+                <p className="text-sm text-cyan-200">CleanWash Lavandería</p>
+              </div>
             </div>
-            {!sidebarCollapsed && <ThemeToggle />}
-            
-            {/* Desktop Collapse/Expand Button */}
-            <button
-              onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-              className="hidden lg:block tech-button-3d p-2 text-gray-300 hover:text-cyan-400 rounded-lg transition-all duration-300 ml-2"
-              title={sidebarCollapsed ? "Expandir panel" : "Colapsar panel"}
-              aria-expanded={!sidebarCollapsed}
-              aria-label={sidebarCollapsed ? "Expandir panel lateral" : "Colapsar panel lateral"}
-              data-testid="sidebar-collapse-toggle"
-            >
-              {sidebarCollapsed ? <Menu className="w-4 h-4" /> : <X className="w-4 h-4" />}
-            </button>
+            <ThemeToggle />
           </div>
         </div>
         
@@ -273,128 +258,119 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
           <div className="space-y-2">
             <button 
               onClick={() => setActiveTab('overview')} 
-              className={`w-full flex items-center ${sidebarCollapsed ? 'justify-center px-2 py-3' : 'px-4 py-3'} text-sm font-medium rounded-lg transition-all duration-300 ${
+              className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-300 ${
                 activeTab === 'overview' 
                   ? 'tech-button-3d tech-button-active text-cyan-400 shadow-lg' 
                   : 'tech-button-3d text-gray-300 hover:text-cyan-400'
               }`}
-              title={sidebarCollapsed ? "Dashboard" : ""}
               data-testid="tab-overview"
             >
-              <Home className={`w-4 h-4 ${!sidebarCollapsed ? 'mr-3' : ''}`} />
-              {!sidebarCollapsed && 'Dashboard'}
+              <Home className="w-4 h-4 mr-3" />
+              Dashboard
             </button>
             
             <button 
               onClick={() => setActiveTab('invoices')} 
-              className={`w-full flex items-center ${sidebarCollapsed ? 'justify-center px-2 py-3' : 'px-4 py-3'} text-sm font-medium rounded-lg transition-all duration-300 ${
+              className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-300 ${
                 activeTab === 'invoices' 
                   ? 'tech-button-3d tech-button-active text-cyan-400 shadow-lg' 
                   : 'tech-button-3d text-gray-300 hover:text-cyan-400'
               }`}
-              title={sidebarCollapsed ? "Nueva Factura" : ""}
               data-testid="tab-invoices"
             >
-              <FileText className={`w-4 h-4 ${!sidebarCollapsed ? 'mr-3' : ''}`} />
-              {!sidebarCollapsed && 'Nueva Factura'}
+              <FileText className="w-4 h-4 mr-3" />
+              Nueva Factura
             </button>
             
             <button 
               onClick={() => setActiveTab('orders')} 
-              className={`w-full flex items-center ${sidebarCollapsed ? 'justify-center px-2 py-3' : 'px-4 py-3'} text-sm font-medium rounded-lg transition-all duration-300 ${
+              className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-300 ${
                 activeTab === 'orders' 
                   ? 'tech-button-3d tech-button-active text-cyan-400 shadow-lg' 
                   : 'tech-button-3d text-gray-300 hover:text-cyan-400'
               }`}
-              title={sidebarCollapsed ? "Órdenes" : ""}
               data-testid="tab-orders"
             >
-              <Package className={`w-4 h-4 ${!sidebarCollapsed ? 'mr-3' : ''}`} />
-              {!sidebarCollapsed && 'Órdenes'}
+              <Package className="w-4 h-4 mr-3" />
+              Órdenes
             </button>
             
             <button 
               onClick={() => setActiveTab('cash-closure')} 
-              className={`w-full flex items-center ${sidebarCollapsed ? 'justify-center px-2 py-3' : 'px-4 py-3'} text-sm font-medium rounded-lg transition-all duration-300 ${
+              className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-300 ${
                 activeTab === 'cash-closure' 
                   ? 'tech-button-3d tech-button-active text-cyan-400 shadow-lg' 
                   : 'tech-button-3d text-gray-300 hover:text-cyan-400'
               }`}
-              title={sidebarCollapsed ? "Cierre de Caja" : ""}
               data-testid="tab-cash-closure"
             >
-              <BarChart3 className={`w-4 h-4 ${!sidebarCollapsed ? 'mr-3' : ''}`} />
-              {!sidebarCollapsed && 'Cierre de Caja'}
+              <BarChart3 className="w-4 h-4 mr-3" />
+              Cierre de Caja
             </button>
             
             <button 
               onClick={() => setActiveTab('services')} 
-              className={`w-full flex items-center ${sidebarCollapsed ? 'justify-center px-2 py-3' : 'px-4 py-3'} text-sm font-medium rounded-lg transition-all duration-300 ${
+              className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-300 ${
                 activeTab === 'services' 
                   ? 'tech-button-3d tech-button-active text-cyan-400 shadow-lg' 
                   : 'tech-button-3d text-gray-300 hover:text-cyan-400'
               }`}
-              title={sidebarCollapsed ? "Servicios" : ""}
               data-testid="tab-services"
             >
-              <Settings className={`w-4 h-4 ${!sidebarCollapsed ? 'mr-3' : ''}`} />
-              {!sidebarCollapsed && 'Servicios'}
+              <Settings className="w-4 h-4 mr-3" />
+              Servicios
             </button>
             
             <button 
               onClick={() => setActiveTab('payment-methods')} 
-              className={`w-full flex items-center ${sidebarCollapsed ? 'justify-center px-2 py-3' : 'px-4 py-3'} text-sm font-medium rounded-lg transition-all duration-300 ${
+              className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-300 ${
                 activeTab === 'payment-methods' 
                   ? 'tech-button-3d tech-button-active text-cyan-400 shadow-lg' 
                   : 'tech-button-3d text-gray-300 hover:text-cyan-400'
               }`}
-              title={sidebarCollapsed ? "Métodos de Pago" : ""}
               data-testid="tab-payment-methods"
             >
-              <CreditCard className={`w-4 h-4 ${!sidebarCollapsed ? 'mr-3' : ''}`} />
-              {!sidebarCollapsed && 'Métodos de Pago'}
+              <CreditCard className="w-4 h-4 mr-3" />
+              Métodos de Pago
             </button>
             
             <button 
               onClick={() => setActiveTab('customers')} 
-              className={`w-full flex items-center ${sidebarCollapsed ? 'justify-center px-2 py-3' : 'px-4 py-3'} text-sm font-medium rounded-lg transition-all duration-300 ${
+              className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-300 ${
                 activeTab === 'customers' 
                   ? 'tech-button-3d tech-button-active text-cyan-400 shadow-lg' 
                   : 'tech-button-3d text-gray-300 hover:text-cyan-400'
               }`}
-              title={sidebarCollapsed ? "Clientes" : ""}
               data-testid="tab-customers"
             >
-              <Users className={`w-4 h-4 ${!sidebarCollapsed ? 'mr-3' : ''}`} />
-              {!sidebarCollapsed && 'Clientes'}
+              <Users className="w-4 h-4 mr-3" />
+              Clientes
             </button>
             
             <button 
               onClick={() => setActiveTab('company-config')} 
-              className={`w-full flex items-center ${sidebarCollapsed ? 'justify-center px-2 py-3' : 'px-4 py-3'} text-sm font-medium rounded-lg transition-all duration-300 ${
+              className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-300 ${
                 activeTab === 'company-config' 
                   ? 'tech-button-3d tech-button-active text-cyan-400 shadow-lg' 
                   : 'tech-button-3d text-gray-300 hover:text-cyan-400'
               }`}
-              title={sidebarCollapsed ? "Configuración Empresa" : ""}
               data-testid="tab-company-config"
             >
-              <Building2 className={`w-4 h-4 ${!sidebarCollapsed ? 'mr-3' : ''}`} />
-              {!sidebarCollapsed && 'Configuración Empresa'}
+              <Building2 className="w-4 h-4 mr-3" />
+              Configuración Empresa
             </button>
             
             <button 
               onClick={() => setActiveTab('whatsapp-config')} 
-              className={`w-full flex items-center ${sidebarCollapsed ? 'justify-center px-2 py-3' : 'px-4 py-3'} text-sm font-medium rounded-lg transition-all duration-300 ${
+              className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-300 ${
                 activeTab === 'whatsapp-config' 
                   ? 'tech-button-3d tech-button-active text-cyan-400 shadow-lg' 
                   : 'tech-button-3d text-gray-300 hover:text-cyan-400'
               }`}
-              title={sidebarCollapsed ? "Mensajes WhatsApp" : ""}
               data-testid="tab-whatsapp-config"
             >
-              <MessageCircle className={`w-4 h-4 ${!sidebarCollapsed ? 'mr-3' : ''}`} />
-              {!sidebarCollapsed && 'Mensajes WhatsApp'}
+              <MessageCircle className="w-4 h-4 mr-3" />
+              Mensajes WhatsApp
             </button>
           </div>
         </div>
