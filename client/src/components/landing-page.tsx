@@ -157,7 +157,7 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
               </div>
               <div>
                 <h1 className="text-xl font-black bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent tech-text-glow">BillTracky</h1>
-                <p className="text-xs text-blue-200/80 font-medium">Sistema de Gestión para Lavanderías</p>
+                <p className="text-xs text-white/90 font-medium">Sistema de Gestión para Lavanderías</p>
               </div>
             </div>
 
@@ -255,7 +255,7 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
               </span>
             </h1>
             
-            <p className="text-xl md:text-2xl text-blue-100/80 mb-12 max-w-4xl mx-auto leading-relaxed font-light">
+            <p className="text-xl md:text-2xl text-white/90 mb-12 max-w-4xl mx-auto leading-relaxed font-light">
               La plataforma completa que necesitas para automatizar tu negocio, 
               aumentar ingresos y brindar una experiencia excepcional a tus clientes.
             </p>
@@ -337,7 +337,7 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
                 </span>
               </h2>
               
-              <p className="text-xl text-blue-100/90 mb-12 leading-relaxed font-light">
+              <p className="text-xl text-white/90 mb-12 leading-relaxed font-light">
                 Dashboard completo, gestión de órdenes y facturación. Todo sincronizado 
                 en tiempo real entre todos tus dispositivos con tecnología avanzada.
               </p>
@@ -433,7 +433,7 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
                 </span>
               </h3>
               
-              <p className="text-xl text-blue-100/80 mb-12 max-w-4xl mx-auto leading-relaxed">
+              <p className="text-xl text-white/90 mb-12 max-w-4xl mx-auto leading-relaxed">
                 BillTracky incluye todas las herramientas que necesitas para administrar tu negocio de manera profesional
               </p>
             </div>
@@ -445,7 +445,7 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
                   <Users className="w-8 h-8 text-white" />
                 </div>
                 <h4 className="text-xl font-bold text-white mb-4">Gestión de Clientes</h4>
-                <p className="text-blue-200 leading-relaxed mb-4">Base de datos completa con historial de órdenes, información de contacto y preferencias de cada cliente.</p>
+                <p className="text-white/90 leading-relaxed mb-4">Base de datos completa con historial de órdenes, información de contacto y preferencias de cada cliente.</p>
                 <div className="flex flex-wrap gap-2">
                   <span className="px-3 py-1 bg-cyan-500/20 text-cyan-300 rounded-full text-sm font-medium">Historial completo</span>
                   <span className="px-3 py-1 bg-blue-500/20 text-blue-300 rounded-full text-sm font-medium">Búsqueda rápida</span>
@@ -458,7 +458,7 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
                   <Settings className="w-8 h-8 text-white" />
                 </div>
                 <h4 className="text-xl font-bold text-white mb-4">Configuración de Servicios</h4>
-                <p className="text-blue-200 leading-relaxed mb-4">Define precios para lavado, planchado y servicios combinados. Personaliza categorías y tarifas especiales.</p>
+                <p className="text-white/90 leading-relaxed mb-4">Define precios para lavado, planchado y servicios combinados. Personaliza categorías y tarifas especiales.</p>
                 <div className="flex flex-wrap gap-2">
                   <span className="px-3 py-1 bg-purple-500/20 text-purple-300 rounded-full text-sm font-medium">Precios flexibles</span>
                   <span className="px-3 py-1 bg-pink-500/20 text-pink-300 rounded-full text-sm font-medium">Categorías</span>
@@ -471,7 +471,7 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
                   <CreditCard className="w-8 h-8 text-white" />
                 </div>
                 <h4 className="text-xl font-bold text-white mb-4">Métodos de Pago</h4>
-                <p className="text-blue-200 leading-relaxed mb-4">Acepta efectivo, tarjetas, transferencias y más. Configura comisiones y referencias automáticamente.</p>
+                <p className="text-white/90 leading-relaxed mb-4">Acepta efectivo, tarjetas, transferencias y más. Configura comisiones y referencias automáticamente.</p>
                 <div className="flex flex-wrap gap-2">
                   <span className="px-3 py-1 bg-green-500/20 text-green-300 rounded-full text-sm font-medium">Múltiples opciones</span>
                   <span className="px-3 py-1 bg-emerald-500/20 text-emerald-300 rounded-full text-sm font-medium">Sin comisiones</span>
@@ -484,7 +484,7 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
                   <BarChart3 className="w-8 h-8 text-white" />
                 </div>
                 <h4 className="text-xl font-bold text-white mb-4">Cierre de Caja</h4>
-                <p className="text-blue-200 leading-relaxed mb-4">Reportes diarios automatizados con resúmenes de ventas, métodos de pago y rendimiento por empleado.</p>
+                <p className="text-white/90 leading-relaxed mb-4">Reportes diarios automatizados con resúmenes de ventas, métodos de pago y rendimiento por empleado.</p>
                 <div className="flex flex-wrap gap-2">
                   <span className="px-3 py-1 bg-yellow-500/20 text-yellow-300 rounded-full text-sm font-medium">Reportes diarios</span>
                   <span className="px-3 py-1 bg-orange-500/20 text-orange-300 rounded-full text-sm font-medium">Análisis</span>
@@ -498,7 +498,7 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
                   <Building className="w-8 h-8 text-white" />
                 </div>
                 <h4 className="text-xl font-bold text-white mb-4">Configuración Empresa</h4>
-                <p className="text-blue-200 leading-relaxed mb-4">Personaliza información de tu negocio, horarios, redes sociales y datos que aparecen en las facturas.</p>
+                <p className="text-white/90 leading-relaxed mb-4">Personaliza información de tu negocio, horarios, redes sociales y datos que aparecen en las facturas.</p>
                 <div className="flex flex-wrap gap-2">
                   <span className="px-3 py-1 bg-indigo-500/20 text-indigo-300 rounded-full text-sm font-medium">Personalización</span>
                   <span className="px-3 py-1 bg-purple-500/20 text-purple-300 rounded-full text-sm font-medium">Branding</span>
@@ -521,7 +521,7 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
                 Comenzar Gratis Ahora
               </Button>
               
-              <p className="text-blue-100/60 text-sm mt-4 max-w-md mx-auto">
+              <p className="text-white/90 text-sm mt-4 max-w-md mx-auto">
                 Sin contratos. Sin pagos ocultos. Todas las funciones desde el primer día.
               </p>
             </div>
@@ -550,7 +550,7 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
               Transforma tu negocio en
               <span className="block bg-gradient-to-r from-green-400 to-cyan-400 bg-clip-text text-transparent">30 días o menos</span>
             </h2>
-            <p className="text-xl text-blue-100/80 max-w-4xl mx-auto font-light">
+            <p className="text-xl text-white/90 max-w-4xl mx-auto font-light">
               Únete a más de 500 lavanderías que ya están viendo resultados extraordinarios
             </p>
           </div>
@@ -564,7 +564,7 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
                 <h3 className="text-2xl md:text-3xl font-black text-white mb-6 group-hover:text-cyan-400 transition-colors duration-300 tech-text-glow">
                   {benefit.title}
                 </h3>
-                <p className="text-blue-200/80 text-lg leading-relaxed font-light">
+                <p className="text-white/90 text-lg leading-relaxed font-light">
                   {benefit.description}
                 </p>
               </div>
@@ -595,7 +595,7 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
               La plataforma más completa
               <span className="block bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">para lavanderías</span>
             </h2>
-            <p className="text-xl text-blue-100/80 max-w-4xl mx-auto font-light leading-relaxed">
+            <p className="text-xl text-white/90 max-w-4xl mx-auto font-light leading-relaxed">
               Cada función está diseñada específicamente para resolver los desafíos diarios de tu lavandería
             </p>
           </div>
@@ -615,7 +615,7 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
                 <h3 className="text-2xl font-bold text-white mb-4 group-hover:text-cyan-400 transition-colors tech-text-glow">
                   {feature.title}
                 </h3>
-                <p className="text-blue-200/80 leading-relaxed font-light">
+                <p className="text-white/90 leading-relaxed font-light">
                   {feature.description}
                 </p>
               </div>
@@ -645,7 +645,7 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
               Invierte en el crecimiento
               <span className="block bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">de tu lavandería</span>
             </h2>
-            <p className="text-xl text-blue-100/80 max-w-4xl mx-auto font-light leading-relaxed">
+            <p className="text-xl text-white/90 max-w-4xl mx-auto font-light leading-relaxed">
               Planes diseñados para lavanderías de cualquier tamaño. Comienza gratis y escala conforme creces.
             </p>
           </div>
@@ -676,7 +676,7 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
                     </span>
                     <span className="text-blue-200/80 text-lg font-bold">/mes</span>
                   </div>
-                  <p className="text-blue-200/80 text-lg font-light">
+                  <p className="text-white/90 text-lg font-light">
                     {plan.description}
                   </p>
                 </div>
@@ -687,7 +687,7 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
                       <div className="w-6 h-6 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full flex items-center justify-center flex-shrink-0 mr-4 mt-0.5 tech-glow">
                         <Check className="w-4 h-4 text-white" />
                       </div>
-                      <span className="text-blue-200/80 font-medium">{feature}</span>
+                      <span className="text-white/90 font-medium">{feature}</span>
                     </li>
                   ))}
                 </ul>
@@ -711,7 +711,7 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
           <div className="text-center mt-20">
             <div className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-20 border border-white/20 rounded-3xl p-10 max-w-3xl mx-auto tech-glow hover:shadow-2xl transition-all duration-300 hover:scale-105">
               <h3 className="text-3xl font-black text-white mb-6 tech-text-glow">¿Empresa con múltiples sucursales?</h3>
-              <p className="text-blue-200/80 text-lg mb-8 font-light leading-relaxed">
+              <p className="text-white/90 text-lg mb-8 font-light leading-relaxed">
                 Tenemos planes especiales para cadenas de lavanderías con descuentos por volumen y funciones empresariales.
               </p>
               <Button className="bg-gradient-to-r from-cyan-600 to-purple-600 text-white hover:from-cyan-500 hover:to-purple-500 px-8 py-3 rounded-xl font-bold transition-all duration-300 tech-glow hover:scale-105">
@@ -743,7 +743,7 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
               Historias de éxito
               <span className="block bg-gradient-to-r from-green-400 to-cyan-400 bg-clip-text text-transparent">que nos motivan</span>
             </h2>
-            <p className="text-xl text-blue-100/80 max-w-4xl mx-auto font-light leading-relaxed">
+            <p className="text-xl text-white/90 max-w-4xl mx-auto font-light leading-relaxed">
               Más de 500 lavanderías han transformado su negocio con BillTracky. Aquí tienes algunas de sus historias.
             </p>
           </div>
@@ -761,7 +761,7 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
                 </div>
                 
                 {/* Quote */}
-                <blockquote className="text-lg text-blue-200/80 mb-8 italic leading-relaxed font-light relative z-10">
+                <blockquote className="text-lg text-white/90 mb-8 italic leading-relaxed font-light relative z-10">
                   "{testimonial.text}"
                 </blockquote>
                 
@@ -774,7 +774,7 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
                     <p className="font-black text-white text-lg tech-text-glow">
                       {testimonial.name}
                     </p>
-                    <p className="text-blue-200/80 font-medium">
+                    <p className="text-white/90 font-medium">
                       Propietario, {testimonial.business}
                     </p>
                   </div>
