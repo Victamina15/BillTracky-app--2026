@@ -30,6 +30,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { apiRequest } from '@/lib/queryClient';
@@ -454,11 +455,14 @@ export default function OrderManagement({ onNotification }: OrderManagementProps
                       )}
                     </div>
                     
-                    <div className="flex gap-2 justify-end">
+                    {/* Menú de acciones compacto */}
+                    <div className="flex items-center gap-2 justify-end">
+                      {/* Acciones rápidas principales */}
                       <Button
                         size="sm"
+                        variant="ghost"
                         onClick={() => openDetailsModal(order)}
-                        className="bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200"
+                        className="h-8 w-8 p-0"
                         data-testid={`button-details-${order.id}`}
                         title="Ver detalles"
                       >
@@ -467,58 +471,95 @@ export default function OrderManagement({ onNotification }: OrderManagementProps
                       
                       <Button
                         size="sm"
-                        onClick={() => openWorkTicketModal(order)}
-                        className="bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200"
-                        data-testid={`button-ticket-${order.id}`}
-                        title="Ticket de trabajo"
+                        variant="ghost"
+                        onClick={() => {
+                          const phoneNumber = order.customerPhone.replace(/[^\d]/g, '');
+                          const message = `¡Hola ${order.customerName}! Tu pedido ${order.number} está ${order.status === 'ready' ? 'listo para recoger' : 'en proceso'}. Total: ${formatCurrency(order.total)}`;
+                          const whatsappUrl = `https://wa.me/1${phoneNumber}?text=${encodeURIComponent(message)}`;
+                          window.open(whatsappUrl, '_blank');
+                        }}
+                        className="h-8 w-8 p-0 text-green-600 hover:text-green-700"
+                        data-testid={`button-whatsapp-${order.id}`}
+                        title="Enviar WhatsApp"
                       >
-                        <FileText className="h-4 w-4" />
+                        <Phone className="h-4 w-4" />
                       </Button>
                       
-                      {order.status !== 'cancelled' && order.status !== 'delivered' && (
-                        <>
+                      {/* Menú dropdown para más acciones */}
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
                           <Button
                             size="sm"
-                            onClick={() => {
-                              setSelectedOrder(order);
-                              setShowStatusModal(true);
-                            }}
-                            className="bg-orange-50 hover:bg-orange-100 text-orange-700 border border-orange-200"
-                            data-testid={`button-status-${order.id}`}
-                            title="Cambiar estado"
+                            variant="ghost"
+                            className="h-8 w-8 p-0"
+                            data-testid={`button-actions-${order.id}`}
                           >
-                            <RefreshCw className="h-4 w-4" />
+                            <MoreVertical className="h-4 w-4" />
                           </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-56">
+                          <DropdownMenuItem
+                            onClick={() => openWorkTicketModal(order)}
+                            data-testid={`menu-ticket-${order.id}`}
+                          >
+                            <FileText className="mr-2 h-4 w-4" />
+                            Ticket de Trabajo
+                          </DropdownMenuItem>
                           
-                          {!order.paid && (
-                            <Button
-                              size="sm"
-                              onClick={() => {
-                                setSelectedOrder(order);
-                                setShowPaymentModal(true);
-                              }}
-                              className="bg-green-50 hover:bg-green-100 text-green-700 border border-green-200"
-                              data-testid={`button-payment-${order.id}`}
-                              title="Marcar como pagado"
-                            >
-                              <DollarSign className="h-4 w-4" />
-                            </Button>
+                          <DropdownMenuItem
+                            onClick={() => window.print()}
+                            data-testid={`menu-print-${order.id}`}
+                          >
+                            <Printer className="mr-2 h-4 w-4" />
+                            Imprimir Recibo
+                          </DropdownMenuItem>
+                          
+                          {order.status !== 'cancelled' && order.status !== 'delivered' && (
+                            <>
+                              <DropdownMenuSeparator />
+                              
+                              <DropdownMenuItem
+                                onClick={() => {
+                                  setSelectedOrder(order);
+                                  setShowStatusModal(true);
+                                }}
+                                data-testid={`menu-status-${order.id}`}
+                              >
+                                <RefreshCw className="mr-2 h-4 w-4" />
+                                Cambiar Estado
+                              </DropdownMenuItem>
+                              
+                              {!order.paid && (
+                                <DropdownMenuItem
+                                  onClick={() => {
+                                    setSelectedOrder(order);
+                                    setShowPaymentModal(true);
+                                  }}
+                                  className="text-green-700"
+                                  data-testid={`menu-payment-${order.id}`}
+                                >
+                                  <DollarSign className="mr-2 h-4 w-4" />
+                                  Procesar Pago
+                                </DropdownMenuItem>
+                              )}
+                              
+                              <DropdownMenuSeparator />
+                              
+                              <DropdownMenuItem
+                                onClick={() => {
+                                  setSelectedOrder(order);
+                                  setShowCancelModal(true);
+                                }}
+                                className="text-red-700"
+                                data-testid={`menu-cancel-${order.id}`}
+                              >
+                                <X className="mr-2 h-4 w-4" />
+                                Cancelar Orden
+                              </DropdownMenuItem>
+                            </>
                           )}
-                          
-                          <Button
-                            size="sm"
-                            onClick={() => {
-                              setSelectedOrder(order);
-                              setShowCancelModal(true);
-                            }}
-                            className="bg-red-50 hover:bg-red-100 text-red-700 border border-red-200"
-                            data-testid={`button-cancel-${order.id}`}
-                            title="Cancelar orden"
-                          >
-                            <X className="h-4 w-4" />
-                          </Button>
-                        </>
-                      )}
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </div>
                   </div>
                 </div>
