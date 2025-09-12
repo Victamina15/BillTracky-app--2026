@@ -154,41 +154,41 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-xl border-b border-gray-100 shadow-sm">
+      <header className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-br from-gray-900/95 via-blue-950/95 to-purple-950/95 backdrop-blur-xl border-b border-white/10 tech-glow">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center">
+              <div className="w-10 h-10 bg-gradient-to-br from-cyan-500 via-blue-600 to-purple-600 rounded-xl flex items-center justify-center tech-glow">
                 <img src={logoPath} alt="Billtracky Logo" className="w-6 h-6" />
               </div>
               <div>
-                <h1 className="text-xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">Billtracky</h1>
-                <p className="text-xs text-gray-600">Sistema de Gestión para Lavanderías</p>
+                <h1 className="text-xl font-black bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent tech-text-glow">BillTracky</h1>
+                <p className="text-xs text-blue-200/80 font-medium">Sistema de Gestión para Lavanderías</p>
               </div>
             </div>
 
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center space-x-8">
-              <a href="#features" className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">
+              <a href="#features" className="text-sm font-bold text-white/90 hover:text-cyan-400 transition-all duration-300" data-testid="link-features">
                 Características
               </a>
-              <a href="#pricing" className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">
+              <a href="#pricing" className="text-sm font-bold text-white/90 hover:text-cyan-400 transition-all duration-300" data-testid="link-pricing">
                 Precios
               </a>
-              <a href="#testimonials" className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">
+              <a href="#testimonials" className="text-sm font-bold text-white/90 hover:text-cyan-400 transition-all duration-300" data-testid="link-testimonials">
                 Testimonios
               </a>
               <Button 
                 variant="ghost" 
                 onClick={onLogin}
-                className="text-gray-700 hover:text-gray-900"
+                className="text-white hover:text-cyan-400 bg-white/5 border border-white/20 hover:border-cyan-400/50 tech-glow shadow-lg hover:shadow-2xl hover:scale-105 transition-all duration-300"
                 data-testid="header-login-button"
               >
                 Iniciar Sesión
               </Button>
               <Button 
                 onClick={onGetStarted}
-                className="bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700 px-6 py-2 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
+                className="bg-gradient-to-r from-cyan-600 to-purple-600 text-white hover:from-cyan-500 hover:to-purple-500 px-6 py-2 rounded-xl tech-glow hover:scale-105 transition-all duration-300 font-bold border-t border-white/20 shadow-lg hover:shadow-2xl"
                 data-testid="header-signup-button"
               >
                 Empezar Gratis
@@ -197,7 +197,7 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
 
             {/* Mobile menu button */}
             <button
-              className="md:hidden"
+              className="md:hidden text-white hover:text-cyan-400 transition-colors duration-300"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               data-testid="mobile-menu-toggle"
             >
@@ -207,21 +207,21 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
 
           {/* Mobile Navigation */}
           {mobileMenuOpen && (
-            <div className="md:hidden py-4 border-t border-border">
+            <div className="md:hidden py-4 border-t border-white/10">
               <div className="flex flex-col space-y-4">
-                <a href="#features" className="text-sm font-medium text-muted-foreground hover:text-foreground">
+                <a href="#features" className="text-sm font-bold text-white/90 hover:text-cyan-400 transition-colors duration-300" data-testid="mobile-link-features">
                   Características
                 </a>
-                <a href="#pricing" className="text-sm font-medium text-muted-foreground hover:text-foreground">
+                <a href="#pricing" className="text-sm font-bold text-white/90 hover:text-cyan-400 transition-colors duration-300" data-testid="mobile-link-pricing">
                   Precios
                 </a>
-                <a href="#testimonials" className="text-sm font-medium text-muted-foreground hover:text-foreground">
+                <a href="#testimonials" className="text-sm font-bold text-white/90 hover:text-cyan-400 transition-colors duration-300" data-testid="mobile-link-testimonials">
                   Testimonios
                 </a>
-                <Button variant="ghost" onClick={onLogin} className="justify-start">
+                <Button variant="ghost" onClick={onLogin} className="justify-start text-white bg-white/5 border border-white/20 hover:border-cyan-400/50 tech-glow shadow-lg hover:shadow-2xl hover:scale-105 transition-all duration-300" data-testid="mobile-login-button">
                   Iniciar Sesión
                 </Button>
-                <Button onClick={onGetStarted} className="justify-start bg-secondary text-secondary-foreground hover:bg-secondary/90">
+                <Button onClick={onGetStarted} className="justify-start bg-gradient-to-r from-cyan-600 to-purple-600 text-white hover:from-cyan-500 hover:to-purple-500 font-bold tech-glow" data-testid="mobile-signup-button">
                   Empezar Gratis
                 </Button>
               </div>
