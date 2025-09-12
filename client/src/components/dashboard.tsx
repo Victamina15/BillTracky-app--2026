@@ -112,7 +112,7 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
                     </p>
                     <p className="text-xs text-green-600 mt-1">+15% vs ayer</p>
                   </div>
-                  <div className="w-12 h-12 bg-gradient-to-br from-green-400/20 to-cyan-500/20 rounded-lg flex items-center justify-center border border-green-400/30 tech-glow">
+                  <div className="w-12 h-12 bg-gradient-to-br from-green-400/20 to-cyan-500/20 rounded-lg flex items-center justify-center border border-green-400/30 dark:tech-glow">
                     <span className="text-lg font-bold text-green-400">$</span>
                   </div>
                 </div>
@@ -127,7 +127,7 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
                     </p>
                     <p className="text-xs text-yellow-600 mt-1">2 listos pronto</p>
                   </div>
-                  <div className="w-12 h-12 bg-gradient-to-br from-yellow-400/20 to-orange-500/20 rounded-lg flex items-center justify-center border border-yellow-400/30 tech-glow">
+                  <div className="w-12 h-12 bg-gradient-to-br from-yellow-400/20 to-orange-500/20 rounded-lg flex items-center justify-center border border-yellow-400/30 dark:tech-glow">
                     <span className="text-lg font-bold text-yellow-400">⏱️</span>
                   </div>
                 </div>
@@ -144,7 +144,7 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
                       RD${metrics?.pendingPaymentTotal || "0.00"} total
                     </p>
                   </div>
-                  <div className="w-12 h-12 bg-gradient-to-br from-red-400/20 to-pink-500/20 rounded-lg flex items-center justify-center border border-red-400/30 tech-glow">
+                  <div className="w-12 h-12 bg-gradient-to-br from-red-400/20 to-pink-500/20 rounded-lg flex items-center justify-center border border-red-400/30 dark:tech-glow">
                     <span className="text-lg font-bold text-red-400">⚠️</span>
                   </div>
                 </div>
@@ -260,7 +260,7 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
               onClick={() => setActiveTab('overview')} 
               className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-300 ${
                 activeTab === 'overview' 
-                  ? 'tech-button-3d tech-button-active text-cyan-400 shadow-lg' 
+                  ? 'tech-button-3d tech-button-active text-cyan-400 dark:shadow-lg' 
                   : 'tech-button-3d text-gray-300 hover:text-cyan-400'
               }`}
               data-testid="tab-overview"
@@ -273,7 +273,7 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
               onClick={() => setActiveTab('invoices')} 
               className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-300 ${
                 activeTab === 'invoices' 
-                  ? 'tech-button-3d tech-button-active text-cyan-400 shadow-lg' 
+                  ? 'tech-button-3d tech-button-active text-cyan-400 dark:shadow-lg' 
                   : 'tech-button-3d text-gray-300 hover:text-cyan-400'
               }`}
               data-testid="tab-invoices"
@@ -286,7 +286,7 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
               onClick={() => setActiveTab('orders')} 
               className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-300 ${
                 activeTab === 'orders' 
-                  ? 'tech-button-3d tech-button-active text-cyan-400 shadow-lg' 
+                  ? 'tech-button-3d tech-button-active text-cyan-400 dark:shadow-lg' 
                   : 'tech-button-3d text-gray-300 hover:text-cyan-400'
               }`}
               data-testid="tab-orders"
@@ -299,7 +299,7 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
               onClick={() => setActiveTab('cash-closure')} 
               className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-300 ${
                 activeTab === 'cash-closure' 
-                  ? 'tech-button-3d tech-button-active text-cyan-400 shadow-lg' 
+                  ? 'tech-button-3d tech-button-active text-cyan-400 dark:shadow-lg' 
                   : 'tech-button-3d text-gray-300 hover:text-cyan-400'
               }`}
               data-testid="tab-cash-closure"
@@ -312,7 +312,7 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
               onClick={() => setActiveTab('services')} 
               className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-300 ${
                 activeTab === 'services' 
-                  ? 'tech-button-3d tech-button-active text-cyan-400 shadow-lg' 
+                  ? 'tech-button-3d tech-button-active text-cyan-400 dark:shadow-lg' 
                   : 'tech-button-3d text-gray-300 hover:text-cyan-400'
               }`}
               data-testid="tab-services"
@@ -325,7 +325,7 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
               onClick={() => setActiveTab('payment-methods')} 
               className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-300 ${
                 activeTab === 'payment-methods' 
-                  ? 'tech-button-3d tech-button-active text-cyan-400 shadow-lg' 
+                  ? 'tech-button-3d tech-button-active text-cyan-400 dark:shadow-lg' 
                   : 'tech-button-3d text-gray-300 hover:text-cyan-400'
               }`}
               data-testid="tab-payment-methods"
@@ -338,7 +338,7 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
               onClick={() => setActiveTab('customers')} 
               className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-300 ${
                 activeTab === 'customers' 
-                  ? 'tech-button-3d tech-button-active text-cyan-400 shadow-lg' 
+                  ? 'tech-button-3d tech-button-active text-cyan-400 dark:shadow-lg' 
                   : 'tech-button-3d text-gray-300 hover:text-cyan-400'
               }`}
               data-testid="tab-customers"
@@ -351,7 +351,7 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
               onClick={() => setActiveTab('company-config')} 
               className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-300 ${
                 activeTab === 'company-config' 
-                  ? 'tech-button-3d tech-button-active text-cyan-400 shadow-lg' 
+                  ? 'tech-button-3d tech-button-active text-cyan-400 dark:shadow-lg' 
                   : 'tech-button-3d text-gray-300 hover:text-cyan-400'
               }`}
               data-testid="tab-company-config"
@@ -364,7 +364,7 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
               onClick={() => setActiveTab('whatsapp-config')} 
               className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-300 ${
                 activeTab === 'whatsapp-config' 
-                  ? 'tech-button-3d tech-button-active text-cyan-400 shadow-lg' 
+                  ? 'tech-button-3d tech-button-active text-cyan-400 dark:shadow-lg' 
                   : 'tech-button-3d text-gray-300 hover:text-cyan-400'
               }`}
               data-testid="tab-whatsapp-config"
