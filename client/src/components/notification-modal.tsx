@@ -11,7 +11,7 @@ export default function NotificationModal({ message, isOpen, onClose }: Notifica
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-card rounded-2xl max-w-md w-full p-6 shadow-2xl fade-in">
+      <div className="bg-card rounded-2xl max-w-md w-full p-6 dark:shadow-2xl fade-in">
         <div className="text-center">
           <div className="w-16 h-16 bg-secondary/10 rounded-full flex items-center justify-center mx-auto mb-4">
             <Check className="w-8 h-8 text-secondary" />

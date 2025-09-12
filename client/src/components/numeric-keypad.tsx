@@ -38,7 +38,7 @@ export default function NumericKeypad({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-card rounded-2xl max-w-sm w-full p-6 shadow-2xl fade-in">
+      <div className="bg-card rounded-2xl max-w-sm w-full p-6 dark:shadow-2xl fade-in">
         <div className="text-center mb-6">
           <h3 className="text-xl font-bold text-card-foreground">Teclado Numérico</h3>
           <div className="mt-4 p-4 bg-muted rounded-lg">

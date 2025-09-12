@@ -44,11 +44,11 @@ export default function OrdersTable({ onNotification }: OrdersTableProps) {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'received': return 'bg-blue-100 text-blue-800';
-      case 'in_process': return 'bg-yellow-100 text-yellow-800';
-      case 'ready': return 'bg-purple-100 text-purple-800';
-      case 'delivered': return 'bg-green-100 text-green-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'received': return 'bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-200 border border-blue-200 dark:border-blue-800';
+      case 'in_process': return 'bg-yellow-100 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-200 border border-yellow-200 dark:border-yellow-800';
+      case 'ready': return 'bg-purple-100 dark:bg-purple-900/20 text-purple-800 dark:text-purple-200 border border-purple-200 dark:border-purple-800';
+      case 'delivered': return 'bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-200 border border-green-200 dark:border-green-800';
+      default: return 'bg-gray-100 dark:bg-gray-900/20 text-gray-800 dark:text-gray-200 border border-gray-200 dark:border-gray-800';
     }
   };
 
@@ -68,7 +68,7 @@ export default function OrdersTable({ onNotification }: OrdersTableProps) {
 
   if (isLoading) {
     return (
-      <div className="bg-card rounded-xl shadow-sm border border-border p-6">
+      <div className="bg-card dark:bg-gray-800/50 rounded-xl shadow-sm dark:shadow-lg tech-glow border border-border dark:border-cyan-500/20 p-6 backdrop-blur-sm">
         <div className="text-center py-8">
           <p className="text-muted-foreground">Cargando órdenes...</p>
         </div>
@@ -77,7 +77,7 @@ export default function OrdersTable({ onNotification }: OrdersTableProps) {
   }
 
   return (
-    <div className="bg-card rounded-xl shadow-sm border border-border p-6">
+    <div className="bg-card dark:bg-gray-800/50 rounded-xl shadow-sm dark:shadow-lg tech-glow border border-border dark:border-cyan-500/20 p-6 backdrop-blur-sm">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
         <h2 className="text-xl font-semibold text-card-foreground mb-4 md:mb-0">
           Gestión de Órdenes
@@ -144,7 +144,7 @@ export default function OrdersTable({ onNotification }: OrdersTableProps) {
                   <select
                     value={order.status || 'received'}
                     onChange={(e) => handleStatusChange(order.id, e.target.value)}
-                    className={`inline-block px-2 py-1 text-xs font-medium rounded-full border-none ${getStatusColor(order.status || 'received')}`}
+                    className={`inline-block px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(order.status || 'received')}`}
                     data-testid={`select-status-${order.id}`}
                   >
                     <option value="received">Recibido</option>
@@ -162,7 +162,7 @@ export default function OrdersTable({ onNotification }: OrdersTableProps) {
                   <div className="flex items-center space-x-2">
                     <button 
                       onClick={() => onNotification(`Viendo detalles de ${order.number}`)}
-                      className="p-1 text-secondary hover:bg-secondary/10 rounded"
+                      className="p-1 text-secondary dark:text-gray-400 hover:bg-secondary/10 dark:hover:bg-gray-700 rounded transition-colors duration-200"
                       title="Ver detalles"
                       data-testid={`button-view-${order.id}`}
                     >
@@ -170,7 +170,7 @@ export default function OrdersTable({ onNotification }: OrdersTableProps) {
                     </button>
                     <button 
                       onClick={() => onNotification(`Editando orden ${order.number}`)}
-                      className="p-1 text-muted-foreground hover:bg-muted rounded"
+                      className="p-1 text-muted-foreground dark:text-gray-400 hover:bg-muted dark:hover:bg-gray-700 rounded transition-colors duration-200"
                       title="Editar"
                       data-testid={`button-edit-${order.id}`}
                     >
@@ -178,7 +178,7 @@ export default function OrdersTable({ onNotification }: OrdersTableProps) {
                     </button>
                     <button 
                       onClick={() => onNotification(`Imprimiendo ${order.number}`)}
-                      className="p-1 text-green-600 hover:bg-green-100 rounded"
+                      className="p-1 text-green-600 dark:text-green-400 hover:bg-green-100 dark:hover:bg-green-900/20 rounded transition-colors duration-200"
                       title="Imprimir"
                       data-testid={`button-print-${order.id}`}
                     >
@@ -193,7 +193,7 @@ export default function OrdersTable({ onNotification }: OrdersTableProps) {
       </div>
 
       {filteredOrders.length === 0 && (
-        <div className="text-center py-8 text-muted-foreground">
+        <div className="text-center py-8 text-muted-foreground dark:text-gray-400">
           <p>No se encontraron órdenes que coincidan con los filtros.</p>
         </div>
       )}

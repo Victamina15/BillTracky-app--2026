@@ -181,38 +181,38 @@ export default function OrderManagement({ onNotification }: OrderManagementProps
 
   // Configuración de estados
   const statusConfig = {
-    received: { name: 'Recibido', colorClass: 'bg-blue-50 text-blue-700', icon: Package },
-    in_process: { name: 'En Proceso', colorClass: 'bg-yellow-50 text-yellow-700', icon: RefreshCw },
-    ready: { name: 'Listo', colorClass: 'bg-purple-50 text-purple-700', icon: CheckCircle },
-    delivered: { name: 'Entregado', colorClass: 'bg-green-50 text-green-700', icon: Check },
-    cancelled: { name: 'Cancelado', colorClass: 'bg-red-50 text-red-700', icon: XCircle },
+    received: { name: 'Recibido', colorClass: 'bg-gradient-to-br from-cyan-500/20 to-blue-600/20 text-cyan-300 border border-cyan-400/30 tech-glow', icon: Package },
+    in_process: { name: 'En Proceso', colorClass: 'bg-gradient-to-br from-yellow-500/20 to-orange-600/20 text-yellow-300 border border-yellow-400/30 tech-glow', icon: RefreshCw },
+    ready: { name: 'Listo', colorClass: 'bg-gradient-to-br from-purple-500/20 to-pink-600/20 text-purple-300 border border-purple-400/30 tech-glow', icon: CheckCircle },
+    delivered: { name: 'Entregado', colorClass: 'bg-gradient-to-br from-green-500/20 to-emerald-600/20 text-green-300 border border-green-400/30 tech-glow', icon: Check },
+    cancelled: { name: 'Cancelado', colorClass: 'bg-gradient-to-br from-red-500/20 to-pink-600/20 text-red-300 border border-red-400/30 tech-glow', icon: XCircle },
   };
 
   // Helper function para obtener clases de estado de forma segura
   const getStatusClasses = (status: string | null) => {
-    if (!status) return 'bg-gray-50 text-gray-700';
+    if (!status) return 'bg-gradient-to-br from-gray-500/20 to-slate-600/20 text-gray-300 border border-gray-400/30 tech-glow';
     
     switch(status) {
-      case 'received': return 'bg-blue-50 text-blue-700';
-      case 'in_process': return 'bg-yellow-50 text-yellow-700'; 
-      case 'ready': return 'bg-purple-50 text-purple-700';
-      case 'delivered': return 'bg-green-50 text-green-700';
-      case 'cancelled': return 'bg-red-50 text-red-700';
-      default: return 'bg-gray-50 text-gray-700';
+      case 'received': return 'bg-gradient-to-br from-cyan-500/20 to-blue-600/20 text-cyan-300 border border-cyan-400/30 tech-glow';
+      case 'in_process': return 'bg-gradient-to-br from-yellow-500/20 to-orange-600/20 text-yellow-300 border border-yellow-400/30 tech-glow';
+      case 'ready': return 'bg-gradient-to-br from-purple-500/20 to-pink-600/20 text-purple-300 border border-purple-400/30 tech-glow';
+      case 'delivered': return 'bg-gradient-to-br from-green-500/20 to-emerald-600/20 text-green-300 border border-green-400/30 tech-glow';
+      case 'cancelled': return 'bg-gradient-to-br from-red-500/20 to-pink-600/20 text-red-300 border border-red-400/30 tech-glow';
+      default: return 'bg-gradient-to-br from-gray-500/20 to-slate-600/20 text-gray-300 border border-gray-400/30 tech-glow';
     }
   };
 
   // Helper function para obtener clases de pago de forma segura
   const getPaymentClasses = (paid: boolean | null) => {
-    return paid ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800';
+    return paid ? 'bg-gradient-to-br from-green-500/20 to-emerald-600/20 text-green-300 border border-green-400/30 tech-glow' : 'bg-gradient-to-br from-yellow-500/20 to-orange-600/20 text-yellow-300 border border-yellow-400/30 tech-glow';
   };
 
   const paymentMethodConfig = {
-    cash: { name: 'Efectivo', icon: Banknote, color: 'text-green-600' },
-    card: { name: 'Tarjeta', icon: CreditCard, color: 'text-blue-600' },
-    transfer: { name: 'Transferencia', icon: Landmark, color: 'text-indigo-600' },
-    mobile_pay: { name: 'Pago Móvil', icon: Phone, color: 'text-purple-600' },
-    pending: { name: 'Pendiente', icon: Clock, color: 'text-yellow-600' },
+    cash: { name: 'Efectivo', icon: Banknote, color: 'text-green-600 dark:text-green-400' },
+    card: { name: 'Tarjeta', icon: CreditCard, color: 'text-blue-600 dark:text-blue-400' },
+    transfer: { name: 'Transferencia', icon: Landmark, color: 'text-indigo-600 dark:text-indigo-400' },
+    mobile_pay: { name: 'Pago Móvil', icon: Phone, color: 'text-purple-600 dark:text-purple-400' },
+    pending: { name: 'Pendiente', icon: Clock, color: 'text-yellow-600 dark:text-yellow-400' },
   };
 
   // Funciones utilitarias
@@ -288,8 +288,8 @@ export default function OrderManagement({ onNotification }: OrderManagementProps
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <RefreshCw className="h-8 w-8 animate-spin" />
-        <span className="ml-2">Cargando órdenes...</span>
+        <RefreshCw className="h-8 w-8 animate-spin text-foreground" />
+        <span className="ml-2 text-foreground">Cargando órdenes...</span>
       </div>
     );
   }
@@ -297,10 +297,10 @@ export default function OrderManagement({ onNotification }: OrderManagementProps
   if (hasError) {
     return (
       <div className="flex flex-col items-center justify-center h-64 space-y-4">
-        <AlertCircle className="h-12 w-12 text-red-500" />
+        <AlertCircle className="h-12 w-12 text-red-500 dark:text-red-400" />
         <div className="text-center space-y-2">
-          <h3 className="text-lg font-semibold">Error al cargar datos</h3>
-          <p className="text-gray-600">No se pudieron cargar las órdenes o métodos de pago</p>
+          <h3 className="text-lg font-semibold text-foreground">Error al cargar datos</h3>
+          <p className="text-muted-foreground">No se pudieron cargar las órdenes o métodos de pago</p>
         </div>
         <div className="flex space-x-2">
           <Button 
@@ -328,8 +328,8 @@ export default function OrderManagement({ onNotification }: OrderManagementProps
     <div className="p-6 space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold">Gestión de Órdenes</h1>
-          <p className="text-gray-600">Administra el estado y pago de las órdenes</p>
+          <h1 className="text-3xl font-bold text-foreground">Gestión de Órdenes</h1>
+          <p className="text-muted-foreground">Administra el estado y pago de las órdenes</p>
         </div>
         
         <div className="flex items-center gap-2">
@@ -340,11 +340,11 @@ export default function OrderManagement({ onNotification }: OrderManagementProps
       </div>
 
       {/* Filtros */}
-      <Card>
+      <Card className="bg-card dark:bg-gray-800/50 dark:shadow-lg tech-glow border border-border dark:border-cyan-500/20">
         <CardContent className="p-4">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
               <Input
                 placeholder="Buscar por número, cliente o teléfono..."
                 value={searchTerm}
@@ -403,24 +403,24 @@ export default function OrderManagement({ onNotification }: OrderManagementProps
           const paymentMethod = paymentMethodConfig[order.paymentMethod as keyof typeof paymentMethodConfig];
           
           return (
-            <Card key={order.id} className="hover:shadow-md transition-shadow" data-testid={`card-order-${order.id}`}>
+            <Card key={order.id} className="bg-card dark:bg-gray-800/50 hover:shadow-md dark:hover:shadow-xl tech-glow border border-border dark:border-cyan-500/20 transition-shadow" data-testid={`card-order-${order.id}`}>
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div className="flex-1 grid grid-cols-1 md:grid-cols-6 gap-4 items-center">
                     <div>
-                      <div className="font-semibold text-blue-600" data-testid={`text-order-number-${order.id}`}>
+                      <div className="font-semibold text-primary" data-testid={`text-order-number-${order.id}`}>
                         {order.number}
                       </div>
-                      <div className="text-sm text-gray-500">
+                      <div className="text-sm text-muted-foreground">
                         {formatDate(order.date)}
                       </div>
                     </div>
                     
                     <div>
-                      <div className="font-medium" data-testid={`text-customer-name-${order.id}`}>
+                      <div className="font-medium text-foreground" data-testid={`text-customer-name-${order.id}`}>
                         {order.customerName}
                       </div>
-                      <div className="text-sm text-gray-500">
+                      <div className="text-sm text-muted-foreground">
                         {order.customerPhone}
                       </div>
                     </div>
@@ -433,10 +433,10 @@ export default function OrderManagement({ onNotification }: OrderManagementProps
                     </div>
                     
                     <div>
-                      <div className="font-semibold" data-testid={`text-total-${order.id}`}>
+                      <div className="font-semibold text-foreground" data-testid={`text-total-${order.id}`}>
                         {formatCurrency(order.total)}
                       </div>
-                      <div className="text-sm text-gray-500">
+                      <div className="text-sm text-muted-foreground">
                         Fecha entrega: {formatDate(order.deliveryDate)}
                       </div>
                     </div>
@@ -449,7 +449,7 @@ export default function OrderManagement({ onNotification }: OrderManagementProps
                         {order.paid ? "Pagado" : "Pendiente"}
                       </Badge>
                       {paymentMethod && (
-                        <div className="text-sm text-gray-500 mt-1">
+                        <div className="text-sm text-muted-foreground mt-1">
                           {paymentMethod.name}
                         </div>
                       )}
@@ -478,7 +478,7 @@ export default function OrderManagement({ onNotification }: OrderManagementProps
                           const whatsappUrl = `https://wa.me/1${phoneNumber}?text=${encodeURIComponent(message)}`;
                           window.open(whatsappUrl, '_blank');
                         }}
-                        className="h-8 w-8 p-0 text-green-600 hover:text-green-700"
+                        className="h-8 w-8 p-0 text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300"
                         data-testid={`button-whatsapp-${order.id}`}
                         title="Enviar WhatsApp"
                       >
@@ -535,7 +535,7 @@ export default function OrderManagement({ onNotification }: OrderManagementProps
                                     setSelectedOrder(order);
                                     setShowPaymentModal(true);
                                   }}
-                                  className="text-green-700"
+                                  className="text-green-700 dark:text-green-400"
                                   data-testid={`menu-payment-${order.id}`}
                                 >
                                   <DollarSign className="mr-2 h-4 w-4" />
@@ -550,7 +550,7 @@ export default function OrderManagement({ onNotification }: OrderManagementProps
                                   setSelectedOrder(order);
                                   setShowCancelModal(true);
                                 }}
-                                className="text-red-700"
+                                className="text-red-700 dark:text-red-400"
                                 data-testid={`menu-cancel-${order.id}`}
                               >
                                 <X className="mr-2 h-4 w-4" />
@@ -570,20 +570,20 @@ export default function OrderManagement({ onNotification }: OrderManagementProps
       </div>
 
       {filteredOrders.length === 0 && (
-        <Card>
+        <Card className="bg-card dark:bg-gray-800/50 dark:shadow-lg tech-glow border border-border dark:border-cyan-500/20">
           <CardContent className="p-8 text-center">
-            <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-gray-600 mb-2">No hay órdenes</h3>
-            <p className="text-gray-500">No se encontraron órdenes que coincidan con los filtros aplicados.</p>
+            <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+            <h3 className="text-lg font-semibold text-foreground mb-2">No hay órdenes</h3>
+            <p className="text-muted-foreground">No se encontraron órdenes que coincidan con los filtros aplicados.</p>
           </CardContent>
         </Card>
       )}
 
       {/* Modal de detalles */}
       <Dialog open={showDetailsModal} onOpenChange={setShowDetailsModal}>
-        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto bg-card dark:bg-gray-800/50 dark:border-cyan-500/20">
           <DialogHeader>
-            <DialogTitle>Detalles de la Orden {selectedOrder?.number}</DialogTitle>
+            <DialogTitle className="text-foreground">Detalles de la Orden {selectedOrder?.number}</DialogTitle>
           </DialogHeader>
           {selectedOrder && (
             <div className="space-y-6">
@@ -674,7 +674,7 @@ export default function OrderManagement({ onNotification }: OrderManagementProps
                       <AlertCircle className="h-8 w-8 text-red-500 mx-auto" />
                       <div>
                         <p className="text-red-600 font-medium">Error al cargar artículos</p>
-                        <p className="text-sm text-gray-500 mt-1">
+                        <p className="text-sm text-muted-foreground mt-1">
                           {orderItemsError instanceof Error ? orderItemsError.message : "No se pudieron cargar los artículos"}
                         </p>
                       </div>
@@ -694,13 +694,13 @@ export default function OrderManagement({ onNotification }: OrderManagementProps
                         <div key={item.id} className="flex justify-between items-center p-2 border rounded" data-testid={`item-${index}`}>
                           <div>
                             <div className="font-medium">{item.serviceName}</div>
-                            <div className="text-sm text-gray-500">Cantidad: {item.quantity}</div>
+                            <div className="text-sm text-muted-foreground">Cantidad: {item.quantity}</div>
                           </div>
                           <div className="text-right">
                             <div className="font-medium" data-testid={`item-total-${index}`}>
                               {formatCurrency(item.total)}
                             </div>
-                            <div className="text-sm text-gray-500">
+                            <div className="text-sm text-muted-foreground">
                               {formatCurrency(item.unitPrice)} c/u
                             </div>
                           </div>
@@ -708,7 +708,7 @@ export default function OrderManagement({ onNotification }: OrderManagementProps
                       ))}
                     </div>
                   ) : (
-                    <div className="text-center text-gray-500 py-4">
+                    <div className="text-center text-muted-foreground py-4">
                       No hay artículos para mostrar
                     </div>
                   )}
@@ -959,16 +959,16 @@ export default function OrderManagement({ onNotification }: OrderManagementProps
                 <CardContent>
                   <div className="space-y-4">
                     {orderItemsLoading ? (
-                      <p className="text-center text-gray-500" data-testid="text-loading-items">Cargando items...</p>
+                      <p className="text-center text-muted-foreground" data-testid="text-loading-items">Cargando items...</p>
                     ) : orderItems.length > 0 ? (
                       orderItems.map((item, index) => (
-                        <div key={item.id || index} className="border rounded-lg p-4 bg-gray-50 dark:bg-gray-800" data-testid={`work-ticket-item-${index}`}>
+                        <div key={item.id || index} className="border border-border dark:border-cyan-500/20 rounded-lg p-4 bg-card dark:bg-gray-800/50" data-testid={`work-ticket-item-${index}`}>
                           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
                             <div>
                               <h4 className="font-semibold text-purple-700 dark:text-purple-300" data-testid={`item-service-name-${index}`}>
                                 {item.serviceName}
                               </h4>
-                              <p className="text-sm text-gray-600 dark:text-gray-400" data-testid={`item-quantity-${index}`}>
+                              <p className="text-sm text-muted-foreground" data-testid={`item-quantity-${index}`}>
                                 Cantidad: {item.quantity}
                               </p>
                             </div>
@@ -978,24 +978,24 @@ export default function OrderManagement({ onNotification }: OrderManagementProps
                               <div className="space-y-1" data-testid={`service-indicators-${index}`}>
                                 {item.serviceType === 'wash' && (
                                   <div className="flex items-center gap-2" data-testid={`wash-indicator-${index}`}>
-                                    <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+                                    <div className="w-3 h-3 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-full shadow-sm dark:shadow-cyan-400/20"></div>
                                     <span className="text-sm">Lavado</span>
                                   </div>
                                 )}
                                 {item.serviceType === 'iron' && (
                                   <div className="flex items-center gap-2" data-testid={`iron-indicator-${index}`}>
-                                    <div className="w-3 h-3 bg-orange-500 rounded-full"></div>
+                                    <div className="w-3 h-3 bg-gradient-to-br from-orange-500 to-red-600 rounded-full shadow-sm dark:shadow-orange-400/20"></div>
                                     <span className="text-sm">Planchado</span>
                                   </div>
                                 )}
                                 {item.serviceType === 'both' && (
                                   <>
                                     <div className="flex items-center gap-2" data-testid={`wash-indicator-${index}`}>
-                                      <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+                                      <div className="w-3 h-3 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-full shadow-sm dark:shadow-cyan-400/20"></div>
                                       <span className="text-sm">Lavado</span>
                                     </div>
                                     <div className="flex items-center gap-2" data-testid={`iron-indicator-${index}`}>
-                                      <div className="w-3 h-3 bg-orange-500 rounded-full"></div>
+                                      <div className="w-3 h-3 bg-gradient-to-br from-orange-500 to-red-600 rounded-full shadow-sm dark:shadow-orange-400/20"></div>
                                       <span className="text-sm">Planchado</span>
                                     </div>
                                   </>
@@ -1004,19 +1004,19 @@ export default function OrderManagement({ onNotification }: OrderManagementProps
                             </div>
                             
                             <div>
-                              <p className="text-sm text-gray-600 dark:text-gray-400">Precio unitario:</p>
+                              <p className="text-sm text-muted-foreground">Precio unitario:</p>
                               <p className="font-semibold" data-testid={`item-unit-price-${index}`}>{formatCurrency(item.unitPrice)}</p>
                             </div>
                             
                             <div>
-                              <p className="text-sm text-gray-600 dark:text-gray-400">Total:</p>
+                              <p className="text-sm text-muted-foreground">Total:</p>
                               <p className="font-bold text-green-600" data-testid={`item-total-${index}`}>{formatCurrency(item.total)}</p>
                             </div>
                           </div>
                         </div>
                       ))
                     ) : (
-                      <p className="text-center text-gray-500" data-testid="text-no-items">No hay items en esta orden</p>
+                      <p className="text-center text-muted-foreground" data-testid="text-no-items">No hay items en esta orden</p>
                     )}
                   </div>
                 </CardContent>
@@ -1032,23 +1032,23 @@ export default function OrderManagement({ onNotification }: OrderManagementProps
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                    <div className="text-center p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg" data-testid="wash-counter">
-                      <div className="font-bold text-lg text-blue-600" data-testid="wash-count">
+                    <div className="text-center p-3 bg-gradient-to-br from-cyan-500/20 to-blue-600/20 border border-cyan-400/30 tech-glow rounded-lg" data-testid="wash-counter">
+                      <div className="font-bold text-lg text-cyan-300" data-testid="wash-count">
                         {orderItems.filter(item => item.serviceType === 'wash' || item.serviceType === 'both').reduce((acc, item) => acc + item.quantity, 0)}
                       </div>
-                      <div className="text-blue-600">Prendas para lavar</div>
+                      <div className="text-cyan-300">Prendas para lavar</div>
                     </div>
-                    <div className="text-center p-3 bg-orange-50 dark:bg-orange-900/20 rounded-lg" data-testid="iron-counter">
-                      <div className="font-bold text-lg text-orange-600" data-testid="iron-count">
+                    <div className="text-center p-3 bg-gradient-to-br from-orange-500/20 to-red-600/20 border border-orange-400/30 tech-glow rounded-lg" data-testid="iron-counter">
+                      <div className="font-bold text-lg text-orange-300" data-testid="iron-count">
                         {orderItems.filter(item => item.serviceType === 'iron' || item.serviceType === 'both').reduce((acc, item) => acc + item.quantity, 0)}
                       </div>
-                      <div className="text-orange-600">Prendas para planchar</div>
+                      <div className="text-orange-300">Prendas para planchar</div>
                     </div>
-                    <div className="text-center p-3 bg-green-50 dark:bg-green-900/20 rounded-lg" data-testid="total-counter">
-                      <div className="font-bold text-lg text-green-600" data-testid="order-total">
+                    <div className="text-center p-3 bg-gradient-to-br from-green-500/20 to-emerald-600/20 border border-green-400/30 tech-glow rounded-lg" data-testid="total-counter">
+                      <div className="font-bold text-lg text-green-300" data-testid="order-total">
                         {formatCurrency(selectedOrder.total)}
                       </div>
-                      <div className="text-green-600">Total de la orden</div>
+                      <div className="text-green-300">Total de la orden</div>
                     </div>
                   </div>
                 </CardContent>

@@ -143,7 +143,7 @@ export default function PaymentMethodsConfig({ onNotification }: PaymentMethodsC
 
   if (isLoading) {
     return (
-      <div className="bg-card rounded-xl shadow-sm border border-border p-6">
+      <div className="bg-card rounded-xl dark:shadow-sm border border-border p-6">
         <div className="text-center py-8">
           <p className="text-muted-foreground">Cargando métodos de pago...</p>
         </div>
@@ -154,7 +154,7 @@ export default function PaymentMethodsConfig({ onNotification }: PaymentMethodsC
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="bg-card rounded-xl shadow-sm border border-border p-6">
+      <div className="bg-card rounded-xl dark:shadow-sm border border-border p-6">
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-3xl font-bold text-card-foreground flex items-center gap-3">
@@ -219,7 +219,7 @@ export default function PaymentMethodsConfig({ onNotification }: PaymentMethodsC
                           type="button"
                           onClick={() => form.setValue("color", color)}
                           className={`w-8 h-8 rounded border-2 ${
-                            form.watch("color") === color ? "border-gray-800" : "border-gray-300"
+                            form.watch("color") === color ? "border-gray-800 dark:border-gray-200" : "border-gray-300 dark:border-gray-600"
                           }`}
                           style={{ backgroundColor: color }}
                         />
@@ -303,7 +303,7 @@ export default function PaymentMethodsConfig({ onNotification }: PaymentMethodsC
 
       {/* Statistics */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-card p-4 rounded-lg shadow-sm border border-border">
+        <div className="bg-card p-4 rounded-lg dark:shadow-sm border border-border">
           <div className="flex items-center gap-3">
             <div className="bg-secondary/10 p-3 rounded-lg">
               <CreditCard className="text-secondary" size={24} />
@@ -315,9 +315,9 @@ export default function PaymentMethodsConfig({ onNotification }: PaymentMethodsC
           </div>
         </div>
 
-        <div className="bg-card p-4 rounded-lg shadow-sm border border-border">
+        <div className="bg-card p-4 rounded-lg dark:shadow-sm border border-border">
           <div className="flex items-center gap-3">
-            <div className="bg-green-100 p-3 rounded-lg">
+            <div className="bg-green-100 dark:bg-green-900/20 p-3 rounded-lg">
               <ToggleRight className="text-green-600" size={24} />
             </div>
             <div>
@@ -327,9 +327,9 @@ export default function PaymentMethodsConfig({ onNotification }: PaymentMethodsC
           </div>
         </div>
 
-        <div className="bg-card p-4 rounded-lg shadow-sm border border-border">
+        <div className="bg-card p-4 rounded-lg dark:shadow-sm border border-border">
           <div className="flex items-center gap-3">
-            <div className="bg-red-100 p-3 rounded-lg">
+            <div className="bg-red-100 dark:bg-red-900/20 p-3 rounded-lg">
               <ToggleLeft className="text-red-600" size={24} />
             </div>
             <div>
@@ -339,9 +339,9 @@ export default function PaymentMethodsConfig({ onNotification }: PaymentMethodsC
           </div>
         </div>
 
-        <div className="bg-card p-4 rounded-lg shadow-sm border border-border">
+        <div className="bg-card p-4 rounded-lg dark:shadow-sm border border-border">
           <div className="flex items-center gap-3">
-            <div className="bg-orange-100 p-3 rounded-lg">
+            <div className="bg-orange-100 dark:bg-orange-900/20 p-3 rounded-lg">
               <DollarSign className="text-orange-600" size={24} />
             </div>
             <div>
@@ -353,7 +353,7 @@ export default function PaymentMethodsConfig({ onNotification }: PaymentMethodsC
       </div>
 
       {/* Filters */}
-      <div className="bg-card rounded-lg shadow-sm border border-border p-4">
+      <div className="bg-card rounded-lg dark:shadow-sm border border-border p-4">
         <div className="flex flex-col md:flex-row gap-4">
           <div className="flex-1">
             <Input
@@ -391,7 +391,7 @@ export default function PaymentMethodsConfig({ onNotification }: PaymentMethodsC
       </div>
 
       {/* Payment Methods List */}
-      <div className="bg-card rounded-lg shadow-sm border border-border overflow-hidden">
+      <div className="bg-card rounded-lg dark:shadow-sm border border-border overflow-hidden">
         {filteredMethods.length === 0 ? (
           <div className="p-8 text-center">
             <CreditCard className="mx-auto text-muted-foreground mb-4" size={64} />
@@ -440,8 +440,8 @@ export default function PaymentMethodsConfig({ onNotification }: PaymentMethodsC
                         onClick={() => handleToggleActive(method.id, method.active)}
                         className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium transition-colors ${
                           method.active 
-                            ? "bg-green-100 text-green-800 hover:bg-green-200" 
-                            : "bg-red-100 text-red-800 hover:bg-red-200"
+                            ? "bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-300 hover:bg-green-200 dark:hover:bg-green-900/30" 
+                            : "bg-red-100 dark:bg-red-900/20 text-red-800 dark:text-red-300 hover:bg-red-200 dark:hover:bg-red-900/30"
                         }`}
                         data-testid={`toggle-status-${method.id}`}
                       >

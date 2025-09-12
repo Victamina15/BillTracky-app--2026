@@ -75,7 +75,7 @@ export default function ServicesConfig({ onNotification }: ServicesConfigProps) 
 
   if (isLoading) {
     return (
-      <div className="bg-card rounded-xl shadow-sm border border-border p-6">
+      <div className="bg-card dark:bg-gray-800/50 rounded-xl dark:shadow-lg tech-glow border border-border dark:border-cyan-500/20 p-6">
         <div className="text-center py-8">
           <p className="text-muted-foreground">Cargando servicios...</p>
         </div>
@@ -84,14 +84,14 @@ export default function ServicesConfig({ onNotification }: ServicesConfigProps) 
   }
 
   return (
-    <div className="bg-card rounded-xl shadow-sm border border-border p-6">
+    <div className="bg-card dark:bg-gray-800/50 rounded-xl dark:shadow-lg tech-glow border border-border dark:border-cyan-500/20 p-6">
       <h2 className="text-xl font-semibold text-card-foreground mb-6">
         Configuración de Servicios
       </h2>
       
       <div className="space-y-6">
         {services.map((service) => (
-          <div key={service.id} className="border border-border rounded-lg p-6" data-testid={`service-card-${service.id}`}>
+          <div key={service.id} className="border border-border dark:border-cyan-500/20 dark:bg-gray-700/30 rounded-lg p-6 dark:shadow-lg tech-glow" data-testid={`service-card-${service.id}`}>
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-medium text-card-foreground" data-testid={`service-name-${service.id}`}>
                 {service.name}
@@ -106,20 +106,20 @@ export default function ServicesConfig({ onNotification }: ServicesConfigProps) 
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-muted p-4 rounded-lg">
-                <p className="text-sm text-muted-foreground mb-1">Solo Lavado</p>
+              <div className="bg-muted dark:bg-gray-700/50 p-4 rounded-lg dark:border dark:border-cyan-500/20">
+                <p className="text-sm text-muted-foreground dark:text-gray-400 mb-1">Solo Lavado</p>
                 <p className="text-xl font-bold text-card-foreground" data-testid={`service-wash-price-${service.id}`}>
                   RD${parseFloat(service.washPrice).toFixed(2)}
                 </p>
               </div>
-              <div className="bg-muted p-4 rounded-lg">
-                <p className="text-sm text-muted-foreground mb-1">Solo Planchado</p>
+              <div className="bg-muted dark:bg-gray-700/50 p-4 rounded-lg dark:border dark:border-cyan-500/20">
+                <p className="text-sm text-muted-foreground dark:text-gray-400 mb-1">Solo Planchado</p>
                 <p className="text-xl font-bold text-card-foreground" data-testid={`service-iron-price-${service.id}`}>
                   RD${parseFloat(service.ironPrice).toFixed(2)}
                 </p>
               </div>
-              <div className="bg-muted p-4 rounded-lg">
-                <p className="text-sm text-muted-foreground mb-1">Lavado + Planchado</p>
+              <div className="bg-muted dark:bg-gray-700/50 p-4 rounded-lg dark:border dark:border-cyan-500/20">
+                <p className="text-sm text-muted-foreground dark:text-gray-400 mb-1">Lavado + Planchado</p>
                 <p className="text-xl font-bold text-card-foreground" data-testid={`service-both-price-${service.id}`}>
                   RD${parseFloat(service.bothPrice).toFixed(2)}
                 </p>

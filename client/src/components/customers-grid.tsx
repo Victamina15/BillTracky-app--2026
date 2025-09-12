@@ -65,7 +65,7 @@ export default function CustomersGrid({ onNotification }: CustomersGridProps) {
 
   if (isLoading) {
     return (
-      <div className="bg-card dark:bg-gray-800/50 rounded-xl shadow-lg tech-glow border border-border dark:border-cyan-500/20 p-6 backdrop-blur-sm">
+      <div className="bg-card dark:bg-gray-800/50 rounded-xl dark:shadow-xl tech-glow border border-border dark:border-cyan-500/20 p-6 backdrop-blur-sm">
         <div className="text-center py-8">
           <p className="text-muted-foreground dark:text-gray-300">Cargando clientes...</p>
         </div>
@@ -74,7 +74,7 @@ export default function CustomersGrid({ onNotification }: CustomersGridProps) {
   }
 
   return (
-    <div className="bg-card dark:bg-gray-800/50 rounded-xl shadow-lg tech-glow border border-border dark:border-cyan-500/20 p-6 backdrop-blur-sm">
+    <div className="bg-card dark:bg-gray-800/50 rounded-xl dark:shadow-xl tech-glow border border-border dark:border-cyan-500/20 p-6 backdrop-blur-sm">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
         <h2 className="text-xl font-semibold text-card-foreground dark:text-white mb-4 md:mb-0 tech-text-glow">
           Gestión de Clientes
@@ -83,7 +83,7 @@ export default function CustomersGrid({ onNotification }: CustomersGridProps) {
           <DialogTrigger asChild>
             <Button 
               onClick={() => setIsDialogOpen(true)}
-              className="tech-button-3d bg-gradient-to-r from-cyan-500 to-blue-600 text-white hover:from-cyan-600 hover:to-blue-700 shadow-lg"
+              className="tech-button-3d bg-gradient-to-r from-cyan-500 to-blue-600 text-white hover:from-cyan-600 hover:to-blue-700 dark:shadow-xl"
               data-testid="button-add-customer"
             >
               <Plus className="w-4 h-4 mr-2" />
@@ -151,7 +151,7 @@ export default function CustomersGrid({ onNotification }: CustomersGridProps) {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {customers.map((customer) => (
-          <div key={customer.id} className="bg-card dark:bg-gray-800/50 rounded-lg p-4 tech-glow border border-border dark:border-cyan-500/20 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300" data-testid={`customer-card-${customer.id}`}>
+          <div key={customer.id} className="bg-card dark:bg-gray-800/50 rounded-lg p-4 tech-glow border border-border dark:border-cyan-500/20 backdrop-blur-sm dark:shadow-xl dark:hover:shadow-2xl transition-all duration-300" data-testid={`customer-card-${customer.id}`}>
             <div className="flex items-center justify-between mb-3">
               <div className="w-12 h-12 bg-gradient-to-br from-cyan-400/20 to-purple-500/20 rounded-full flex items-center justify-center border border-cyan-400/30">
                 <User className="w-6 h-6 text-cyan-400" />
@@ -174,7 +174,7 @@ export default function CustomersGrid({ onNotification }: CustomersGridProps) {
               <span className="text-muted-foreground">
                 Órdenes: <span data-testid={`customer-orders-${customer.id}`}>{customer.ordersCount}</span>
               </span>
-              <span className="text-green-600 font-medium" data-testid={`customer-spent-${customer.id}`}>
+              <span className="text-green-600 dark:text-green-400 font-medium" data-testid={`customer-spent-${customer.id}`}>
                 RD${parseFloat(customer.totalSpent || "0").toFixed(2)}
               </span>
             </div>

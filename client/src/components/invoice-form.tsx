@@ -173,7 +173,7 @@ export default function InvoiceForm({ user, onNotification }: InvoiceFormProps) 
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       {/* Invoice Form */}
       <div className="lg:col-span-2">
-        <div className="bg-card rounded-xl shadow-sm border border-border p-6">
+        <div className="bg-card rounded-xl dark:shadow-sm border border-border p-6">
           <h2 className="text-xl font-semibold text-card-foreground mb-6">Nueva Factura</h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
@@ -357,7 +357,7 @@ export default function InvoiceForm({ user, onNotification }: InvoiceFormProps) 
 
       {/* Invoice Preview */}
       <div className="lg:col-span-1">
-        <div className="bg-card rounded-xl shadow-sm border border-border p-6 sticky top-6">
+        <div className="bg-card rounded-xl dark:shadow-sm border border-border p-6 sticky top-6">
           <h3 className="text-lg font-semibold text-card-foreground mb-4">Resumen</h3>
           
           <div className="space-y-3 mb-6">

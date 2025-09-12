@@ -374,7 +374,7 @@ export default function CashClosure({ onBack }: CashClosureProps) {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 p-6 mb-6">
+        <div className="bg-white dark:bg-gray-800 rounded-xl dark:shadow-sm border dark:border-gray-700 p-6 mb-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <Button

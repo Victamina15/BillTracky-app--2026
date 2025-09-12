@@ -688,10 +688,10 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="bg-card dark:bg-gray-800/50 rounded-2xl dark:shadow-lg dark:tech-glow border border-border dark:border-cyan-500/20 p-6 backdrop-blur-sm">
+      <div className="bg-card dark:bg-gray-800/50 rounded-2xl dark:shadow-lg tech-glow border border-border dark:border-cyan-500/20 p-6 backdrop-blur-sm">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            <div className="w-14 h-14 bg-gradient-to-br from-cyan-400 to-purple-500 rounded-2xl flex items-center justify-center dark:shadow-lg dark:tech-glow">
+            <div className="w-14 h-14 bg-gradient-to-br from-cyan-400 to-purple-500 rounded-2xl flex items-center justify-center dark:shadow-lg tech-glow">
               <FileText className="w-8 h-8 text-white" />
             </div>
             <div>
@@ -710,7 +710,7 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
         {/* Panel Principal */}
         <div className="lg:col-span-2 space-y-6">
           {/* Información del Cliente */}
-          <Card className="bg-card dark:bg-gray-800/50 border border-border dark:border-cyan-500/20 dark:shadow-lg dark:tech-glow backdrop-blur-sm">
+          <Card className="bg-card dark:bg-gray-800/50 border border-border dark:border-cyan-500/20 dark:shadow-lg tech-glow backdrop-blur-sm">
             <CardHeader>
               <CardTitle className="flex items-center justify-between">
                 <div className="flex items-center">
@@ -961,7 +961,7 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
                   <span data-testid="text-subtotal">{formatCurrency(currentInvoice.subtotal)}</span>
                 </div>
                 {currentInvoice.discount > 0 && (
-                  <div className="flex justify-between text-red-600">
+                  <div className="flex justify-between text-red-600 dark:text-red-400">
                     <span>Descuento:</span>
                     <span data-testid="text-discount">-{formatCurrency(currentInvoice.discount)}</span>
                   </div>
@@ -1395,7 +1395,7 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
                 <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg">
                   <div className="flex justify-between items-center">
                     <span className="font-medium">Total del artículo:</span>
-                    <span className="text-lg font-bold text-blue-600">
+                    <span className="text-lg font-bold text-blue-600 dark:text-blue-400">
                       {formatCurrency(
                         parseFloat(
                           selectedServiceType === 'wash' ? selectedService.washPrice :
@@ -1442,7 +1442,7 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
         <DialogContent className="max-w-2xl max-h-[80vh] overflow-hidden flex flex-col" data-testid="modal-edit-item">
           <DialogHeader>
             <DialogTitle className="text-center">
-              <Edit className="w-12 h-12 text-green-600 mx-auto mb-4" />
+              <Edit className="w-12 h-12 text-green-600 dark:text-green-400 mx-auto mb-4" />
               Editar Artículo
             </DialogTitle>
             {editingItem && (
@@ -1569,7 +1569,7 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
                 <div className="bg-green-50 dark:bg-green-900/20 p-3 rounded-lg">
                   <div className="flex justify-between items-center">
                     <span className="font-medium">Total del artículo:</span>
-                    <span className="text-lg font-bold text-green-600">
+                    <span className="text-lg font-bold text-green-600 dark:text-green-400">
                       {formatCurrency(
                         parseFloat(
                           selectedServiceType === 'wash' ? selectedService.washPrice :
@@ -1611,7 +1611,7 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
           <DialogHeader>
             <DialogTitle className="text-center">
               <div className="w-16 h-16 bg-gradient-to-r from-blue-100 to-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <CheckCircle className="w-8 h-8 text-green-600" />
+                <CheckCircle className="w-8 h-8 text-green-600 dark:text-green-400" />
               </div>
               {isDraft ? 'Pedido Guardado Exitosamente' : 'Factura Procesada Exitosamente'}
             </DialogTitle>
@@ -1645,11 +1645,11 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
             >
               <div className="flex items-center space-x-3">
                 <div className="p-2 bg-gray-100 rounded-lg">
-                  <Printer className="w-5 h-5 text-gray-700" />
+                  <Printer className="w-5 h-5 text-gray-700 dark:text-gray-300" />
                 </div>
                 <div className="text-left">
-                  <div className="font-medium text-gray-800">Imprimir Recibo</div>
-                  <div className="text-sm text-gray-600">Generar versión impresa para el cliente</div>
+                  <div className="font-medium text-gray-800 dark:text-gray-200">Imprimir Recibo</div>
+                  <div className="text-sm text-gray-600 dark:text-gray-400">Generar versión impresa para el cliente</div>
                 </div>
               </div>
             </Button>
@@ -1672,11 +1672,11 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
             >
               <div className="flex items-center space-x-3">
                 <div className="p-2 bg-green-100 rounded-lg">
-                  <MessageCircle className="w-5 h-5 text-green-700" />
+                  <MessageCircle className="w-5 h-5 text-green-700 dark:text-green-400" />
                 </div>
                 <div className="text-left">
-                  <div className="font-medium text-green-800">Enviar por WhatsApp</div>
-                  <div className="text-sm text-green-600">
+                  <div className="font-medium text-green-800 dark:text-green-300">Enviar por WhatsApp</div>
+                  <div className="text-sm text-green-600 dark:text-green-400">
                     {currentInvoice.customerPhone ? 'Notificar al cliente directamente' : 'Teléfono no disponible'}
                   </div>
                 </div>
@@ -1705,7 +1705,7 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
                 </div>
                 <div className="text-left">
                   <div className="font-medium text-blue-800">Enviar por Correo</div>
-                  <div className="text-sm text-blue-600">
+                  <div className="text-sm text-blue-600 dark:text-blue-400">
                     {currentInvoice.customerEmail ? 'Notificar por email' : 'Email no disponible'}
                   </div>
                 </div>

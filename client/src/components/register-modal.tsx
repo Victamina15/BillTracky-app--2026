@@ -282,7 +282,7 @@ export default function RegisterModal({ isOpen, onClose, onLoginClick, onSuccess
                   <div className="text-right">
                     <p className="font-bold text-lg">{selectedPlanDetails.price}</p>
                     {selectedPlanDetails.id === "free" && (
-                      <p className="text-sm text-green-600">30 días gratis</p>
+                      <p className="text-sm text-green-600 dark:text-green-400">30 días gratis</p>
                     )}
                   </div>
                 </div>

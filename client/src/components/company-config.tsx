@@ -165,7 +165,7 @@ export default function CompanyConfig({ onBack }: CompanyConfigProps) {
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <Card className="mb-6">
+        <Card className="mb-6 dark:bg-gray-800/50 dark:shadow-lg tech-glow border-border dark:border-cyan-500/20">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
@@ -213,7 +213,7 @@ export default function CompanyConfig({ onBack }: CompanyConfigProps) {
         </Card>
 
         {/* Tabs Navigation */}
-        <Card className="mb-6">
+        <Card className="mb-6 dark:bg-gray-800/50 dark:shadow-lg tech-glow border-border dark:border-cyan-500/20">
           <div className="border-b border-border">
             <nav className="flex space-x-8 px-6">
               <button
@@ -320,7 +320,7 @@ export default function CompanyConfig({ onBack }: CompanyConfigProps) {
                 <div className="space-y-2">
                   <Label>Logo de la Empresa</Label>
                   <div className="flex items-center space-x-4">
-                    <div className="w-20 h-20 bg-muted rounded-lg flex items-center justify-center border-2 border-dashed border-muted-foreground/25">
+                    <div className="w-20 h-20 bg-muted dark:bg-gray-700/50 rounded-lg flex items-center justify-center border-2 border-dashed border-muted-foreground/25 dark:border-cyan-500/30">
                       {logoPreview ? (
                         <img src={logoPreview} alt="Logo" className="w-full h-full object-contain rounded-lg" />
                       ) : (
@@ -342,7 +342,7 @@ export default function CompanyConfig({ onBack }: CompanyConfigProps) {
                           Subir Logo
                         </label>
                       </Button>
-                      <p className="text-xs text-muted-foreground mt-1">PNG, JPG hasta 5MB</p>
+                      <p className="text-xs text-muted-foreground dark:text-gray-400 mt-1">PNG, JPG hasta 5MB</p>
                     </div>
                   </div>
                 </div>
@@ -510,7 +510,7 @@ export default function CompanyConfig({ onBack }: CompanyConfigProps) {
                   <h3 className="text-lg font-semibold mb-4">Horarios de Atención</h3>
                   <div className="space-y-4">
                     {Object.entries(configuracion.horarios).map(([dia, horario]) => (
-                      <Card key={dia} className="p-4">
+                      <Card key={dia} className="p-4 dark:bg-gray-700/30 dark:border-cyan-500/20 dark:shadow-lg tech-glow">
                         <div className="flex items-center space-x-4">
                           <div className="w-24">
                             <span className="font-medium">{diasSemana[dia as keyof typeof diasSemana]}</span>
@@ -569,7 +569,7 @@ export default function CompanyConfig({ onBack }: CompanyConfigProps) {
                   <h3 className="text-lg font-semibold mb-4">Configuración de Factura</h3>
                   
                   <div className="space-y-4">
-                    <Card className="p-4">
+                    <Card className="p-4 dark:bg-gray-700/30 dark:border-cyan-500/20 dark:shadow-lg tech-glow">
                       <div className="flex items-center justify-between">
                         <div>
                           <p className="font-medium">Mostrar RNC en facturas</p>
@@ -583,7 +583,7 @@ export default function CompanyConfig({ onBack }: CompanyConfigProps) {
                       </div>
                     </Card>
                     
-                    <Card className="p-4">
+                    <Card className="p-4 dark:bg-gray-700/30 dark:border-cyan-500/20 dark:shadow-lg tech-glow">
                       <div className="flex items-center justify-between">
                         <div>
                           <p className="font-medium">Mostrar dirección en facturas</p>
@@ -597,7 +597,7 @@ export default function CompanyConfig({ onBack }: CompanyConfigProps) {
                       </div>
                     </Card>
                     
-                    <Card className="p-4">
+                    <Card className="p-4 dark:bg-gray-700/30 dark:border-cyan-500/20 dark:shadow-lg tech-glow">
                       <div className="flex items-center justify-between">
                         <div>
                           <p className="font-medium">Mostrar teléfono en facturas</p>
@@ -611,7 +611,7 @@ export default function CompanyConfig({ onBack }: CompanyConfigProps) {
                       </div>
                     </Card>
                     
-                    <Card className="p-4">
+                    <Card className="p-4 dark:bg-gray-700/30 dark:border-cyan-500/20 dark:shadow-lg tech-glow">
                       <div className="flex items-center justify-between">
                         <div>
                           <p className="font-medium">Mostrar email en facturas</p>

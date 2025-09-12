@@ -287,7 +287,7 @@ _{empresa_nombre}_`
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <Card className="mb-6">
+        <Card className="mb-6 dark:bg-gray-800/50 dark:shadow-lg tech-glow border-border dark:border-cyan-500/20">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
@@ -324,7 +324,7 @@ _{empresa_nombre}_`
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Menu Lateral */}
-          <Card>
+          <Card className="dark:bg-gray-800/50 dark:shadow-lg tech-glow border-border dark:border-cyan-500/20">
             <CardHeader>
               <CardTitle className="text-lg">Tipos de Mensaje</CardTitle>
             </CardHeader>
@@ -376,7 +376,7 @@ _{empresa_nombre}_`
           {/* Contenido Principal */}
           <div className="lg:col-span-3 space-y-6">
             {/* Configuración del Mensaje Actual */}
-            <Card>
+            <Card className="dark:bg-gray-800/50 dark:shadow-lg tech-glow border-border dark:border-cyan-500/20">
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <CardTitle>
@@ -567,12 +567,12 @@ _{empresa_nombre}_`
             </div>
 
             {/* Vista previa WhatsApp */}
-            <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
+            <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700/30 rounded-lg p-4 mb-4">
               <div className="flex items-center space-x-2 mb-3">
-                <MessageCircle className="w-5 h-5 text-green-600" />
-                <span className="text-sm font-medium text-green-800">WhatsApp Preview</span>
+                <MessageCircle className="w-5 h-5 text-green-600 dark:text-green-400" />
+                <span className="text-sm font-medium text-green-800 dark:text-green-300">WhatsApp Preview</span>
               </div>
-              <div className="bg-white dark:bg-gray-800 rounded-lg p-3 dark:shadow-sm border border-gray-200 dark:border-gray-700">
+              <div className="bg-white dark:bg-gray-800/70 rounded-lg p-3 dark:shadow-sm border border-gray-200 dark:border-cyan-500/30 tech-glow">
                 <pre className="whitespace-pre-wrap text-sm text-foreground font-sans">
                   {mensajePreview}
                 </pre>

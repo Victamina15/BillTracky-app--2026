@@ -40,15 +40,15 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
 
   // Helper functions para obtener clases de estado de forma segura
   const getStatusClasses = (status: string | null) => {
-    if (!status) return 'bg-gradient-to-br from-gray-500/20 to-slate-600/20 text-gray-300 border border-gray-400/30 dark:tech-glow';
+    if (!status) return 'bg-gradient-to-br from-gray-500/20 to-slate-600/20 text-gray-300 border border-gray-400/30 tech-glow';
     
     switch(status) {
-      case 'received': return 'bg-gradient-to-br from-cyan-500/20 to-blue-600/20 text-cyan-300 border border-cyan-400/30 dark:tech-glow';
-      case 'in_process': return 'bg-gradient-to-br from-yellow-500/20 to-orange-600/20 text-yellow-300 border border-yellow-400/30 dark:tech-glow'; 
-      case 'ready': return 'bg-gradient-to-br from-purple-500/20 to-pink-600/20 text-purple-300 border border-purple-400/30 dark:tech-glow';
-      case 'delivered': return 'bg-gradient-to-br from-green-500/20 to-emerald-600/20 text-green-300 border border-green-400/30 dark:tech-glow';
-      case 'cancelled': return 'bg-gradient-to-br from-red-500/20 to-pink-600/20 text-red-300 border border-red-400/30 dark:tech-glow';
-      default: return 'bg-gradient-to-br from-gray-500/20 to-slate-600/20 text-gray-300 border border-gray-400/30 dark:tech-glow';
+      case 'received': return 'bg-gradient-to-br from-cyan-500/20 to-blue-600/20 text-cyan-300 border border-cyan-400/30 tech-glow';
+      case 'in_process': return 'bg-gradient-to-br from-yellow-500/20 to-orange-600/20 text-yellow-300 border border-yellow-400/30 tech-glow'; 
+      case 'ready': return 'bg-gradient-to-br from-purple-500/20 to-pink-600/20 text-purple-300 border border-purple-400/30 tech-glow';
+      case 'delivered': return 'bg-gradient-to-br from-green-500/20 to-emerald-600/20 text-green-300 border border-green-400/30 tech-glow';
+      case 'cancelled': return 'bg-gradient-to-br from-red-500/20 to-pink-600/20 text-red-300 border border-red-400/30 tech-glow';
+      default: return 'bg-gradient-to-br from-gray-500/20 to-slate-600/20 text-gray-300 border border-gray-400/30 tech-glow';
     }
   };
 
@@ -88,52 +88,52 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
           <div>
             {/* Metrics Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-              <div className="bg-card dark:bg-gray-800/50 rounded-xl dark:shadow-lg dark:tech-glow border border-border dark:border-cyan-500/20 p-6 dark:backdrop-blur-sm dark:hover:shadow-xl transition-all duration-300">
+              <div className="bg-card dark:bg-gray-800/50 rounded-xl dark:shadow-lg tech-glow border border-border dark:border-cyan-500/20 p-6 dark:backdrop-blur-sm dark:hover:shadow-xl transition-all duration-300">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-muted-foreground">Órdenes Hoy</p>
                     <p className="text-2xl font-bold text-card-foreground" data-testid="metric-today-orders">
                       {metricsLoading ? "..." : metrics?.todayOrders || 0}
                     </p>
-                    <p className="text-xs text-green-600 mt-1">+3 desde ayer</p>
+                    <p className="text-xs text-green-600 dark:text-green-400 mt-1">+3 desde ayer</p>
                   </div>
-                  <div className="w-12 h-12 bg-gradient-to-br from-cyan-400/20 to-purple-500/20 rounded-lg flex items-center justify-center border border-cyan-400/30 dark:tech-glow">
+                  <div className="w-12 h-12 bg-gradient-to-br from-cyan-400/20 to-purple-500/20 rounded-lg flex items-center justify-center border border-cyan-400/30 tech-glow">
                     <Package className="w-6 h-6 text-cyan-400" />
                   </div>
                 </div>
               </div>
 
-              <div className="bg-card dark:bg-gray-800/50 rounded-xl dark:shadow-lg dark:tech-glow border border-border dark:border-cyan-500/20 p-6 dark:backdrop-blur-sm dark:hover:shadow-xl transition-all duration-300">
+              <div className="bg-card dark:bg-gray-800/50 rounded-xl dark:shadow-lg tech-glow border border-border dark:border-cyan-500/20 p-6 dark:backdrop-blur-sm dark:hover:shadow-xl transition-all duration-300">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-muted-foreground">Ingresos Hoy</p>
                     <p className="text-2xl font-bold text-card-foreground" data-testid="metric-today-revenue">
                       {metricsLoading ? "..." : `RD$${metrics?.todayRevenue || "0.00"}`}
                     </p>
-                    <p className="text-xs text-green-600 mt-1">+15% vs ayer</p>
+                    <p className="text-xs text-green-600 dark:text-green-400 mt-1">+15% vs ayer</p>
                   </div>
-                  <div className="w-12 h-12 bg-gradient-to-br from-green-400/20 to-cyan-500/20 rounded-lg flex items-center justify-center border border-green-400/30 dark:tech-glow">
+                  <div className="w-12 h-12 bg-gradient-to-br from-green-400/20 to-cyan-500/20 rounded-lg flex items-center justify-center border border-green-400/30 tech-glow">
                     <span className="text-lg font-bold text-green-400">$</span>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-card dark:bg-gray-800/50 rounded-xl dark:shadow-lg dark:tech-glow border border-border dark:border-cyan-500/20 p-6 dark:backdrop-blur-sm dark:hover:shadow-xl transition-all duration-300">
+              <div className="bg-card dark:bg-gray-800/50 rounded-xl dark:shadow-lg tech-glow border border-border dark:border-cyan-500/20 p-6 dark:backdrop-blur-sm dark:hover:shadow-xl transition-all duration-300">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-muted-foreground">En Proceso</p>
                     <p className="text-2xl font-bold text-card-foreground" data-testid="metric-in-progress">
                       {metricsLoading ? "..." : metrics?.inProgress || 0}
                     </p>
-                    <p className="text-xs text-yellow-600 mt-1">2 listos pronto</p>
+                    <p className="text-xs text-yellow-600 dark:text-yellow-400 mt-1">2 listos pronto</p>
                   </div>
-                  <div className="w-12 h-12 bg-gradient-to-br from-yellow-400/20 to-orange-500/20 rounded-lg flex items-center justify-center border border-yellow-400/30 dark:tech-glow">
+                  <div className="w-12 h-12 bg-gradient-to-br from-yellow-400/20 to-orange-500/20 rounded-lg flex items-center justify-center border border-yellow-400/30 tech-glow">
                     <span className="text-lg font-bold text-yellow-400">⏱️</span>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-card dark:bg-gray-800/50 rounded-xl dark:shadow-lg dark:tech-glow border border-border dark:border-cyan-500/20 p-6 dark:backdrop-blur-sm dark:hover:shadow-xl transition-all duration-300">
+              <div className="bg-card dark:bg-gray-800/50 rounded-xl dark:shadow-lg tech-glow border border-border dark:border-cyan-500/20 p-6 dark:backdrop-blur-sm dark:hover:shadow-xl transition-all duration-300">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-muted-foreground">Pendientes Pago</p>
@@ -144,7 +144,7 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
                       RD${metrics?.pendingPaymentTotal || "0.00"} total
                     </p>
                   </div>
-                  <div className="w-12 h-12 bg-gradient-to-br from-red-400/20 to-pink-500/20 rounded-lg flex items-center justify-center border border-red-400/30 dark:tech-glow">
+                  <div className="w-12 h-12 bg-gradient-to-br from-red-400/20 to-pink-500/20 rounded-lg flex items-center justify-center border border-red-400/30 tech-glow">
                     <span className="text-lg font-bold text-red-400">⚠️</span>
                   </div>
                 </div>
@@ -153,7 +153,7 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
 
             {/* Quick Actions and Recent Orders */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-              <div className="bg-card dark:bg-gray-800/50 rounded-xl dark:shadow-lg dark:tech-glow border border-border dark:border-cyan-500/20 p-6 dark:backdrop-blur-sm">
+              <div className="bg-card dark:bg-gray-800/50 rounded-xl dark:shadow-lg tech-glow border border-border dark:border-cyan-500/20 p-6 dark:backdrop-blur-sm">
                 <h3 className="text-lg font-semibold text-card-foreground dark:text-white tech-text-glow mb-4">Acciones Rápidas</h3>
                 <div className="grid grid-cols-2 gap-4">
                   <button 
@@ -191,7 +191,7 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
                 </div>
               </div>
 
-              <div className="bg-card dark:bg-gray-800/50 rounded-xl dark:shadow-lg dark:tech-glow border border-border dark:border-cyan-500/20 p-6 dark:backdrop-blur-sm">
+              <div className="bg-card dark:bg-gray-800/50 rounded-xl dark:shadow-lg tech-glow border border-border dark:border-cyan-500/20 p-6 dark:backdrop-blur-sm">
                 <h3 className="text-lg font-semibold text-card-foreground dark:text-white tech-text-glow mb-4">Órdenes Recientes</h3>
                 <div className="space-y-3">
                   {recentOrders.map((order: Invoice) => (
@@ -241,7 +241,7 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
         <div className="p-6 border-b border-cyan-500/20">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-cyan-400 to-purple-500 rounded-lg flex items-center justify-center dark:shadow-lg dark:tech-glow">
+              <div className="w-10 h-10 bg-gradient-to-br from-cyan-400 to-purple-500 rounded-lg flex items-center justify-center dark:shadow-lg tech-glow">
                 <FileText className="w-6 h-6 text-white" />
               </div>
               <div>
