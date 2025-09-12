@@ -3,7 +3,7 @@ import { Check, Star, Users, Building, CreditCard, Clock, Shield, HeadphonesIcon
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import logoPath from "@assets/logo demo 2_1757619097947.png";
-import dashboardDevicesImage from "@assets/generated_images/Professional_devices_mockup_with_BillTracky_dashboard_ab78b829.png";
+import dashboardDevicesImage from "@assets/generated_images/Real_BillTracky_interface_in_multiple_devices_02a6652a.png";
 
 interface LandingPageProps {
   onGetStarted: () => void;
