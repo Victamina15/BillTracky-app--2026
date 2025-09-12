@@ -792,8 +792,16 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
                   <div className="text-blue-200/80 font-bold">Lavanderías activas</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-4xl font-black bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text text-transparent mb-3 tech-text-glow">24/7</div>
-                  <div className="text-blue-200/80 font-bold">Soporte</div>
+                  <div className="text-4xl font-black bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent mb-3 tech-text-glow">IA</div>
+                  <div className="text-blue-200/80 font-bold">Asistente AI 24/7</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-4xl font-black bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text text-transparent mb-3 tech-text-glow">99.9%</div>
+                  <div className="text-blue-200/80 font-bold">Tiempo activo</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-4xl font-black bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent mb-3 tech-text-glow">0s</div>
+                  <div className="text-blue-200/80 font-bold">Tiempo de respuesta</div>
                 </div>
               </div>
             </div>
@@ -850,10 +858,10 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
                   variant="outline"
                   size="lg"
                   onClick={onLogin}
-                  className="border-white/30 text-white hover:bg-white/10 hover:border-cyan-400/50 text-xl px-10 py-6 rounded-2xl backdrop-blur tech-glow hover:shadow-xl hover:scale-105 transition-all duration-300 font-bold"
+                  className="border-cyan-400/50 text-cyan-400 hover:bg-cyan-500/20 hover:border-cyan-400 text-xl px-10 py-6 rounded-2xl backdrop-blur-xl tech-glow hover:shadow-cyan-500/25 hover:scale-105 transition-all duration-300 font-bold bg-black/20"
                   data-testid="cta-demo-button"
                 >
-                  <Play className="mr-3 w-6 h-6" />
+                  <Play className="mr-3 w-6 h-6 text-cyan-400" />
                   Ver Demo
                 </Button>
               </div>
