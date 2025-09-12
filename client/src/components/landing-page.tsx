@@ -349,7 +349,7 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
                   </div>
                   <div>
                     <h3 className="font-bold text-white mb-2 text-lg">💻 Dashboard Completo</h3>
-                    <p className="text-blue-200">Métricas, acciones rápidas y control total desde laptop</p>
+                    <p className="text-white/90">Métricas, acciones rápidas y control total desde laptop</p>
                   </div>
                 </div>
                 
@@ -359,7 +359,7 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
                   </div>
                   <div>
                     <h3 className="font-bold text-white mb-2 text-lg">📱 Gestión de Órdenes</h3>
-                    <p className="text-blue-200">Administra todas las órdenes desde tablet con interfaz táctil</p>
+                    <p className="text-white/90">Administra todas las órdenes desde tablet con interfaz táctil</p>
                   </div>
                 </div>
                 
@@ -369,7 +369,7 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
                   </div>
                   <div>
                     <h3 className="font-bold text-white mb-2 text-lg">📄 Facturación Móvil</h3>
-                    <p className="text-blue-200">Crea facturas al instante desde tu móvil en cualquier lugar</p>
+                    <p className="text-white/90">Crea facturas al instante desde tu móvil en cualquier lugar</p>
                   </div>
                 </div>
               </div>
