@@ -189,15 +189,15 @@ export default function CashClosure({ onBack }: CashClosureProps) {
   const getPaymentMethodColor = (methodCode: string) => {
     switch (methodCode) {
       case 'cash':
-        return 'bg-green-50 text-green-700 border-green-200';
+        return 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300 border-green-200 dark:border-green-700';
       case 'card':
-        return 'bg-blue-50 text-blue-700 border-blue-200';
+        return 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-700';
       case 'transfer':
-        return 'bg-indigo-50 text-indigo-700 border-indigo-200';
+        return 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-700';
       case 'mobile_pay':
-        return 'bg-purple-50 text-purple-700 border-purple-200';
+        return 'bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-700';
       default:
-        return 'bg-yellow-50 text-yellow-700 border-yellow-200';
+        return 'bg-yellow-50 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-300 border-yellow-200 dark:border-yellow-700';
     }
   };
 
@@ -359,11 +359,11 @@ export default function CashClosure({ onBack }: CashClosureProps) {
 
   if (invoicesLoading || paymentMethodsLoading || employeesLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 p-6">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6">
         <div className="max-w-6xl mx-auto">
           <div className="flex items-center justify-center py-12">
             <Loader2 className="h-8 w-8 animate-spin mr-3" />
-            <span className="text-lg">Cargando datos del cierre...</span>
+            <span className="text-lg dark:text-gray-200">Cargando datos del cierre...</span>
           </div>
         </div>
       </div>
@@ -371,10 +371,10 @@ export default function CashClosure({ onBack }: CashClosureProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="bg-white rounded-xl shadow-sm border p-6 mb-6">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 p-6 mb-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <Button
@@ -391,15 +391,15 @@ export default function CashClosure({ onBack }: CashClosureProps) {
                 <BarChart3 className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">Cierre de Caja</h1>
-                <p className="text-gray-600">Reportes y cálculos diarios</p>
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Cierre de Caja</h1>
+                <p className="text-gray-600 dark:text-gray-300">Reportes y cálculos diarios</p>
               </div>
             </div>
             
             <div className="flex items-center space-x-3">
               <div className="flex items-center space-x-2">
-                <Calendar className="h-4 w-4 text-gray-500" />
-                <Label htmlFor="fecha" className="text-sm font-medium">
+                <Calendar className="h-4 w-4 text-gray-500 dark:text-gray-400" />
+                <Label htmlFor="fecha" className="text-sm font-medium dark:text-gray-300">
                   Fecha:
                 </Label>
                 <Input
@@ -414,7 +414,7 @@ export default function CashClosure({ onBack }: CashClosureProps) {
               
               <Button
                 onClick={printCashClosure}
-                className="bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200"
+                className="bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/30 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-700"
                 data-testid="button-print-closure"
               >
                 <Printer className="w-4 h-4 mr-2" />
@@ -422,7 +422,7 @@ export default function CashClosure({ onBack }: CashClosureProps) {
               </Button>
               <Button
                 onClick={exportToExcel}
-                className="bg-green-50 hover:bg-green-100 text-green-700 border border-green-200"
+                className="bg-green-50 dark:bg-green-900/20 hover:bg-green-100 dark:hover:bg-green-900/30 text-green-700 dark:text-green-300 border border-green-200 dark:border-green-700"
                 data-testid="button-export-closure"
               >
                 <Download className="w-4 h-4 mr-2" />
@@ -438,12 +438,12 @@ export default function CashClosure({ onBack }: CashClosureProps) {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Total Facturas</p>
-                  <p className="text-2xl font-bold text-gray-900" data-testid="stat-total-invoices">
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Facturas</p>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-white" data-testid="stat-total-invoices">
                     {dailySummary.totalInvoices}
                   </p>
                 </div>
-                <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+                <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/20 rounded-xl flex items-center justify-center">
                   <FileText className="w-6 h-6 text-blue-600" />
                 </div>
               </div>
@@ -454,12 +454,12 @@ export default function CashClosure({ onBack }: CashClosureProps) {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Entregadas</p>
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Entregadas</p>
                   <p className="text-2xl font-bold text-green-600" data-testid="stat-delivered-invoices">
                     {dailySummary.deliveredInvoices}
                   </p>
                 </div>
-                <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+                <div className="w-12 h-12 bg-green-100 dark:bg-green-900/20 rounded-xl flex items-center justify-center">
                   <CheckCircle className="w-6 h-6 text-green-600" />
                 </div>
               </div>
@@ -470,12 +470,12 @@ export default function CashClosure({ onBack }: CashClosureProps) {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Pendientes</p>
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Pendientes</p>
                   <p className="text-2xl font-bold text-yellow-600" data-testid="stat-pending-invoices">
                     {dailySummary.pendingInvoices}
                   </p>
                 </div>
-                <div className="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center">
+                <div className="w-12 h-12 bg-yellow-100 dark:bg-yellow-900/20 rounded-xl flex items-center justify-center">
                   <Clock className="w-6 h-6 text-yellow-600" />
                 </div>
               </div>
@@ -486,12 +486,12 @@ export default function CashClosure({ onBack }: CashClosureProps) {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Total Ingresos</p>
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Ingresos</p>
                   <p className="text-2xl font-bold text-green-600" data-testid="stat-total-revenue">
                     {formatCurrency(dailySummary.totalRevenue)}
                   </p>
                 </div>
-                <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+                <div className="w-12 h-12 bg-green-100 dark:bg-green-900/20 rounded-xl flex items-center justify-center">
                   <DollarSign className="w-6 h-6 text-green-600" />
                 </div>
               </div>
@@ -517,12 +517,12 @@ export default function CashClosure({ onBack }: CashClosureProps) {
                     const methodCode = method?.code || 'pending';
                     
                     return (
-                      <div key={methodName} className="flex items-center justify-between p-3 rounded-lg border">
+                      <div key={methodName} className="flex items-center justify-between p-3 rounded-lg border border-gray-200 dark:border-gray-700">
                         <div className="flex items-center gap-3">
                           {getPaymentMethodIcon(methodCode)}
                           <div>
                             <p className="font-medium">{methodName}</p>
-                            <p className="text-sm text-gray-600">{data.quantity} transacciones</p>
+                            <p className="text-sm text-gray-600 dark:text-gray-400">{data.quantity} transacciones</p>
                           </div>
                         </div>
                         <Badge className={getPaymentMethodColor(methodCode)} data-testid={`payment-${methodCode}-total`}>
@@ -546,12 +546,12 @@ export default function CashClosure({ onBack }: CashClosureProps) {
             <CardContent>
               <div className="space-y-3">
                 {Object.entries(dailySummary.employeeStats).map(([employeeName, stats]) => (
-                  <div key={employeeName} className="flex items-center justify-between p-3 rounded-lg border">
+                  <div key={employeeName} className="flex items-center justify-between p-3 rounded-lg border border-gray-200 dark:border-gray-700">
                     <div>
                       <p className="font-medium">{employeeName}</p>
-                      <p className="text-sm text-gray-600">{stats.sales} ventas</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">{stats.sales} ventas</p>
                     </div>
-                    <Badge className="bg-blue-50 text-blue-700 border-blue-200" data-testid={`employee-${employeeName}-total`}>
+                    <Badge className="bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-700" data-testid={`employee-${employeeName}-total`}>
                       {formatCurrency(stats.total)}
                     </Badge>
                   </div>
@@ -574,20 +574,20 @@ export default function CashClosure({ onBack }: CashClosureProps) {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="text-center p-4 bg-green-50 rounded-lg">
-                <p className="text-sm text-gray-600 mb-1">Subtotal</p>
+              <div className="text-center p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Subtotal</p>
                 <p className="text-xl font-bold text-green-600" data-testid="financial-subtotal">
                   {formatCurrency(dailySummary.totalSubtotal)}
                 </p>
               </div>
-              <div className="text-center p-4 bg-blue-50 rounded-lg">
-                <p className="text-sm text-gray-600 mb-1">ITBIS (18%)</p>
+              <div className="text-center p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">ITBIS (18%)</p>
                 <p className="text-xl font-bold text-blue-600" data-testid="financial-tax">
                   {formatCurrency(dailySummary.totalTax)}
                 </p>
               </div>
-              <div className="text-center p-4 bg-green-100 rounded-lg border-2 border-green-200">
-                <p className="text-sm text-gray-600 mb-1">Total Ingresos</p>
+              <div className="text-center p-4 bg-green-100 dark:bg-green-900/20 rounded-lg border-2 border-green-200 dark:border-green-700">
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Total Ingresos</p>
                 <p className="text-2xl font-bold text-green-700" data-testid="financial-total">
                   {formatCurrency(dailySummary.totalRevenue)}
                 </p>
@@ -606,10 +606,10 @@ export default function CashClosure({ onBack }: CashClosureProps) {
               </DialogTitle>
             </DialogHeader>
             <div className="text-center py-4">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="w-16 h-16 bg-green-100 dark:bg-green-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
                 <CheckCircle className="w-8 h-8 text-green-600" />
               </div>
-              <p className="text-gray-600 mb-6" data-testid="modal-message">{modalMessage}</p>
+              <p className="text-gray-600 dark:text-gray-300 mb-6" data-testid="modal-message">{modalMessage}</p>
               <Button
                 onClick={() => setShowConfirmModal(false)}
                 className="w-full bg-green-600 hover:bg-green-700 text-white"
