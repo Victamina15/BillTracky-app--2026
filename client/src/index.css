@@ -4,38 +4,39 @@
 @tailwind utilities;
 
 :root {
-  --background: hsl(210, 40%, 98%);
-  --foreground: hsl(222.2, 84%, 4.9%);
+  /* Light mode - Tech style */
+  --background: hsl(0, 0%, 98%);
+  --foreground: hsl(220, 20%, 15%);
   --card: hsl(0, 0%, 100%);
-  --card-foreground: hsl(222.2, 84%, 4.9%);
+  --card-foreground: hsl(220, 20%, 15%);
   --popover: hsl(0, 0%, 100%);
-  --popover-foreground: hsl(222.2, 84%, 4.9%);
-  --primary: hsl(219, 78%, 25%);
-  --primary-foreground: hsl(0, 0%, 100%);
-  --secondary: hsl(199, 89%, 48%);
+  --popover-foreground: hsl(220, 20%, 15%);
+  --primary: hsl(194, 96%, 60%);
+  --primary-foreground: hsl(220, 20%, 5%);
+  --secondary: hsl(272, 75%, 60%);
   --secondary-foreground: hsl(0, 0%, 100%);
-  --muted: hsl(210, 40%, 96%);
-  --muted-foreground: hsl(215.4, 16.3%, 46.9%);
-  --accent: hsl(210, 40%, 96%);
-  --accent-foreground: hsl(222.2, 84%, 4.9%);
-  --destructive: hsl(0, 84.2%, 60.2%);
+  --muted: hsl(220, 15%, 95%);
+  --muted-foreground: hsl(220, 10%, 50%);
+  --accent: hsl(194, 96%, 60%);
+  --accent-foreground: hsl(220, 20%, 5%);
+  --destructive: hsl(0, 84%, 60%);
   --destructive-foreground: hsl(210, 40%, 98%);
-  --border: hsl(214.3, 31.8%, 91.4%);
-  --input: hsl(214.3, 31.8%, 91.4%);
-  --ring: hsl(199, 89%, 48%);
-  --chart-1: hsl(0, 72%, 51%);
-  --chart-2: hsl(159.7826, 100%, 36.0784%);
-  --chart-3: hsl(42.0290, 92.8251%, 56.2745%);
-  --chart-4: hsl(147.1429, 78.5047%, 41.9608%);
-  --chart-5: hsl(341.4894, 75.2000%, 50.9804%);
+  --border: hsl(220, 15%, 85%);
+  --input: hsl(220, 15%, 90%);
+  --ring: hsl(194, 96%, 60%);
+  --chart-1: hsl(194, 96%, 60%);
+  --chart-2: hsl(272, 75%, 60%);
+  --chart-3: hsl(32, 95%, 55%);
+  --chart-4: hsl(142, 76%, 40%);
+  --chart-5: hsl(340, 75%, 50%);
   --sidebar: hsl(0, 0%, 100%);
-  --sidebar-foreground: hsl(222.2, 84%, 4.9%);
-  --sidebar-primary: hsl(219, 78%, 25%);
-  --sidebar-primary-foreground: hsl(0, 0%, 100%);
-  --sidebar-accent: hsl(210, 40%, 96%);
-  --sidebar-accent-foreground: hsl(219, 78%, 25%);
-  --sidebar-border: hsl(214.3, 31.8%, 91.4%);
-  --sidebar-ring: hsl(199, 89%, 48%);
+  --sidebar-foreground: hsl(220, 20%, 15%);
+  --sidebar-primary: hsl(194, 96%, 60%);
+  --sidebar-primary-foreground: hsl(220, 20%, 5%);
+  --sidebar-accent: hsl(220, 15%, 95%);
+  --sidebar-accent-foreground: hsl(194, 96%, 60%);
+  --sidebar-border: hsl(220, 15%, 85%);
+  --sidebar-ring: hsl(194, 96%, 60%);
   --font-sans: 'Inter', system-ui, sans-serif;
   --font-serif: Georgia, serif;
   --font-mono: Menlo, monospace;
@@ -43,25 +44,34 @@
 }
 
 .dark {
-  --background: hsl(0, 0%, 0%);
-  --foreground: hsl(200, 6.6667%, 91.1765%);
-  --card: hsl(228, 9.8039%, 10%);
-  --card-foreground: hsl(0, 0%, 85.0980%);
-  --popover: hsl(0, 0%, 0%);
-  --popover-foreground: hsl(200, 6.6667%, 91.1765%);
-  --primary: hsl(219, 78%, 25%);
-  --primary-foreground: hsl(0, 0%, 100%);
-  --secondary: hsl(199, 89%, 48%);
+  /* Dark mode - Tech style matching landing page */
+  --background: hsl(220, 35%, 6%);
+  --foreground: hsl(0, 0%, 95%);
+  --card: hsl(220, 20%, 8%);
+  --card-foreground: hsl(0, 0%, 90%);
+  --popover: hsl(220, 20%, 8%);
+  --popover-foreground: hsl(0, 0%, 95%);
+  --primary: hsl(194, 96%, 60%);
+  --primary-foreground: hsl(220, 35%, 6%);
+  --secondary: hsl(272, 75%, 60%);
   --secondary-foreground: hsl(0, 0%, 100%);
-  --muted: hsl(0, 0%, 9.4118%);
-  --muted-foreground: hsl(210, 3.3898%, 46.2745%);
-  --accent: hsl(205.7143, 70%, 7.8431%);
-  --accent-foreground: hsl(0, 72%, 51%);
-  --destructive: hsl(0, 84.2%, 60.2%);
+  --muted: hsl(220, 20%, 12%);
+  --muted-foreground: hsl(220, 10%, 60%);
+  --accent: hsl(220, 20%, 15%);
+  --accent-foreground: hsl(194, 96%, 60%);
+  --destructive: hsl(0, 84%, 60%);
   --destructive-foreground: hsl(210, 40%, 98%);
-  --border: hsl(210, 5.2632%, 14.9020%);
-  --input: hsl(207.6923, 27.6596%, 18.4314%);
-  --ring: hsl(199, 89%, 48%);
+  --border: hsl(220, 20%, 20%);
+  --input: hsl(220, 20%, 15%);
+  --ring: hsl(194, 96%, 60%);
+  --sidebar: hsl(220, 35%, 6%);
+  --sidebar-foreground: hsl(0, 0%, 95%);
+  --sidebar-primary: hsl(194, 96%, 60%);
+  --sidebar-primary-foreground: hsl(220, 35%, 6%);
+  --sidebar-accent: hsl(220, 20%, 12%);
+  --sidebar-accent-foreground: hsl(194, 96%, 60%);
+  --sidebar-border: hsl(220, 20%, 20%);
+  --sidebar-ring: hsl(194, 96%, 60%);
 }
 
 @layer base {
@@ -294,6 +304,59 @@
 .backdrop-modern {
   backdrop-filter: blur(20px) saturate(180%);
   background: rgba(255, 255, 255, 0.1);
+}
+
+/* Tech Button 3D Effects */
+.tech-button-3d {
+  background: linear-gradient(145deg, rgba(59, 130, 246, 0.1), rgba(147, 51, 234, 0.1));
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  position: relative;
+  overflow: hidden;
+  transform: translateZ(0);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.tech-button-3d::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.tech-button-3d:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 
+    0 10px 25px rgba(59, 130, 246, 0.2),
+    0 5px 15px rgba(147, 51, 234, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.tech-button-3d:hover::before {
+  left: 100%;
+}
+
+.tech-button-3d:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.tech-button-active {
+  background: linear-gradient(145deg, rgba(59, 130, 246, 0.2), rgba(147, 51, 234, 0.2));
+  border-color: rgba(59, 130, 246, 0.6);
+  box-shadow: 
+    0 0 20px rgba(59, 130, 246, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.tech-text-glow {
+  text-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+}
+
+.backdrop-blur-20 {
+  backdrop-filter: blur(20px);
 }
 
 /* 3D Tech Effects for Devices Section */
