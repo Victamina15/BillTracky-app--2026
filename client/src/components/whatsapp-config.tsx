@@ -572,7 +572,7 @@ _{empresa_nombre}_`
                 <MessageCircle className="w-5 h-5 text-green-600" />
                 <span className="text-sm font-medium text-green-800">WhatsApp Preview</span>
               </div>
-              <div className="bg-white rounded-lg p-3 shadow-sm">
+              <div className="bg-white dark:bg-gray-800 rounded-lg p-3 dark:shadow-sm border border-gray-200 dark:border-gray-700">
                 <pre className="whitespace-pre-wrap text-sm text-foreground font-sans">
                   {mensajePreview}
                 </pre>

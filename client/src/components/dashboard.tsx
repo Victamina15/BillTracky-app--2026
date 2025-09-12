@@ -21,6 +21,7 @@ interface DashboardProps {
 export default function Dashboard({ user, onLogout, onNotification }: DashboardProps) {
   const [activeTab, setActiveTab] = useState("overview");
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   const { data: metrics, isLoading: metricsLoading } = useQuery<{
     todayOrders: number;
@@ -40,15 +41,15 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
 
   // Helper functions para obtener clases de estado de forma segura
   const getStatusClasses = (status: string | null) => {
-    if (!status) return 'bg-gradient-to-br from-gray-500/20 to-slate-600/20 text-gray-300 border border-gray-400/30 tech-glow';
+    if (!status) return 'bg-gradient-to-br from-gray-500/20 to-slate-600/20 text-gray-300 border border-gray-400/30 dark:tech-glow';
     
     switch(status) {
-      case 'received': return 'bg-gradient-to-br from-cyan-500/20 to-blue-600/20 text-cyan-300 border border-cyan-400/30 tech-glow';
-      case 'in_process': return 'bg-gradient-to-br from-yellow-500/20 to-orange-600/20 text-yellow-300 border border-yellow-400/30 tech-glow'; 
-      case 'ready': return 'bg-gradient-to-br from-purple-500/20 to-pink-600/20 text-purple-300 border border-purple-400/30 tech-glow';
-      case 'delivered': return 'bg-gradient-to-br from-green-500/20 to-emerald-600/20 text-green-300 border border-green-400/30 tech-glow';
-      case 'cancelled': return 'bg-gradient-to-br from-red-500/20 to-pink-600/20 text-red-300 border border-red-400/30 tech-glow';
-      default: return 'bg-gradient-to-br from-gray-500/20 to-slate-600/20 text-gray-300 border border-gray-400/30 tech-glow';
+      case 'received': return 'bg-gradient-to-br from-cyan-500/20 to-blue-600/20 text-cyan-300 border border-cyan-400/30 dark:tech-glow';
+      case 'in_process': return 'bg-gradient-to-br from-yellow-500/20 to-orange-600/20 text-yellow-300 border border-yellow-400/30 dark:tech-glow'; 
+      case 'ready': return 'bg-gradient-to-br from-purple-500/20 to-pink-600/20 text-purple-300 border border-purple-400/30 dark:tech-glow';
+      case 'delivered': return 'bg-gradient-to-br from-green-500/20 to-emerald-600/20 text-green-300 border border-green-400/30 dark:tech-glow';
+      case 'cancelled': return 'bg-gradient-to-br from-red-500/20 to-pink-600/20 text-red-300 border border-red-400/30 dark:tech-glow';
+      default: return 'bg-gradient-to-br from-gray-500/20 to-slate-600/20 text-gray-300 border border-gray-400/30 dark:tech-glow';
     }
   };
 
@@ -88,7 +89,7 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
           <div>
             {/* Metrics Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-              <div className="bg-card dark:bg-gray-800/50 rounded-xl shadow-lg tech-glow border border-border dark:border-cyan-500/20 p-6 backdrop-blur-sm hover:shadow-xl transition-all duration-300">
+              <div className="bg-card dark:bg-gray-800/50 rounded-xl dark:shadow-lg dark:tech-glow border border-border dark:border-cyan-500/20 p-6 dark:backdrop-blur-sm dark:hover:shadow-xl transition-all duration-300">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-muted-foreground">Órdenes Hoy</p>
@@ -97,13 +98,13 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
                     </p>
                     <p className="text-xs text-green-600 mt-1">+3 desde ayer</p>
                   </div>
-                  <div className="w-12 h-12 bg-gradient-to-br from-cyan-400/20 to-purple-500/20 rounded-lg flex items-center justify-center border border-cyan-400/30 tech-glow">
+                  <div className="w-12 h-12 bg-gradient-to-br from-cyan-400/20 to-purple-500/20 rounded-lg flex items-center justify-center border border-cyan-400/30 dark:tech-glow">
                     <Package className="w-6 h-6 text-cyan-400" />
                   </div>
                 </div>
               </div>
 
-              <div className="bg-card dark:bg-gray-800/50 rounded-xl shadow-lg tech-glow border border-border dark:border-cyan-500/20 p-6 backdrop-blur-sm hover:shadow-xl transition-all duration-300">
+              <div className="bg-card dark:bg-gray-800/50 rounded-xl dark:shadow-lg dark:tech-glow border border-border dark:border-cyan-500/20 p-6 dark:backdrop-blur-sm dark:hover:shadow-xl transition-all duration-300">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-muted-foreground">Ingresos Hoy</p>
@@ -118,7 +119,7 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
                 </div>
               </div>
 
-              <div className="bg-card dark:bg-gray-800/50 rounded-xl shadow-lg tech-glow border border-border dark:border-cyan-500/20 p-6 backdrop-blur-sm hover:shadow-xl transition-all duration-300">
+              <div className="bg-card dark:bg-gray-800/50 rounded-xl dark:shadow-lg dark:tech-glow border border-border dark:border-cyan-500/20 p-6 dark:backdrop-blur-sm dark:hover:shadow-xl transition-all duration-300">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-muted-foreground">En Proceso</p>
@@ -133,7 +134,7 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
                 </div>
               </div>
 
-              <div className="bg-card dark:bg-gray-800/50 rounded-xl shadow-lg tech-glow border border-border dark:border-cyan-500/20 p-6 backdrop-blur-sm hover:shadow-xl transition-all duration-300">
+              <div className="bg-card dark:bg-gray-800/50 rounded-xl dark:shadow-lg dark:tech-glow border border-border dark:border-cyan-500/20 p-6 dark:backdrop-blur-sm dark:hover:shadow-xl transition-all duration-300">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-muted-foreground">Pendientes Pago</p>
@@ -153,7 +154,7 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
 
             {/* Quick Actions and Recent Orders */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-              <div className="bg-card dark:bg-gray-800/50 rounded-xl shadow-lg tech-glow border border-border dark:border-cyan-500/20 p-6 backdrop-blur-sm">
+              <div className="bg-card dark:bg-gray-800/50 rounded-xl dark:shadow-lg dark:tech-glow border border-border dark:border-cyan-500/20 p-6 dark:backdrop-blur-sm">
                 <h3 className="text-lg font-semibold text-card-foreground dark:text-white tech-text-glow mb-4">Acciones Rápidas</h3>
                 <div className="grid grid-cols-2 gap-4">
                   <button 
@@ -191,7 +192,7 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
                 </div>
               </div>
 
-              <div className="bg-card dark:bg-gray-800/50 rounded-xl shadow-lg tech-glow border border-border dark:border-cyan-500/20 p-6 backdrop-blur-sm">
+              <div className="bg-card dark:bg-gray-800/50 rounded-xl dark:shadow-lg dark:tech-glow border border-border dark:border-cyan-500/20 p-6 dark:backdrop-blur-sm">
                 <h3 className="text-lg font-semibold text-card-foreground dark:text-white tech-text-glow mb-4">Órdenes Recientes</h3>
                 <div className="space-y-3">
                   {recentOrders.map((order: Invoice) => (
@@ -234,20 +235,32 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
       {/* Sidebar Navigation */}
       <nav className={`${
         sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-      } fixed lg:relative lg:translate-x-0 w-64 h-full bg-gradient-to-b from-gray-900 via-purple-900/20 to-blue-900/20 backdrop-blur-xl border-r border-cyan-500/20 flex flex-col z-40 transition-transform duration-300 lg:transition-none tech-gradient-bg`}>
+      } fixed lg:relative lg:translate-x-0 ${sidebarCollapsed ? 'w-16' : 'w-64'} h-full bg-gradient-to-b from-gray-900 via-purple-900/20 to-blue-900/20 backdrop-blur-xl border-r border-cyan-500/20 flex flex-col z-40 transition-all duration-300 tech-gradient-bg`}>
         {/* Header in Sidebar */}
         <div className="p-6 border-b border-cyan-500/20">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-cyan-400 to-purple-500 rounded-lg flex items-center justify-center shadow-lg tech-glow">
+              <div className="w-10 h-10 bg-gradient-to-br from-cyan-400 to-purple-500 rounded-lg flex items-center justify-center dark:shadow-lg dark:tech-glow">
                 <FileText className="w-6 h-6 text-white" />
               </div>
-              <div>
-                <h1 className="text-xl font-bold text-white tech-text-glow">Billtracky</h1>
-                <p className="text-sm text-cyan-200">CleanWash Lavandería</p>
-              </div>
+              {!sidebarCollapsed && (
+                <div>
+                  <h1 className="text-xl font-bold text-white tech-text-glow">Billtracky</h1>
+                  <p className="text-sm text-cyan-200">CleanWash Lavandería</p>
+                </div>
+              )}
             </div>
-            <ThemeToggle />
+            {!sidebarCollapsed && <ThemeToggle />}
+            
+            {/* Desktop Collapse/Expand Button */}
+            <button
+              onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+              className="hidden lg:block tech-button-3d p-2 text-gray-300 hover:text-cyan-400 rounded-lg transition-all duration-300 ml-2"
+              title={sidebarCollapsed ? "Expandir panel" : "Colapsar panel"}
+              data-testid="sidebar-collapse-toggle"
+            >
+              {sidebarCollapsed ? <Menu className="w-4 h-4" /> : <X className="w-4 h-4" />}
+            </button>
           </div>
         </div>
         
@@ -256,41 +269,44 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
           <div className="space-y-2">
             <button 
               onClick={() => setActiveTab('overview')} 
-              className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-300 ${
+              className={`w-full flex items-center ${sidebarCollapsed ? 'justify-center px-2 py-3' : 'px-4 py-3'} text-sm font-medium rounded-lg transition-all duration-300 ${
                 activeTab === 'overview' 
                   ? 'tech-button-3d tech-button-active text-cyan-400 shadow-lg' 
                   : 'tech-button-3d text-gray-300 hover:text-cyan-400'
               }`}
+              title={sidebarCollapsed ? "Dashboard" : ""}
               data-testid="tab-overview"
             >
-              <Home className="w-4 h-4 mr-3" />
-              Dashboard
+              <Home className={`w-4 h-4 ${!sidebarCollapsed ? 'mr-3' : ''}`} />
+              {!sidebarCollapsed && 'Dashboard'}
             </button>
             
             <button 
               onClick={() => setActiveTab('invoices')} 
-              className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-300 ${
+              className={`w-full flex items-center ${sidebarCollapsed ? 'justify-center px-2 py-3' : 'px-4 py-3'} text-sm font-medium rounded-lg transition-all duration-300 ${
                 activeTab === 'invoices' 
                   ? 'tech-button-3d tech-button-active text-cyan-400 shadow-lg' 
                   : 'tech-button-3d text-gray-300 hover:text-cyan-400'
               }`}
+              title={sidebarCollapsed ? "Nueva Factura" : ""}
               data-testid="tab-invoices"
             >
-              <FileText className="w-4 h-4 mr-3" />
-              Nueva Factura
+              <FileText className={`w-4 h-4 ${!sidebarCollapsed ? 'mr-3' : ''}`} />
+              {!sidebarCollapsed && 'Nueva Factura'}
             </button>
             
             <button 
               onClick={() => setActiveTab('orders')} 
-              className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-300 ${
+              className={`w-full flex items-center ${sidebarCollapsed ? 'justify-center px-2 py-3' : 'px-4 py-3'} text-sm font-medium rounded-lg transition-all duration-300 ${
                 activeTab === 'orders' 
                   ? 'tech-button-3d tech-button-active text-cyan-400 shadow-lg' 
                   : 'tech-button-3d text-gray-300 hover:text-cyan-400'
               }`}
+              title={sidebarCollapsed ? "Órdenes" : ""}
               data-testid="tab-orders"
             >
-              <Package className="w-4 h-4 mr-3" />
-              Órdenes
+              <Package className={`w-4 h-4 ${!sidebarCollapsed ? 'mr-3' : ''}`} />
+              {!sidebarCollapsed && 'Órdenes'}
             </button>
             
             <button 
@@ -308,67 +324,72 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
             
             <button 
               onClick={() => setActiveTab('services')} 
-              className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-300 ${
+              className={`w-full flex items-center ${sidebarCollapsed ? 'justify-center px-2 py-3' : 'px-4 py-3'} text-sm font-medium rounded-lg transition-all duration-300 ${
                 activeTab === 'services' 
                   ? 'tech-button-3d tech-button-active text-cyan-400 shadow-lg' 
                   : 'tech-button-3d text-gray-300 hover:text-cyan-400'
               }`}
+              title={sidebarCollapsed ? "Servicios" : ""}
               data-testid="tab-services"
             >
-              <Settings className="w-4 h-4 mr-3" />
-              Servicios
+              <Settings className={`w-4 h-4 ${!sidebarCollapsed ? 'mr-3' : ''}`} />
+              {!sidebarCollapsed && 'Servicios'}
             </button>
             
             <button 
               onClick={() => setActiveTab('payment-methods')} 
-              className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-300 ${
+              className={`w-full flex items-center ${sidebarCollapsed ? 'justify-center px-2 py-3' : 'px-4 py-3'} text-sm font-medium rounded-lg transition-all duration-300 ${
                 activeTab === 'payment-methods' 
                   ? 'tech-button-3d tech-button-active text-cyan-400 shadow-lg' 
                   : 'tech-button-3d text-gray-300 hover:text-cyan-400'
               }`}
+              title={sidebarCollapsed ? "Métodos de Pago" : ""}
               data-testid="tab-payment-methods"
             >
-              <CreditCard className="w-4 h-4 mr-3" />
-              Métodos de Pago
+              <CreditCard className={`w-4 h-4 ${!sidebarCollapsed ? 'mr-3' : ''}`} />
+              {!sidebarCollapsed && 'Métodos de Pago'}
             </button>
             
             <button 
               onClick={() => setActiveTab('customers')} 
-              className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-300 ${
+              className={`w-full flex items-center ${sidebarCollapsed ? 'justify-center px-2 py-3' : 'px-4 py-3'} text-sm font-medium rounded-lg transition-all duration-300 ${
                 activeTab === 'customers' 
                   ? 'tech-button-3d tech-button-active text-cyan-400 shadow-lg' 
                   : 'tech-button-3d text-gray-300 hover:text-cyan-400'
               }`}
+              title={sidebarCollapsed ? "Clientes" : ""}
               data-testid="tab-customers"
             >
-              <Users className="w-4 h-4 mr-3" />
-              Clientes
+              <Users className={`w-4 h-4 ${!sidebarCollapsed ? 'mr-3' : ''}`} />
+              {!sidebarCollapsed && 'Clientes'}
             </button>
             
             <button 
               onClick={() => setActiveTab('company-config')} 
-              className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-300 ${
+              className={`w-full flex items-center ${sidebarCollapsed ? 'justify-center px-2 py-3' : 'px-4 py-3'} text-sm font-medium rounded-lg transition-all duration-300 ${
                 activeTab === 'company-config' 
                   ? 'tech-button-3d tech-button-active text-cyan-400 shadow-lg' 
                   : 'tech-button-3d text-gray-300 hover:text-cyan-400'
               }`}
+              title={sidebarCollapsed ? "Configuración Empresa" : ""}
               data-testid="tab-company-config"
             >
-              <Building2 className="w-4 h-4 mr-3" />
-              Configuración Empresa
+              <Building2 className={`w-4 h-4 ${!sidebarCollapsed ? 'mr-3' : ''}`} />
+              {!sidebarCollapsed && 'Configuración Empresa'}
             </button>
             
             <button 
               onClick={() => setActiveTab('whatsapp-config')} 
-              className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-300 ${
+              className={`w-full flex items-center ${sidebarCollapsed ? 'justify-center px-2 py-3' : 'px-4 py-3'} text-sm font-medium rounded-lg transition-all duration-300 ${
                 activeTab === 'whatsapp-config' 
                   ? 'tech-button-3d tech-button-active text-cyan-400 shadow-lg' 
                   : 'tech-button-3d text-gray-300 hover:text-cyan-400'
               }`}
+              title={sidebarCollapsed ? "Mensajes WhatsApp" : ""}
               data-testid="tab-whatsapp-config"
             >
-              <MessageCircle className="w-4 h-4 mr-3" />
-              Mensajes WhatsApp
+              <MessageCircle className={`w-4 h-4 ${!sidebarCollapsed ? 'mr-3' : ''}`} />
+              {!sidebarCollapsed && 'Mensajes WhatsApp'}
             </button>
           </div>
         </div>
@@ -410,7 +431,7 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
       {/* Mobile Overlay */}
       {sidebarOpen && (
         <div 
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-30 lg:hidden"
+          className="fixed inset-0 bg-black/50 dark:backdrop-blur-sm z-30 lg:hidden"
           onClick={() => setSidebarOpen(false)}
           data-testid="sidebar-overlay"
         />
