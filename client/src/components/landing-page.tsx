@@ -3,7 +3,7 @@ import { Check, Star, Users, Building, CreditCard, Clock, Shield, HeadphonesIcon
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import logoPath from "@assets/logo demo 2_1757619097947.png";
-import dashboardDevicesImage from "@assets/generated_images/BillTracky_in_browser_on_multiple_devices_79cab30d.png";
+import dashboardDevicesImage from "@assets/generated_images/3D_floating_tech_devices_with_BillTracky_f6288f1b.png";
 
 interface LandingPageProps {
   onGetStarted: () => void;
@@ -315,92 +315,100 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
         </div>
       </section>
 
-      {/* Modern Dashboard Preview Section */}
-      <section className="py-24 bg-white relative overflow-hidden">
+      {/* Modern 3D Tech Devices Section */}
+      <section className="py-32 tech-gradient-bg relative overflow-hidden">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             {/* Left side - Content */}
             <div className="order-2 lg:order-1">
-              <div className="inline-flex items-center px-4 py-2 bg-blue-50 border border-blue-200 rounded-full mb-6">
-                <Sparkles className="w-4 h-4 text-blue-600 mr-2" />
-                <span className="text-sm font-medium text-blue-700">Interfaz Intuitiva</span>
+              <div className="inline-flex items-center px-6 py-3 tech-glow bg-gradient-to-r from-blue-600/20 to-purple-600/20 border border-blue-500/30 rounded-full mb-8 interactive-badge">
+                <Smartphone className="w-5 h-5 text-blue-400 mr-3" />
+                <span className="text-sm font-bold text-white tracking-wide">📱 MULTI-DISPOSITIVO</span>
               </div>
               
-              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
-                Funciona perfecto en
-                <span className="block bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                  todos los dispositivos
+              <h2 className="text-5xl md:text-6xl font-black text-white mb-8 leading-tight">
+                Tu negocio en
+                <span className="block bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">
+                  cualquier dispositivo
                 </span>
               </h2>
               
-              <p className="text-xl text-gray-600 mb-8 leading-relaxed font-light">
-                Usa BillTracky desde cualquier dispositivo. Tu negocio siempre accesible 
-                desde laptop, tablet o móvil con la misma experiencia increíble.
+              <p className="text-xl text-blue-100/90 mb-12 leading-relaxed font-light">
+                Dashboard completo, gestión de órdenes y facturación. Todo sincronizado 
+                en tiempo real entre todos tus dispositivos con tecnología avanzada.
               </p>
               
               <div className="space-y-4 mb-8">
                 <div className="flex items-start">
-                  <div className="w-6 h-6 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full flex items-center justify-center flex-shrink-0 mr-4 mt-1">
-                    <Check className="w-4 h-4 text-white" />
+                  <div className="w-8 h-8 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-full flex items-center justify-center flex-shrink-0 mr-4 mt-1 tech-glow">
+                    <Check className="w-5 h-5 text-white" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900 mb-1">Diseño responsivo</h3>
-                    <p className="text-gray-600">Funciona perfecto en computadora, tablet y móvil</p>
+                    <h3 className="font-bold text-white mb-2 text-lg">💻 Dashboard Completo</h3>
+                    <p className="text-blue-200">Métricas, acciones rápidas y control total desde laptop</p>
                   </div>
                 </div>
                 
                 <div className="flex items-start">
-                  <div className="w-6 h-6 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center flex-shrink-0 mr-4 mt-1">
-                    <Check className="w-4 h-4 text-white" />
+                  <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center flex-shrink-0 mr-4 mt-1 tech-glow">
+                    <Check className="w-5 h-5 text-white" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900 mb-1">Sincronización automática</h3>
-                    <p className="text-gray-600">Tus datos siempre actualizados en todos los dispositivos</p>
+                    <h3 className="font-bold text-white mb-2 text-lg">📱 Gestión de Órdenes</h3>
+                    <p className="text-blue-200">Administra todas las órdenes desde tablet con interfaz táctil</p>
                   </div>
                 </div>
                 
                 <div className="flex items-start">
-                  <div className="w-6 h-6 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center flex-shrink-0 mr-4 mt-1">
-                    <Check className="w-4 h-4 text-white" />
+                  <div className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-cyan-500 rounded-full flex items-center justify-center flex-shrink-0 mr-4 mt-1 tech-glow">
+                    <Check className="w-5 h-5 text-white" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900 mb-1">Experiencia optimizada</h3>
-                    <p className="text-gray-600">Interfaz adaptada para pantalla táctil y desktop</p>
+                    <h3 className="font-bold text-white mb-2 text-lg">📄 Facturación Móvil</h3>
+                    <p className="text-blue-200">Crea facturas al instante desde tu móvil en cualquier lugar</p>
                   </div>
                 </div>
               </div>
               
               <Button 
                 onClick={onGetStarted}
-                className="bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700 px-8 py-3 rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl"
+                className="bg-gradient-to-r from-cyan-500 via-blue-600 to-purple-600 text-white hover:from-cyan-400 hover:via-blue-500 hover:to-purple-500 px-10 py-4 rounded-2xl font-bold text-lg transition-all duration-300 tech-glow hover:scale-105 modern-button"
               >
-                <Play className="mr-2 w-5 h-5" />
-                Probar en tu Dispositivo
+                <Rocket className="mr-3 w-6 h-6" />
+                Experimentar Tecnología
               </Button>
             </div>
             
-            {/* Right side - Dashboard Image */}
-            <div className="order-1 lg:order-2 relative">
-              <div className="relative">
-                {/* Decorative elements */}
-                <div className="absolute -top-6 -left-6 w-24 h-24 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-2xl rotate-6"></div>
-                <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-2xl -rotate-6"></div>
-                
-                {/* Dashboard devices image */}
-                <div className="relative">
+            {/* Right side - 3D Tech Devices */}
+            <div className="order-1 lg:order-2 relative tech-devices-container">
+              {/* Tech particles */}
+              <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                <div className="tech-particle" style={{left: '10%', animationDelay: '0s'}}></div>
+                <div className="tech-particle" style={{left: '30%', animationDelay: '2s'}}></div>
+                <div className="tech-particle" style={{left: '50%', animationDelay: '4s'}}></div>
+                <div className="tech-particle" style={{left: '70%', animationDelay: '6s'}}></div>
+                <div className="tech-particle" style={{left: '90%', animationDelay: '1s'}}></div>
+              </div>
+              
+              <div className="relative modern-device-showcase">
+                {/* 3D Floating Devices */}
+                <div className="floating-device device-laptop">
                   <img 
                     src={dashboardDevicesImage} 
-                    alt="BillTracky Dashboard en múltiples dispositivos - Laptop, Tablet y Móvil" 
-                    className="w-full h-auto drop-shadow-2xl"
+                    alt="BillTracky en dispositivos 3D - Dashboard, Gestión de Órdenes, Facturación Móvil" 
+                    className="w-full h-auto tech-glow"
                   />
-                  
-                  {/* Floating badges */}
-                  <div className="absolute top-4 left-4 bg-blue-500 text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg animate-pulse">
-                    📱 Multi-dispositivo
-                  </div>
-                  <div className="absolute bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg">
-                    ✨ En tiempo real
-                  </div>
+                </div>
+                
+                {/* Floating tech badges */}
+                <div className="absolute top-8 -left-4 bg-gradient-to-r from-cyan-500 to-blue-600 text-white px-6 py-3 rounded-2xl text-sm font-bold shadow-2xl interactive-badge">
+                  💻 DASHBOARD HD
+                </div>
+                <div className="absolute top-1/2 -right-8 bg-gradient-to-r from-purple-500 to-pink-600 text-white px-6 py-3 rounded-2xl text-sm font-bold shadow-2xl interactive-badge" style={{animationDelay: '1s'}}>
+                  📱 GESTIÓN 3D
+                </div>
+                <div className="absolute bottom-8 left-8 bg-gradient-to-r from-emerald-500 to-cyan-500 text-white px-6 py-3 rounded-2xl text-sm font-bold shadow-2xl interactive-badge" style={{animationDelay: '2s'}}>
+                  📄 FACTURACIÓN
                 </div>
               </div>
             </div>
