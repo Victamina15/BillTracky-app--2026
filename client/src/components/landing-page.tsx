@@ -3,7 +3,7 @@ import { Check, Star, Users, Building, CreditCard, Clock, Shield, HeadphonesIcon
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import logoPath from "@assets/logo demo 2_1757619097947.png";
-import dashboardImage from "@assets/generated_images/BillTracky_dashboard_interface_mockup_252f60b8.png";
+import dashboardDevicesImage from "@assets/generated_images/Professional_devices_mockup_with_BillTracky_dashboard_ab78b829.png";
 
 interface LandingPageProps {
   onGetStarted: () => void;
@@ -327,15 +327,15 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
               </div>
               
               <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
-                Panel de control
+                Funciona perfecto en
                 <span className="block bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                  súper intuitivo
+                  todos los dispositivos
                 </span>
               </h2>
               
               <p className="text-xl text-gray-600 mb-8 leading-relaxed font-light">
-                Controla todo tu negocio desde una sola pantalla. Métricas en tiempo real, 
-                acciones rápidas y gestión completa de órdenes.
+                Usa BillTracky desde cualquier dispositivo. Tu negocio siempre accesible 
+                desde laptop, tablet o móvil con la misma experiencia increíble.
               </p>
               
               <div className="space-y-4 mb-8">
@@ -344,8 +344,8 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
                     <Check className="w-4 h-4 text-white" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900 mb-1">Métricas en tiempo real</h3>
-                    <p className="text-gray-600">Ve órdenes, ingresos y pendientes al instante</p>
+                    <h3 className="font-semibold text-gray-900 mb-1">Diseño responsivo</h3>
+                    <p className="text-gray-600">Funciona perfecto en computadora, tablet y móvil</p>
                   </div>
                 </div>
                 
@@ -354,8 +354,8 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
                     <Check className="w-4 h-4 text-white" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900 mb-1">Acciones rápidas</h3>
-                    <p className="text-gray-600">Crea facturas y busca órdenes en un click</p>
+                    <h3 className="font-semibold text-gray-900 mb-1">Sincronización automática</h3>
+                    <p className="text-gray-600">Tus datos siempre actualizados en todos los dispositivos</p>
                   </div>
                 </div>
                 
@@ -364,8 +364,8 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
                     <Check className="w-4 h-4 text-white" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900 mb-1">Navegación intuitiva</h3>
-                    <p className="text-gray-600">Acceso fácil a todos los módulos desde el sidebar</p>
+                    <h3 className="font-semibold text-gray-900 mb-1">Experiencia optimizada</h3>
+                    <p className="text-gray-600">Interfaz adaptada para pantalla táctil y desktop</p>
                   </div>
                 </div>
               </div>
@@ -375,7 +375,7 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
                 className="bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700 px-8 py-3 rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl"
               >
                 <Play className="mr-2 w-5 h-5" />
-                Probar Dashboard Gratis
+                Probar en tu Dispositivo
               </Button>
             </div>
             
@@ -386,17 +386,20 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
                 <div className="absolute -top-6 -left-6 w-24 h-24 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-2xl rotate-6"></div>
                 <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-2xl -rotate-6"></div>
                 
-                {/* Dashboard image */}
-                <div className="relative bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-200">
+                {/* Dashboard devices image */}
+                <div className="relative">
                   <img 
-                    src={dashboardImage} 
-                    alt="BillTracky Dashboard - Panel de control intuitivo" 
-                    className="w-full h-auto"
+                    src={dashboardDevicesImage} 
+                    alt="BillTracky Dashboard en múltiples dispositivos - Laptop, Tablet y Móvil" 
+                    className="w-full h-auto drop-shadow-2xl"
                   />
                   
-                  {/* Overlay badge */}
-                  <div className="absolute top-4 right-4 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium shadow-lg">
-                    ✨ En vivo
+                  {/* Floating badges */}
+                  <div className="absolute top-4 left-4 bg-blue-500 text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg animate-pulse">
+                    📱 Multi-dispositivo
+                  </div>
+                  <div className="absolute bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg">
+                    ✨ En tiempo real
                   </div>
                 </div>
               </div>
