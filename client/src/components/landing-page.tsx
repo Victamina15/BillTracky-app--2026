@@ -93,12 +93,6 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
       category: "Analytics"
     },
     {
-      icon: <MessageCircle className="w-8 h-8" />,
-      title: "WhatsApp Automático",
-      description: "Envía notificaciones automáticas por WhatsApp: pedidos listos, recordatorios y confirmaciones de pago.",
-      category: "Comunicación"
-    },
-    {
       icon: <Smartphone className="w-8 h-8" />,
       title: "Sistema Móvil",
       description: "Accede desde cualquier dispositivo. Interface optimizada para tablet y móvil con funcionamiento offline.",
@@ -497,18 +491,6 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
                 </div>
               </div>
               
-              {/* Mensajes WhatsApp */}
-              <div className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-20 rounded-3xl p-8 border border-white/20 hover:border-green-400/50 transition-all duration-300 hover:transform hover:scale-105 group">
-                <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-teal-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                  <MessageCircle className="w-8 h-8 text-white" />
-                </div>
-                <h4 className="text-xl font-bold text-white mb-4">Mensajes WhatsApp</h4>
-                <p className="text-blue-200 leading-relaxed mb-4">Envía notificaciones automáticas cuando las órdenes estén listas, recordatorios de pago y más.</p>
-                <div className="flex flex-wrap gap-2">
-                  <span className="px-3 py-1 bg-green-500/20 text-green-300 rounded-full text-sm font-medium">Mensajes automáticos</span>
-                  <span className="px-3 py-1 bg-teal-500/20 text-teal-300 rounded-full text-sm font-medium">Plantillas</span>
-                </div>
-              </div>
               
               {/* Configuración Empresa */}
               <div className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-20 rounded-3xl p-8 border border-white/20 hover:border-indigo-400/50 transition-all duration-300 hover:transform hover:scale-105 group">
@@ -810,16 +792,8 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
                   <div className="text-blue-200/80 font-bold">Lavanderías activas</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-4xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent mb-3">98%</div>
-                  <div className="text-gray-600 font-medium">Satisfacción</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-3">75%</div>
-                  <div className="text-gray-600 font-medium">Ahorro de tiempo</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-4xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent mb-3">24/7</div>
-                  <div className="text-gray-600 font-medium">Soporte</div>
+                  <div className="text-4xl font-black bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text text-transparent mb-3 tech-text-glow">24/7</div>
+                  <div className="text-blue-200/80 font-bold">Soporte</div>
                 </div>
               </div>
             </div>
