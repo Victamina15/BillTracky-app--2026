@@ -413,6 +413,127 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
               </div>
             </div>
           </div>
+          
+          {/* Complete Features List */}
+          <div className="mt-20">
+            <div className="text-center mb-16">
+              <div className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-purple-600/20 to-cyan-600/20 border border-purple-500/30 rounded-full mb-8">
+                <Award className="w-5 h-5 text-purple-400 mr-3" />
+                <span className="text-sm font-bold text-white tracking-wide">FUNCIONALIDADES COMPLETAS</span>
+              </div>
+              
+              <h3 className="text-4xl md:text-5xl font-black text-white mb-8 leading-tight">
+                Todo lo que necesitas para tu
+                <span className="block bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
+                  lavandería en una sola app
+                </span>
+              </h3>
+              
+              <p className="text-xl text-blue-100/80 mb-12 max-w-4xl mx-auto leading-relaxed">
+                BillTracky incluye todas las herramientas que necesitas para administrar tu negocio de manera profesional
+              </p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+              {/* Gestión de Clientes */}
+              <div className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-20 rounded-3xl p-8 border border-white/20 hover:border-cyan-400/50 transition-all duration-300 hover:transform hover:scale-105 group">
+                <div className="w-16 h-16 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <Users className="w-8 h-8 text-white" />
+                </div>
+                <h4 className="text-xl font-bold text-white mb-4">Gestión de Clientes</h4>
+                <p className="text-blue-200 leading-relaxed mb-4">Base de datos completa con historial de órdenes, información de contacto y preferencias de cada cliente.</p>
+                <div className="flex flex-wrap gap-2">
+                  <span className="px-3 py-1 bg-cyan-500/20 text-cyan-300 rounded-full text-sm font-medium">Historial completo</span>
+                  <span className="px-3 py-1 bg-blue-500/20 text-blue-300 rounded-full text-sm font-medium">Búsqueda rápida</span>
+                </div>
+              </div>
+              
+              {/* Configuración de Servicios */}
+              <div className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-20 rounded-3xl p-8 border border-white/20 hover:border-purple-400/50 transition-all duration-300 hover:transform hover:scale-105 group">
+                <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <Settings className="w-8 h-8 text-white" />
+                </div>
+                <h4 className="text-xl font-bold text-white mb-4">Configuración de Servicios</h4>
+                <p className="text-blue-200 leading-relaxed mb-4">Define precios para lavado, planchado y servicios combinados. Personaliza categorías y tarifas especiales.</p>
+                <div className="flex flex-wrap gap-2">
+                  <span className="px-3 py-1 bg-purple-500/20 text-purple-300 rounded-full text-sm font-medium">Precios flexibles</span>
+                  <span className="px-3 py-1 bg-pink-500/20 text-pink-300 rounded-full text-sm font-medium">Categorías</span>
+                </div>
+              </div>
+              
+              {/* Métodos de Pago */}
+              <div className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-20 rounded-3xl p-8 border border-white/20 hover:border-green-400/50 transition-all duration-300 hover:transform hover:scale-105 group">
+                <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <CreditCard className="w-8 h-8 text-white" />
+                </div>
+                <h4 className="text-xl font-bold text-white mb-4">Métodos de Pago</h4>
+                <p className="text-blue-200 leading-relaxed mb-4">Acepta efectivo, tarjetas, transferencias y más. Configura comisiones y referencias automáticamente.</p>
+                <div className="flex flex-wrap gap-2">
+                  <span className="px-3 py-1 bg-green-500/20 text-green-300 rounded-full text-sm font-medium">Múltiples opciones</span>
+                  <span className="px-3 py-1 bg-emerald-500/20 text-emerald-300 rounded-full text-sm font-medium">Sin comisiones</span>
+                </div>
+              </div>
+              
+              {/* Cierre de Caja */}
+              <div className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-20 rounded-3xl p-8 border border-white/20 hover:border-yellow-400/50 transition-all duration-300 hover:transform hover:scale-105 group">
+                <div className="w-16 h-16 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <BarChart3 className="w-8 h-8 text-white" />
+                </div>
+                <h4 className="text-xl font-bold text-white mb-4">Cierre de Caja</h4>
+                <p className="text-blue-200 leading-relaxed mb-4">Reportes diarios automatizados con resúmenes de ventas, métodos de pago y rendimiento por empleado.</p>
+                <div className="flex flex-wrap gap-2">
+                  <span className="px-3 py-1 bg-yellow-500/20 text-yellow-300 rounded-full text-sm font-medium">Reportes diarios</span>
+                  <span className="px-3 py-1 bg-orange-500/20 text-orange-300 rounded-full text-sm font-medium">Análisis</span>
+                </div>
+              </div>
+              
+              {/* Mensajes WhatsApp */}
+              <div className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-20 rounded-3xl p-8 border border-white/20 hover:border-green-400/50 transition-all duration-300 hover:transform hover:scale-105 group">
+                <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-teal-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <MessageCircle className="w-8 h-8 text-white" />
+                </div>
+                <h4 className="text-xl font-bold text-white mb-4">Mensajes WhatsApp</h4>
+                <p className="text-blue-200 leading-relaxed mb-4">Envía notificaciones automáticas cuando las órdenes estén listas, recordatorios de pago y más.</p>
+                <div className="flex flex-wrap gap-2">
+                  <span className="px-3 py-1 bg-green-500/20 text-green-300 rounded-full text-sm font-medium">Mensajes automáticos</span>
+                  <span className="px-3 py-1 bg-teal-500/20 text-teal-300 rounded-full text-sm font-medium">Plantillas</span>
+                </div>
+              </div>
+              
+              {/* Configuración Empresa */}
+              <div className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-20 rounded-3xl p-8 border border-white/20 hover:border-indigo-400/50 transition-all duration-300 hover:transform hover:scale-105 group">
+                <div className="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <Building className="w-8 h-8 text-white" />
+                </div>
+                <h4 className="text-xl font-bold text-white mb-4">Configuración Empresa</h4>
+                <p className="text-blue-200 leading-relaxed mb-4">Personaliza información de tu negocio, horarios, redes sociales y datos que aparecen en las facturas.</p>
+                <div className="flex flex-wrap gap-2">
+                  <span className="px-3 py-1 bg-indigo-500/20 text-indigo-300 rounded-full text-sm font-medium">Personalización</span>
+                  <span className="px-3 py-1 bg-purple-500/20 text-purple-300 rounded-full text-sm font-medium">Branding</span>
+                </div>
+              </div>
+            </div>
+            
+            {/* Call to Action Final */}
+            <div className="text-center mt-16">
+              <div className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-green-600/30 to-blue-600/30 border border-green-400/40 rounded-full mb-6">
+                <CheckCircle className="w-5 h-5 text-green-400 mr-3" />
+                <span className="text-sm font-bold text-white">TODO INCLUIDO SIN COSTO ADICIONAL</span>
+              </div>
+              
+              <Button 
+                onClick={onGetStarted}
+                className="bg-gradient-to-r from-green-500 via-emerald-600 to-cyan-600 text-white hover:from-green-400 hover:via-emerald-500 hover:to-cyan-500 px-12 py-4 rounded-2xl font-bold text-xl transition-all duration-300 tech-glow hover:scale-105 modern-button"
+              >
+                <Rocket className="mr-3 w-6 h-6" />
+                Comenzar Gratis Ahora
+              </Button>
+              
+              <p className="text-blue-100/60 text-sm mt-4 max-w-md mx-auto">
+                Sin contratos. Sin pagos ocultos. Todas las funciones desde el primer día.
+              </p>
+            </div>
+          </div>
         </div>
       </section>
 
