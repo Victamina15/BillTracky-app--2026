@@ -688,14 +688,14 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border p-6">
+      <div className="bg-card dark:bg-gray-800/50 rounded-2xl shadow-lg tech-glow border border-border dark:border-cyan-500/20 p-6 backdrop-blur-sm">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            <div className="w-14 h-14 bg-blue-600 rounded-2xl flex items-center justify-center">
+            <div className="w-14 h-14 bg-gradient-to-br from-cyan-400 to-purple-500 rounded-2xl flex items-center justify-center shadow-lg tech-glow">
               <FileText className="w-8 h-8 text-white" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Nueva Factura</h1>
+              <h1 className="text-3xl font-bold text-card-foreground dark:text-white tech-text-glow">Nueva Factura</h1>
               <div className="flex items-center space-x-4 mt-1">
                 <span className="text-gray-600 dark:text-gray-400">#{nextInvoiceNumber?.number || 'FAC-001'}</span>
                 <span className="text-gray-400">•</span>
@@ -710,7 +710,7 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
         {/* Panel Principal */}
         <div className="lg:col-span-2 space-y-6">
           {/* Información del Cliente */}
-          <Card>
+          <Card className="bg-card dark:bg-gray-800/50 border border-border dark:border-cyan-500/20 shadow-lg tech-glow backdrop-blur-sm">
             <CardHeader>
               <CardTitle className="flex items-center justify-between">
                 <div className="flex items-center">
@@ -721,6 +721,7 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
                   variant="outline"
                   size="sm"
                   onClick={() => setShowCustomerSearchModal(true)}
+                  className="tech-button-3d border-cyan-500/50 text-cyan-400 hover:bg-cyan-500/20"
                   data-testid="button-search-customer"
                 >
                   <Users className="w-4 h-4 mr-2" />

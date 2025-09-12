@@ -65,25 +65,25 @@ export default function CustomersGrid({ onNotification }: CustomersGridProps) {
 
   if (isLoading) {
     return (
-      <div className="bg-card rounded-xl shadow-sm border border-border p-6">
+      <div className="bg-card dark:bg-gray-800/50 rounded-xl shadow-lg tech-glow border border-border dark:border-cyan-500/20 p-6 backdrop-blur-sm">
         <div className="text-center py-8">
-          <p className="text-muted-foreground">Cargando clientes...</p>
+          <p className="text-muted-foreground dark:text-gray-300">Cargando clientes...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="bg-card rounded-xl shadow-sm border border-border p-6">
+    <div className="bg-card dark:bg-gray-800/50 rounded-xl shadow-lg tech-glow border border-border dark:border-cyan-500/20 p-6 backdrop-blur-sm">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
-        <h2 className="text-xl font-semibold text-card-foreground mb-4 md:mb-0">
+        <h2 className="text-xl font-semibold text-card-foreground dark:text-white mb-4 md:mb-0 tech-text-glow">
           Gestión de Clientes
         </h2>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button 
               onClick={() => setIsDialogOpen(true)}
-              className="bg-primary text-primary-foreground hover:bg-primary/90"
+              className="tech-button-3d bg-gradient-to-r from-cyan-500 to-blue-600 text-white hover:from-cyan-600 hover:to-blue-700 shadow-lg"
               data-testid="button-add-customer"
             >
               <Plus className="w-4 h-4 mr-2" />
@@ -127,21 +127,21 @@ export default function CustomersGrid({ onNotification }: CustomersGridProps) {
               </div>
               <div className="flex gap-3">
                 <Button
-                  type="button"
-                  variant="outline"
-                  onClick={handleDialogClose}
-                  className="flex-1"
-                  data-testid="button-cancel-customer"
-                >
-                  Cancelar
-                </Button>
-                <Button
                   type="submit"
                   disabled={createCustomerMutation.isPending}
-                  className="flex-1"
+                  className="tech-button-3d bg-gradient-to-r from-cyan-500 to-blue-600 text-white hover:from-cyan-600 hover:to-blue-700"
                   data-testid="button-save-customer"
                 >
                   {createCustomerMutation.isPending ? "Guardando..." : "Guardar"}
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleDialogClose}
+                  className="tech-button-3d border-gray-600 text-gray-300 hover:bg-gray-700"
+                  data-testid="button-cancel"
+                >
+                  Cancelar
                 </Button>
               </div>
             </form>
@@ -151,14 +151,14 @@ export default function CustomersGrid({ onNotification }: CustomersGridProps) {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {customers.map((customer) => (
-          <div key={customer.id} className="bg-muted rounded-lg p-4 card-hover" data-testid={`customer-card-${customer.id}`}>
+          <div key={customer.id} className="bg-card dark:bg-gray-800/50 rounded-lg p-4 tech-glow border border-border dark:border-cyan-500/20 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300" data-testid={`customer-card-${customer.id}`}>
             <div className="flex items-center justify-between mb-3">
-              <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-                <User className="w-6 h-6 text-primary" />
+              <div className="w-12 h-12 bg-gradient-to-br from-cyan-400/20 to-purple-500/20 rounded-full flex items-center justify-center border border-cyan-400/30">
+                <User className="w-6 h-6 text-cyan-400" />
               </div>
               <button 
                 onClick={() => handleEdit(customer)}
-                className="p-1 text-muted-foreground hover:text-card-foreground"
+                className="tech-button-3d p-1 text-gray-300 hover:text-cyan-400 rounded-lg"
                 data-testid={`button-edit-customer-${customer.id}`}
               >
                 <Edit3 className="w-4 h-4" />

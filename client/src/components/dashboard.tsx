@@ -40,15 +40,15 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
 
   // Helper functions para obtener clases de estado de forma segura
   const getStatusClasses = (status: string | null) => {
-    if (!status) return 'bg-gray-100 text-gray-800';
+    if (!status) return 'bg-gradient-to-br from-gray-500/20 to-slate-600/20 text-gray-300 border border-gray-400/30 tech-glow';
     
     switch(status) {
-      case 'received': return 'bg-blue-100 text-blue-800';
-      case 'in_process': return 'bg-yellow-100 text-yellow-800'; 
-      case 'ready': return 'bg-purple-100 text-purple-800';
-      case 'delivered': return 'bg-green-100 text-green-800';
-      case 'cancelled': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'received': return 'bg-gradient-to-br from-cyan-500/20 to-blue-600/20 text-cyan-300 border border-cyan-400/30 tech-glow';
+      case 'in_process': return 'bg-gradient-to-br from-yellow-500/20 to-orange-600/20 text-yellow-300 border border-yellow-400/30 tech-glow'; 
+      case 'ready': return 'bg-gradient-to-br from-purple-500/20 to-pink-600/20 text-purple-300 border border-purple-400/30 tech-glow';
+      case 'delivered': return 'bg-gradient-to-br from-green-500/20 to-emerald-600/20 text-green-300 border border-green-400/30 tech-glow';
+      case 'cancelled': return 'bg-gradient-to-br from-red-500/20 to-pink-600/20 text-red-300 border border-red-400/30 tech-glow';
+      default: return 'bg-gradient-to-br from-gray-500/20 to-slate-600/20 text-gray-300 border border-gray-400/30 tech-glow';
     }
   };
 
@@ -88,7 +88,7 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
           <div>
             {/* Metrics Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-              <div className="bg-card rounded-xl shadow-sm border border-border p-6 card-hover">
+              <div className="bg-card dark:bg-gray-800/50 rounded-xl shadow-lg tech-glow border border-border dark:border-cyan-500/20 p-6 backdrop-blur-sm hover:shadow-xl transition-all duration-300">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-muted-foreground">Órdenes Hoy</p>
@@ -97,13 +97,13 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
                     </p>
                     <p className="text-xs text-green-600 mt-1">+3 desde ayer</p>
                   </div>
-                  <div className="w-12 h-12 bg-secondary/10 rounded-lg flex items-center justify-center">
-                    <Package className="w-6 h-6 text-secondary" />
+                  <div className="w-12 h-12 bg-gradient-to-br from-cyan-400/20 to-purple-500/20 rounded-lg flex items-center justify-center border border-cyan-400/30 tech-glow">
+                    <Package className="w-6 h-6 text-cyan-400" />
                   </div>
                 </div>
               </div>
 
-              <div className="bg-card rounded-xl shadow-sm border border-border p-6 card-hover">
+              <div className="bg-card dark:bg-gray-800/50 rounded-xl shadow-lg tech-glow border border-border dark:border-cyan-500/20 p-6 backdrop-blur-sm hover:shadow-xl transition-all duration-300">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-muted-foreground">Ingresos Hoy</p>
@@ -112,13 +112,13 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
                     </p>
                     <p className="text-xs text-green-600 mt-1">+15% vs ayer</p>
                   </div>
-                  <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                    <span className="text-lg font-bold text-green-600">$</span>
+                  <div className="w-12 h-12 bg-gradient-to-br from-green-400/20 to-cyan-500/20 rounded-lg flex items-center justify-center border border-green-400/30 tech-glow">
+                    <span className="text-lg font-bold text-green-400">$</span>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-card rounded-xl shadow-sm border border-border p-6 card-hover">
+              <div className="bg-card dark:bg-gray-800/50 rounded-xl shadow-lg tech-glow border border-border dark:border-cyan-500/20 p-6 backdrop-blur-sm hover:shadow-xl transition-all duration-300">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-muted-foreground">En Proceso</p>
@@ -127,25 +127,25 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
                     </p>
                     <p className="text-xs text-yellow-600 mt-1">2 listos pronto</p>
                   </div>
-                  <div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
-                    <span className="text-lg font-bold text-yellow-600">⏱️</span>
+                  <div className="w-12 h-12 bg-gradient-to-br from-yellow-400/20 to-orange-500/20 rounded-lg flex items-center justify-center border border-yellow-400/30 tech-glow">
+                    <span className="text-lg font-bold text-yellow-400">⏱️</span>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-card rounded-xl shadow-sm border border-border p-6 card-hover">
+              <div className="bg-card dark:bg-gray-800/50 rounded-xl shadow-lg tech-glow border border-border dark:border-cyan-500/20 p-6 backdrop-blur-sm hover:shadow-xl transition-all duration-300">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-muted-foreground">Pendientes Pago</p>
                     <p className="text-2xl font-bold text-card-foreground" data-testid="metric-pending-payment">
                       {metricsLoading ? "..." : metrics?.pendingPayment || 0}
                     </p>
-                    <p className="text-xs text-red-600 mt-1">
+                    <p className="text-xs text-red-500 dark:text-red-400 mt-1">
                       RD${metrics?.pendingPaymentTotal || "0.00"} total
                     </p>
                   </div>
-                  <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
-                    <span className="text-lg font-bold text-red-600">⚠️</span>
+                  <div className="w-12 h-12 bg-gradient-to-br from-red-400/20 to-pink-500/20 rounded-lg flex items-center justify-center border border-red-400/30 tech-glow">
+                    <span className="text-lg font-bold text-red-400">⚠️</span>
                   </div>
                 </div>
               </div>
@@ -153,12 +153,12 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
 
             {/* Quick Actions and Recent Orders */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-              <div className="bg-card rounded-xl shadow-sm border border-border p-6">
-                <h3 className="text-lg font-semibold text-card-foreground mb-4">Acciones Rápidas</h3>
+              <div className="bg-card dark:bg-gray-800/50 rounded-xl shadow-lg tech-glow border border-border dark:border-cyan-500/20 p-6 backdrop-blur-sm">
+                <h3 className="text-lg font-semibold text-card-foreground dark:text-white tech-text-glow mb-4">Acciones Rápidas</h3>
                 <div className="grid grid-cols-2 gap-4">
                   <button 
                     onClick={() => setActiveTab('invoices')}
-                    className="bg-primary text-primary-foreground p-4 rounded-lg hover:bg-primary/90 transition-colors text-left"
+                    className="tech-button-3d bg-gradient-to-br from-cyan-500/20 to-blue-600/20 text-white p-4 rounded-lg border border-cyan-400/30 hover:from-cyan-400/30 hover:to-blue-500/30 transition-all duration-300 text-left"
                     data-testid="quick-action-new-invoice"
                   >
                     <span className="text-lg mb-2 block">➕</span>
@@ -166,7 +166,7 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
                   </button>
                   <button 
                     onClick={() => setActiveTab('orders')}
-                    className="bg-secondary text-secondary-foreground p-4 rounded-lg hover:bg-secondary/90 transition-colors text-left"
+                    className="tech-button-3d bg-gradient-to-br from-purple-500/20 to-pink-600/20 text-white p-4 rounded-lg border border-purple-400/30 hover:from-purple-400/30 hover:to-pink-500/30 transition-all duration-300 text-left"
                     data-testid="quick-action-search-order"
                   >
                     <span className="text-lg mb-2 block">🔍</span>
@@ -174,7 +174,7 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
                   </button>
                   <button 
                     onClick={() => setActiveTab('cash-closure')}
-                    className="bg-green-600 text-white p-4 rounded-lg hover:bg-green-700 transition-colors text-left"
+                    className="tech-button-3d bg-gradient-to-br from-green-500/20 to-emerald-600/20 text-white p-4 rounded-lg border border-green-400/30 hover:from-green-400/30 hover:to-emerald-500/30 transition-all duration-300 text-left"
                     data-testid="quick-action-cash-closure"
                   >
                     <span className="text-lg mb-2 block">💰</span>
@@ -182,7 +182,7 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
                   </button>
                   <button 
                     onClick={() => setActiveTab('services')}
-                    className="bg-yellow-600 text-white p-4 rounded-lg hover:bg-yellow-700 transition-colors text-left"
+                    className="tech-button-3d bg-gradient-to-br from-yellow-500/20 to-orange-600/20 text-white p-4 rounded-lg border border-yellow-400/30 hover:from-yellow-400/30 hover:to-orange-500/30 transition-all duration-300 text-left"
                     data-testid="quick-action-configure"
                   >
                     <span className="text-lg mb-2 block">⚙️</span>
@@ -191,8 +191,8 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
                 </div>
               </div>
 
-              <div className="bg-card rounded-xl shadow-sm border border-border p-6">
-                <h3 className="text-lg font-semibold text-card-foreground mb-4">Órdenes Recientes</h3>
+              <div className="bg-card dark:bg-gray-800/50 rounded-xl shadow-lg tech-glow border border-border dark:border-cyan-500/20 p-6 backdrop-blur-sm">
+                <h3 className="text-lg font-semibold text-card-foreground dark:text-white tech-text-glow mb-4">Órdenes Recientes</h3>
                 <div className="space-y-3">
                   {recentOrders.map((order: Invoice) => (
                     <div key={order.id} className="flex items-center justify-between p-3 bg-muted rounded-lg">
