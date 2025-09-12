@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { FileText, LogOut, Home, Package, Users, Settings, CreditCard, BarChart3, Building2, MessageCircle } from "lucide-react";
+import { FileText, LogOut, Home, Package, Users, Settings, CreditCard, BarChart3, Building2, MessageCircle, Menu, X } from "lucide-react";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { type Employee, type Invoice } from "@shared/schema";
 import InvoiceCreation from "./invoice-creation";
 import OrderManagement from "./order-management";
@@ -19,6 +20,7 @@ interface DashboardProps {
 
 export default function Dashboard({ user, onLogout, onNotification }: DashboardProps) {
   const [activeTab, setActiveTab] = useState("overview");
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const { data: metrics, isLoading: metricsLoading } = useQuery<{
     todayOrders: number;
@@ -220,18 +222,32 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
 
   return (
     <div className="min-h-screen bg-background flex">
+      {/* Mobile Hamburger Button */}
+      <button
+        onClick={() => setSidebarOpen(!sidebarOpen)}
+        className="fixed top-4 left-4 z-50 lg:hidden tech-button-3d p-2 rounded-lg bg-card border border-border"
+        data-testid="hamburger-menu"
+      >
+        {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+      </button>
+
       {/* Sidebar Navigation */}
-      <nav className="w-64 bg-card shadow-sm border-r border-border flex flex-col">
+      <nav className={`${
+        sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+      } fixed lg:relative lg:translate-x-0 w-64 h-full bg-gradient-to-b from-gray-900 via-purple-900/20 to-blue-900/20 backdrop-blur-xl border-r border-cyan-500/20 flex flex-col z-40 transition-transform duration-300 lg:transition-none tech-gradient-bg`}>
         {/* Header in Sidebar */}
-        <div className="p-6 border-b border-border">
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center shadow-md">
-              <FileText className="w-6 h-6 text-primary-foreground" />
+        <div className="p-6 border-b border-cyan-500/20">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-gradient-to-br from-cyan-400 to-purple-500 rounded-lg flex items-center justify-center shadow-lg tech-glow">
+                <FileText className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h1 className="text-xl font-bold text-white tech-text-glow">Billtracky</h1>
+                <p className="text-sm text-cyan-200">CleanWash Lavandería</p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-xl font-bold text-card-foreground">Billtracky</h1>
-              <p className="text-sm text-muted-foreground">CleanWash Lavandería</p>
-            </div>
+            <ThemeToggle />
           </div>
         </div>
         
@@ -240,10 +256,10 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
           <div className="space-y-2">
             <button 
               onClick={() => setActiveTab('overview')} 
-              className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
+              className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-300 ${
                 activeTab === 'overview' 
-                  ? 'bg-primary text-primary-foreground shadow-sm' 
-                  : 'text-muted-foreground hover:bg-muted hover:text-card-foreground'
+                  ? 'tech-button-3d tech-button-active text-cyan-400 shadow-lg' 
+                  : 'tech-button-3d text-gray-300 hover:text-cyan-400'
               }`}
               data-testid="tab-overview"
             >
@@ -253,10 +269,10 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
             
             <button 
               onClick={() => setActiveTab('invoices')} 
-              className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
+              className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-300 ${
                 activeTab === 'invoices' 
-                  ? 'bg-primary text-primary-foreground shadow-sm' 
-                  : 'text-muted-foreground hover:bg-muted hover:text-card-foreground'
+                  ? 'tech-button-3d tech-button-active text-cyan-400 shadow-lg' 
+                  : 'tech-button-3d text-gray-300 hover:text-cyan-400'
               }`}
               data-testid="tab-invoices"
             >
@@ -266,10 +282,10 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
             
             <button 
               onClick={() => setActiveTab('orders')} 
-              className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
+              className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-300 ${
                 activeTab === 'orders' 
-                  ? 'bg-primary text-primary-foreground shadow-sm' 
-                  : 'text-muted-foreground hover:bg-muted hover:text-card-foreground'
+                  ? 'tech-button-3d tech-button-active text-cyan-400 shadow-lg' 
+                  : 'tech-button-3d text-gray-300 hover:text-cyan-400'
               }`}
               data-testid="tab-orders"
             >
@@ -279,10 +295,10 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
             
             <button 
               onClick={() => setActiveTab('cash-closure')} 
-              className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
+              className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-300 ${
                 activeTab === 'cash-closure' 
-                  ? 'bg-primary text-primary-foreground shadow-sm' 
-                  : 'text-muted-foreground hover:bg-muted hover:text-card-foreground'
+                  ? 'tech-button-3d tech-button-active text-cyan-400 shadow-lg' 
+                  : 'tech-button-3d text-gray-300 hover:text-cyan-400'
               }`}
               data-testid="tab-cash-closure"
             >
@@ -292,10 +308,10 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
             
             <button 
               onClick={() => setActiveTab('services')} 
-              className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
+              className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-300 ${
                 activeTab === 'services' 
-                  ? 'bg-primary text-primary-foreground shadow-sm' 
-                  : 'text-muted-foreground hover:bg-muted hover:text-card-foreground'
+                  ? 'tech-button-3d tech-button-active text-cyan-400 shadow-lg' 
+                  : 'tech-button-3d text-gray-300 hover:text-cyan-400'
               }`}
               data-testid="tab-services"
             >
@@ -305,10 +321,10 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
             
             <button 
               onClick={() => setActiveTab('payment-methods')} 
-              className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
+              className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-300 ${
                 activeTab === 'payment-methods' 
-                  ? 'bg-primary text-primary-foreground shadow-sm' 
-                  : 'text-muted-foreground hover:bg-muted hover:text-card-foreground'
+                  ? 'tech-button-3d tech-button-active text-cyan-400 shadow-lg' 
+                  : 'tech-button-3d text-gray-300 hover:text-cyan-400'
               }`}
               data-testid="tab-payment-methods"
             >
@@ -318,10 +334,10 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
             
             <button 
               onClick={() => setActiveTab('customers')} 
-              className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
+              className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-300 ${
                 activeTab === 'customers' 
-                  ? 'bg-primary text-primary-foreground shadow-sm' 
-                  : 'text-muted-foreground hover:bg-muted hover:text-card-foreground'
+                  ? 'tech-button-3d tech-button-active text-cyan-400 shadow-lg' 
+                  : 'tech-button-3d text-gray-300 hover:text-cyan-400'
               }`}
               data-testid="tab-customers"
             >
@@ -331,10 +347,10 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
             
             <button 
               onClick={() => setActiveTab('company-config')} 
-              className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
+              className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-300 ${
                 activeTab === 'company-config' 
-                  ? 'bg-primary text-primary-foreground shadow-sm' 
-                  : 'text-muted-foreground hover:bg-muted hover:text-card-foreground'
+                  ? 'tech-button-3d tech-button-active text-cyan-400 shadow-lg' 
+                  : 'tech-button-3d text-gray-300 hover:text-cyan-400'
               }`}
               data-testid="tab-company-config"
             >
@@ -344,10 +360,10 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
             
             <button 
               onClick={() => setActiveTab('whatsapp-config')} 
-              className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
+              className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-300 ${
                 activeTab === 'whatsapp-config' 
-                  ? 'bg-primary text-primary-foreground shadow-sm' 
-                  : 'text-muted-foreground hover:bg-muted hover:text-card-foreground'
+                  ? 'tech-button-3d tech-button-active text-cyan-400 shadow-lg' 
+                  : 'tech-button-3d text-gray-300 hover:text-cyan-400'
               }`}
               data-testid="tab-whatsapp-config"
             >
@@ -358,20 +374,20 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
         </div>
         
         {/* User Info and Logout */}
-        <div className="p-4 border-t border-border">
+        <div className="p-4 border-t border-cyan-500/20">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <div className="text-left">
                 <div className="flex items-center space-x-2 mb-1">
-                  <div className="w-2 h-2 bg-green-500 rounded-full pulse-animation"></div>
-                  <span className="text-xs text-green-600 font-medium">En línea</span>
+                  <div className="w-2 h-2 bg-green-400 rounded-full pulse-animation tech-glow"></div>
+                  <span className="text-xs text-green-400 font-medium">En línea</span>
                 </div>
-                <p className="text-sm font-medium text-card-foreground" data-testid="user-name">
+                <p className="text-sm font-medium text-white" data-testid="user-name">
                   {user.name}
                 </p>
                 <span className={`inline-block px-2 py-1 text-xs font-medium rounded-full mt-1 ${
-                  user.role === 'manager' ? 'bg-secondary/10 text-secondary' : 
-                  'bg-green-100 text-green-800'
+                  user.role === 'manager' ? 'bg-cyan-400/20 text-cyan-400 border border-cyan-400/30' : 
+                  'bg-purple-400/20 text-purple-400 border border-purple-400/30'
                 }`}>
                   {user.role === 'manager' ? 'Gerente' : 
                    user.role === 'supervisor' ? 'Supervisor' : 'Empleado'}
@@ -381,7 +397,7 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
             
             <button
               onClick={onLogout}
-              className="p-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg transition-colors"
+              className="tech-button-3d p-2 text-gray-300 hover:text-red-400 rounded-lg transition-all duration-300"
               title="Cerrar sesión"
               data-testid="button-logout"
             >
@@ -391,8 +407,19 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
         </div>
       </nav>
 
+      {/* Mobile Overlay */}
+      {sidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-30 lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+          data-testid="sidebar-overlay"
+        />
+      )}
+
       {/* Main Content */}
-      <main className="flex-1 p-6 overflow-auto">
+      <main className={`flex-1 p-6 overflow-auto transition-all duration-300 ${
+        sidebarOpen && 'lg:ml-0'
+      }`}>
         {renderTabContent()}
       </main>
     </div>
