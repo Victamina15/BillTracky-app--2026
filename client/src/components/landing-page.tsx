@@ -802,33 +802,43 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 laundry-bg">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="hero-gradient rounded-3xl p-12 md:p-16 text-center relative overflow-hidden">
-            {/* Background decorations */}
-            <div className="absolute top-0 left-0 w-40 h-40 bg-white/10 rounded-full -translate-x-20 -translate-y-20"></div>
-            <div className="absolute bottom-0 right-0 w-40 h-40 bg-white/10 rounded-full translate-x-20 translate-y-20"></div>
+      <section className="py-20 tech-gradient-bg relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-purple-900 to-blue-900"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_800px_at_50%_-100px,rgba(59,130,246,0.15),transparent)]"></div>
+        
+        {/* Tech particles */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="tech-particle" style={{left: '20%', animationDelay: '0s'}}></div>
+          <div className="tech-particle" style={{left: '80%', animationDelay: '4s'}}></div>
+        </div>
+        
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
+          <div className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-20 rounded-3xl p-12 md:p-16 text-center relative overflow-hidden border border-white/20 tech-glow">
+            {/* Tech decorations */}
+            <div className="absolute top-0 left-0 w-40 h-40 bg-gradient-to-br from-cyan-500/10 to-purple-500/10 rounded-full -translate-x-20 -translate-y-20"></div>
+            <div className="absolute bottom-0 right-0 w-40 h-40 bg-gradient-to-br from-purple-500/10 to-blue-500/10 rounded-full translate-x-20 translate-y-20"></div>
             
             <div className="relative z-10">
-              <Badge className="mb-6 bg-white/20 text-white border-white/30">
-                🚀 ¡Únete a la Revolución Digital!
-              </Badge>
+              <div className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-cyan-600/20 to-purple-600/20 border border-cyan-500/30 rounded-full mb-6 tech-glow interactive-badge">
+                <Rocket className="w-5 h-5 text-cyan-400 mr-3" />
+                <span className="text-sm font-bold text-white tracking-wide">¡Únete a la Revolución Digital!</span>
+              </div>
               
-              <h2 className="text-4xl md:text-6xl font-bold text-white mb-6">
-                ¿Listo para transformar
-                <span className="block">tu lavandería?</span>
+              <h2 className="text-4xl md:text-6xl font-black mb-6 tech-text-glow">
+                <span className="text-white">¿Listo para </span>
+                <span className="block bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">transformar tu lavandería?</span>
               </h2>
               
               <p className="text-xl md:text-2xl text-white/90 mb-12 max-w-3xl mx-auto leading-relaxed">
                 Únete a más de 500 lavanderías que ya están aumentando sus ingresos, 
-                ahorrando tiempo y brindando un mejor servicio con Billtracky.
+                ahorrando tiempo y brindando un mejor servicio con BillTracky.
               </p>
               
               <div className="flex flex-col sm:flex-row gap-6 justify-center">
                 <Button 
                   onClick={onGetStarted}
                   size="lg"
-                  className="bg-white text-primary hover:bg-gray-100 text-xl px-10 py-6 rounded-2xl shadow-2xl transform hover:scale-105 transition-all duration-200"
+                  className="bg-gradient-to-r from-cyan-600 to-purple-600 text-white hover:from-cyan-500 hover:to-purple-500 text-xl px-10 py-6 rounded-2xl tech-glow shadow-2xl hover:shadow-cyan-500/25 transform hover:scale-105 transition-all duration-300 font-bold border-t border-white/20"
                   data-testid="cta-signup-button"
                 >
                   <Sparkles className="mr-3 w-6 h-6" />
@@ -840,7 +850,7 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
                   variant="outline"
                   size="lg"
                   onClick={onLogin}
-                  className="border-white/30 text-white hover:bg-white/10 text-xl px-10 py-6 rounded-2xl backdrop-blur"
+                  className="border-white/30 text-white hover:bg-white/10 hover:border-cyan-400/50 text-xl px-10 py-6 rounded-2xl backdrop-blur tech-glow hover:shadow-xl hover:scale-105 transition-all duration-300 font-bold"
                   data-testid="cta-demo-button"
                 >
                   <Play className="mr-3 w-6 h-6" />
