@@ -230,38 +230,48 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
         </div>
       </header>
 
-      {/* Hero Section */}
-      <section className="relative pt-32 pb-20 lg:pt-40 lg:pb-32 overflow-hidden">
-        {/* Modern Background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50"></div>
-        <div className="absolute inset-0 bg-[radial-gradient(circle_800px_at_100%_200px,rgba(120,119,198,0.3),transparent)]"></div>
+      {/* Hero Section - Tech Style */}
+      <section className="relative pt-32 pb-20 lg:pt-40 lg:pb-32 overflow-hidden tech-gradient-bg">
+        {/* Tech Background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_800px_at_100%_200px,rgba(59,130,246,0.15),transparent)]"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_600px_at_0%_100%,rgba(147,51,234,0.1),transparent)]"></div>
+        
+        {/* Tech particles */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="tech-particle" style={{left: '10%', animationDelay: '0s'}}></div>
+          <div className="tech-particle" style={{left: '30%', animationDelay: '3s'}}></div>
+          <div className="tech-particle" style={{left: '50%', animationDelay: '6s'}}></div>
+          <div className="tech-particle" style={{left: '70%', animationDelay: '9s'}}></div>
+          <div className="tech-particle" style={{left: '90%', animationDelay: '2s'}}></div>
+        </div>
         
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
           <div className="text-center max-w-6xl mx-auto">
-            {/* Modern Badge */}
-            <div className="inline-flex items-center px-4 py-2 bg-white/60 backdrop-blur-sm border border-purple-200 rounded-full mb-8 shadow-sm">
-              <Sparkles className="w-4 h-4 text-purple-600 mr-2" />
-              <span className="text-sm font-medium text-purple-700">Nuevo: Mensajes WhatsApp automatizados</span>
+            {/* Tech Badge */}
+            <div className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-purple-600/20 to-cyan-600/20 border border-purple-500/30 rounded-full mb-8 tech-glow interactive-badge">
+              <Sparkles className="w-5 h-5 text-cyan-400 mr-3" />
+              <span className="text-sm font-bold text-white tracking-wide">NUEVO: MENSAJES WHATSAPP AUTOMATIZADOS</span>
             </div>
             
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-gray-900 mb-8 leading-tight">
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-black text-white mb-8 leading-tight tech-text-glow">
               Lleva tu lavandería al
-              <span className="block bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent">
+              <span className="block bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
                 siguiente nivel
               </span>
             </h1>
             
-            <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-4xl mx-auto leading-relaxed font-light">
+            <p className="text-xl md:text-2xl text-blue-100/80 mb-12 max-w-4xl mx-auto leading-relaxed font-light">
               La plataforma completa que necesitas para automatizar tu negocio, 
               aumentar ingresos y brindar una experiencia excepcional a tus clientes.
             </p>
 
-            {/* Modern CTA Buttons */}
+            {/* Tech CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-6 justify-center mb-16">
               <Button 
                 onClick={onGetStarted}
                 size="lg"
-                className="bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700 text-xl px-12 py-6 rounded-2xl shadow-2xl hover:shadow-3xl transform hover:scale-105 transition-all duration-300"
+                className="bg-gradient-to-r from-cyan-500 via-blue-600 to-purple-600 text-white hover:from-cyan-400 hover:via-blue-500 hover:to-purple-500 text-xl px-12 py-6 rounded-2xl tech-glow hover:scale-105 transition-all duration-300 modern-button font-bold"
                 data-testid="hero-signup-button"
               >
                 <Rocket className="mr-3 w-6 h-6" />
@@ -272,7 +282,7 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
                 variant="outline" 
                 size="lg"
                 onClick={onLogin}
-                className="text-xl px-12 py-6 rounded-2xl border-2 border-gray-300 text-gray-700 hover:border-gray-400 hover:bg-gray-50 transition-all duration-200 bg-white/70 backdrop-blur-sm"
+                className="text-xl px-12 py-6 rounded-2xl border-2 border-cyan-500/50 text-cyan-400 hover:border-cyan-400 hover:bg-cyan-500/10 transition-all duration-300 bg-black/30 backdrop-blur-sm font-bold tech-glow"
                 data-testid="hero-login-button"
               >
                 <Play className="mr-3 w-6 h-6" />
@@ -280,34 +290,34 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
               </Button>
             </div>
 
-            {/* Modern Trust indicators */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-8 text-sm text-gray-600">
-              <div className="flex items-center gap-2 bg-white/60 backdrop-blur-sm px-4 py-2 rounded-full border border-green-200">
-                <CheckCircle className="w-5 h-5 text-green-600" />
-                <span className="font-medium">Sin tarjeta de crédito</span>
+            {/* Tech Trust indicators */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-8 text-sm">
+              <div className="flex items-center gap-3 bg-gradient-to-r from-green-600/20 to-emerald-600/20 border border-green-500/30 px-6 py-3 rounded-full tech-glow interactive-badge">
+                <CheckCircle className="w-5 h-5 text-green-400" />
+                <span className="font-bold text-white">Sin tarjeta de crédito</span>
               </div>
-              <div className="flex items-center gap-2 bg-white/60 backdrop-blur-sm px-4 py-2 rounded-full border border-blue-200">
-                <Clock className="w-5 h-5 text-blue-600" />
-                <span className="font-medium">Configuración en 5 minutos</span>
+              <div className="flex items-center gap-3 bg-gradient-to-r from-blue-600/20 to-cyan-600/20 border border-blue-500/30 px-6 py-3 rounded-full tech-glow interactive-badge">
+                <Clock className="w-5 h-5 text-blue-400" />
+                <span className="font-bold text-white">Configuración en 5 minutos</span>
               </div>
-              <div className="flex items-center gap-2 bg-white/60 backdrop-blur-sm px-4 py-2 rounded-full border border-purple-200">
-                <HeadphonesIcon className="w-5 h-5 text-purple-600" />
-                <span className="font-medium">Soporte en español 24/7</span>
+              <div className="flex items-center gap-3 bg-gradient-to-r from-purple-600/20 to-pink-600/20 border border-purple-500/30 px-6 py-3 rounded-full tech-glow interactive-badge">
+                <HeadphonesIcon className="w-5 h-5 text-purple-400" />
+                <span className="font-bold text-white">Soporte en español 24/7</span>
               </div>
             </div>
           </div>
 
-          {/* Modern Stats Section */}
+          {/* Tech Stats Section */}
           <div className="mt-24 grid grid-cols-2 md:grid-cols-4 gap-8 max-w-5xl mx-auto">
             {stats.map((stat, index) => {
               const IconComponent = stat.icon;
               return (
-                <div key={index} className="text-center">
-                  <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-blue-500 to-purple-600 rounded-3xl flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110">
+                <div key={index} className="text-center group">
+                  <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-cyan-500 via-blue-600 to-purple-600 rounded-3xl flex items-center justify-center tech-glow hover:scale-110 transition-all duration-300 group-hover:shadow-2xl floating-device">
                     <IconComponent className="w-10 h-10 text-white" />
                   </div>
-                  <div className="text-4xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent mb-2">{stat.value}</div>
-                  <div className="text-sm text-gray-600 font-medium">{stat.label}</div>
+                  <div className="text-4xl font-black bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent mb-2 tech-text-glow">{stat.value}</div>
+                  <div className="text-sm text-blue-200/80 font-bold">{stat.label}</div>
                 </div>
               );
             })}
@@ -537,20 +547,28 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
         </div>
       </section>
 
-      {/* Modern Benefits Section */}
-      <section className="py-24 bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-100 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_600px_at_50%_200px,rgba(120,119,198,0.1),transparent)]"></div>
+      {/* Tech Benefits Section */}
+      <section className="py-24 tech-gradient-bg relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_600px_at_50%_200px,rgba(59,130,246,0.15),transparent)]"></div>
+        
+        {/* Tech particles */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="tech-particle" style={{left: '20%', animationDelay: '1s'}}></div>
+          <div className="tech-particle" style={{left: '60%', animationDelay: '4s'}}></div>
+          <div className="tech-particle" style={{left: '80%', animationDelay: '7s'}}></div>
+        </div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
           <div className="text-center mb-20">
-            <div className="inline-flex items-center px-4 py-2 bg-white/70 backdrop-blur-sm border border-green-200 rounded-full mb-6 shadow-sm">
-              <Target className="w-4 h-4 text-green-600 mr-2" />
-              <span className="text-sm font-medium text-green-700">Resultados Comprobados</span>
+            <div className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-green-600/20 to-emerald-600/20 border border-green-500/30 rounded-full mb-6 tech-glow interactive-badge">
+              <Target className="w-5 h-5 text-green-400 mr-3" />
+              <span className="text-sm font-bold text-white tracking-wide">RESULTADOS COMPROBADOS</span>
             </div>
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-8 leading-tight">
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-8 leading-tight tech-text-glow">
               Transforma tu negocio en
-              <span className="block bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">30 días o menos</span>
+              <span className="block bg-gradient-to-r from-green-400 to-cyan-400 bg-clip-text text-transparent">30 días o menos</span>
             </h2>
-            <p className="text-xl text-gray-600 max-w-4xl mx-auto font-light">
+            <p className="text-xl text-blue-100/80 max-w-4xl mx-auto font-light">
               Únete a más de 500 lavanderías que ya están viendo resultados extraordinarios
             </p>
           </div>
@@ -558,13 +576,13 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-6xl mx-auto mb-20">
             {benefits.map((benefit, index) => (
               <div key={index} className="text-center group">
-                <div className="w-20 h-20 mx-auto mb-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-3xl flex items-center justify-center text-white shadow-xl group-hover:shadow-2xl transition-all duration-300 group-hover:scale-110">
+                <div className="w-20 h-20 mx-auto mb-8 bg-gradient-to-br from-cyan-500 via-blue-600 to-purple-600 rounded-3xl flex items-center justify-center text-white tech-glow group-hover:scale-110 transition-all duration-300 floating-device">
                   {benefit.icon}
                 </div>
-                <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6 group-hover:text-blue-600 transition-colors duration-300">
+                <h3 className="text-2xl md:text-3xl font-black text-white mb-6 group-hover:text-cyan-400 transition-colors duration-300 tech-text-glow">
                   {benefit.title}
                 </h3>
-                <p className="text-gray-600 text-lg leading-relaxed font-light">
+                <p className="text-blue-200/80 text-lg leading-relaxed font-light">
                   {benefit.description}
                 </p>
               </div>
@@ -573,39 +591,49 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
         </div>
       </section>
 
-      {/* Modern Features Section */}
-      <section id="features" className="py-24 bg-white relative">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Tech Features Section */}
+      <section id="features" className="py-24 tech-gradient-bg relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_800px_at_0%_50%,rgba(147,51,234,0.1),transparent)]"></div>
+        
+        {/* Tech particles */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="tech-particle" style={{left: '15%', animationDelay: '2s'}}></div>
+          <div className="tech-particle" style={{left: '45%', animationDelay: '5s'}}></div>
+          <div className="tech-particle" style={{left: '75%', animationDelay: '8s'}}></div>
+        </div>
+        
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
           <div className="text-center mb-20">
-            <div className="inline-flex items-center px-4 py-2 bg-blue-50 border border-blue-200 rounded-full mb-6">
-              <Briefcase className="w-4 h-4 text-blue-600 mr-2" />
-              <span className="text-sm font-medium text-blue-700">Funcionalidades Avanzadas</span>
+            <div className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600/20 to-cyan-600/20 border border-blue-500/30 rounded-full mb-6 tech-glow interactive-badge">
+              <Briefcase className="w-5 h-5 text-blue-400 mr-3" />
+              <span className="text-sm font-bold text-white tracking-wide">FUNCIONALIDADES AVANZADAS</span>
             </div>
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-8 leading-tight">
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-8 leading-tight tech-text-glow">
               La plataforma más completa
-              <span className="block bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">para lavanderías</span>
+              <span className="block bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">para lavanderías</span>
             </h2>
-            <p className="text-xl text-gray-600 max-w-4xl mx-auto font-light leading-relaxed">
+            <p className="text-xl text-blue-100/80 max-w-4xl mx-auto font-light leading-relaxed">
               Cada función está diseñada específicamente para resolver los desafíos diarios de tu lavandería
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {features.map((feature, index) => (
-              <div key={index} className="group bg-white p-8 rounded-3xl border border-gray-100 hover:border-blue-200 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-500/5 to-purple-500/5 rounded-full -translate-y-16 translate-x-16"></div>
-                <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 relative z-10">
+              <div key={index} className="group bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-20 p-8 rounded-3xl border border-white/20 hover:border-cyan-400/50 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 hover:scale-105 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-cyan-500/10 to-purple-500/10 rounded-full -translate-y-16 translate-x-16"></div>
+                <div className="w-16 h-16 bg-gradient-to-br from-cyan-500 via-blue-600 to-purple-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 relative z-10 tech-glow">
                   <span className="text-white">{feature.icon}</span>
                 </div>
                 
-                <div className="inline-block px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-xs font-medium mb-4">
+                <div className="inline-block px-3 py-1 bg-gradient-to-r from-blue-500/20 to-purple-500/20 text-blue-300 rounded-full text-xs font-bold mb-4 border border-blue-400/30">
                   {feature.category}
                 </div>
                 
-                <h3 className="text-2xl font-bold text-gray-900 mb-4 group-hover:text-blue-600 transition-colors">
+                <h3 className="text-2xl font-bold text-white mb-4 group-hover:text-cyan-400 transition-colors tech-text-glow">
                   {feature.title}
                 </h3>
-                <p className="text-gray-600 leading-relaxed font-light">
+                <p className="text-blue-200/80 leading-relaxed font-light">
                   {feature.description}
                 </p>
               </div>
@@ -614,20 +642,28 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
         </div>
       </section>
 
-      {/* Modern Pricing Section */}
-      <section id="pricing" className="py-24 bg-gradient-to-br from-gray-50 via-purple-50 to-blue-50 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_800px_at_50%_-100px,rgba(120,119,198,0.1),transparent)]"></div>
+      {/* Tech Pricing Section */}
+      <section id="pricing" className="py-24 tech-gradient-bg relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-purple-900 to-blue-900"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_800px_at_50%_-100px,rgba(59,130,246,0.15),transparent)]"></div>
+        
+        {/* Tech particles */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="tech-particle" style={{left: '25%', animationDelay: '3s'}}></div>
+          <div className="tech-particle" style={{left: '65%', animationDelay: '6s'}}></div>
+          <div className="tech-particle" style={{left: '85%', animationDelay: '9s'}}></div>
+        </div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
           <div className="text-center mb-20">
-            <div className="inline-flex items-center px-4 py-2 bg-white/70 backdrop-blur-sm border border-green-200 rounded-full mb-6 shadow-sm">
-              <DollarSign className="w-4 h-4 text-green-600 mr-2" />
-              <span className="text-sm font-medium text-green-700">Precios Transparentes</span>
+            <div className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-green-600/20 to-emerald-600/20 border border-green-500/30 rounded-full mb-6 tech-glow interactive-badge">
+              <DollarSign className="w-5 h-5 text-green-400 mr-3" />
+              <span className="text-sm font-bold text-white tracking-wide">PRECIOS TRANSPARENTES</span>
             </div>
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-8 leading-tight">
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-8 leading-tight tech-text-glow">
               Invierte en el crecimiento
-              <span className="block bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">de tu lavandería</span>
+              <span className="block bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">de tu lavandería</span>
             </h2>
-            <p className="text-xl text-gray-600 max-w-4xl mx-auto font-light leading-relaxed">
+            <p className="text-xl text-blue-100/80 max-w-4xl mx-auto font-light leading-relaxed">
               Planes diseñados para lavanderías de cualquier tamaño. Comienza gratis y escala conforme creces.
             </p>
           </div>
@@ -636,29 +672,29 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
             {plans.map((plan, index) => (
               <div 
                 key={index} 
-                className={`relative bg-white p-8 rounded-3xl border-2 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 ${
-                  plan.popular ? 'border-purple-500 scale-105 shadow-xl bg-gradient-to-br from-purple-50 to-blue-50' : 'border-gray-200 hover:border-blue-300'
+                className={`relative bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-20 p-8 rounded-3xl border-2 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 hover:scale-105 tech-glow ${
+                  plan.popular ? 'border-purple-500/50 scale-105 shadow-xl bg-gradient-to-br from-purple-600/20 to-blue-600/20' : 'border-white/20 hover:border-cyan-400/50'
                 }`}
               >
                 {plan.popular && (
                   <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                    <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 py-2 text-sm font-medium rounded-full shadow-lg">
+                    <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 py-2 text-sm font-bold rounded-full shadow-lg tech-glow">
                       ⭐ Más Popular
                     </div>
                   </div>
                 )}
                 
                 <div className="text-center mb-8">
-                  <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6">
+                  <h3 className="text-2xl md:text-3xl font-black text-white mb-6 tech-text-glow">
                     {plan.name}
                   </h3>
                   <div className="mb-6">
-                    <span className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                      ${plan.price}
+                    <span className="text-5xl md:text-6xl font-black bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent tech-text-glow">
+                      RD${plan.price}
                     </span>
-                    <span className="text-gray-600 text-lg">/mes</span>
+                    <span className="text-blue-200/80 text-lg font-bold">/mes</span>
                   </div>
-                  <p className="text-gray-600 text-lg font-light">
+                  <p className="text-blue-200/80 text-lg font-light">
                     {plan.description}
                   </p>
                 </div>
@@ -666,20 +702,20 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
                 <ul className="space-y-4 mb-8">
                   {plan.features.map((feature, featureIndex) => (
                     <li key={featureIndex} className="flex items-start">
-                      <div className="w-6 h-6 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full flex items-center justify-center flex-shrink-0 mr-4 mt-0.5">
+                      <div className="w-6 h-6 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full flex items-center justify-center flex-shrink-0 mr-4 mt-0.5 tech-glow">
                         <Check className="w-4 h-4 text-white" />
                       </div>
-                      <span className="text-gray-700 font-medium">{feature}</span>
+                      <span className="text-blue-200/80 font-medium">{feature}</span>
                     </li>
                   ))}
                 </ul>
 
                 <Button 
                   onClick={onGetStarted}
-                  className={`w-full py-4 text-lg rounded-xl font-semibold transition-all duration-300 ${
+                  className={`w-full py-4 text-lg rounded-xl font-bold transition-all duration-300 tech-glow hover:scale-105 ${
                     plan.popular 
-                      ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:from-purple-700 hover:to-blue-700 shadow-lg hover:shadow-xl' 
-                      : 'bg-white border-2 border-gray-300 text-gray-700 hover:border-blue-500 hover:bg-blue-50'
+                      ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:from-purple-500 hover:to-blue-500 shadow-xl hover:shadow-2xl' 
+                      : 'bg-gradient-to-r from-gray-700/50 to-gray-600/50 text-white hover:from-gray-600/50 hover:to-gray-500/50 border border-white/20'
                   }`}
                   data-testid={`plan-${plan.name.toLowerCase()}-button`}
                 >
@@ -691,12 +727,12 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
           </div>
 
           <div className="text-center mt-20">
-            <div className="bg-white/70 backdrop-blur-sm border border-gray-200 rounded-3xl p-10 max-w-3xl mx-auto shadow-lg hover:shadow-xl transition-all duration-300">
-              <h3 className="text-3xl font-bold text-gray-900 mb-6">¿Empresa con múltiples sucursales?</h3>
-              <p className="text-gray-600 text-lg mb-8 font-light leading-relaxed">
+            <div className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-20 border border-white/20 rounded-3xl p-10 max-w-3xl mx-auto tech-glow hover:shadow-2xl transition-all duration-300 hover:scale-105">
+              <h3 className="text-3xl font-black text-white mb-6 tech-text-glow">¿Empresa con múltiples sucursales?</h3>
+              <p className="text-blue-200/80 text-lg mb-8 font-light leading-relaxed">
                 Tenemos planes especiales para cadenas de lavanderías con descuentos por volumen y funciones empresariales.
               </p>
-              <Button className="bg-gradient-to-r from-gray-700 to-gray-900 text-white hover:from-gray-800 hover:to-black px-8 py-3 rounded-xl font-semibold transition-all duration-200">
+              <Button className="bg-gradient-to-r from-cyan-600 to-purple-600 text-white hover:from-cyan-500 hover:to-purple-500 px-8 py-3 rounded-xl font-bold transition-all duration-300 tech-glow hover:scale-105">
                 Solicitar Cotización Empresarial
               </Button>
             </div>
@@ -704,27 +740,36 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
         </div>
       </section>
 
-      {/* Modern Testimonials Section */}
-      <section id="testimonials" className="py-24 bg-white relative">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Tech Testimonials Section */}
+      <section id="testimonials" className="py-24 tech-gradient-bg relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_800px_at_0%_100%,rgba(147,51,234,0.1),transparent)]"></div>
+        
+        {/* Tech particles */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="tech-particle" style={{left: '30%', animationDelay: '2s'}}></div>
+          <div className="tech-particle" style={{left: '70%', animationDelay: '5s'}}></div>
+        </div>
+        
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
           <div className="text-center mb-20">
-            <div className="inline-flex items-center px-4 py-2 bg-green-50 border border-green-200 rounded-full mb-6">
-              <Star className="w-4 h-4 text-green-600 mr-2" />
-              <span className="text-sm font-medium text-green-700">Testimonios Reales</span>
+            <div className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-green-600/20 to-emerald-600/20 border border-green-500/30 rounded-full mb-6 tech-glow interactive-badge">
+              <Star className="w-5 h-5 text-green-400 mr-3" />
+              <span className="text-sm font-bold text-white tracking-wide">TESTIMONIOS REALES</span>
             </div>
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-8 leading-tight">
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-8 leading-tight tech-text-glow">
               Historias de éxito
-              <span className="block bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">que nos motivan</span>
+              <span className="block bg-gradient-to-r from-green-400 to-cyan-400 bg-clip-text text-transparent">que nos motivan</span>
             </h2>
-            <p className="text-xl text-gray-600 max-w-4xl mx-auto font-light leading-relaxed">
-              Más de 500 lavanderías han transformado su negocio con Billtracky. Aquí tienes algunas de sus historias.
+            <p className="text-xl text-blue-100/80 max-w-4xl mx-auto font-light leading-relaxed">
+              Más de 500 lavanderías han transformado su negocio con BillTracky. Aquí tienes algunas de sus historias.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
             {testimonials.map((testimonial, index) => (
-              <div key={index} className="bg-white p-8 rounded-3xl border border-gray-100 hover:border-blue-200 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-blue-500/5 to-purple-500/5 rounded-full -translate-y-12 translate-x-12"></div>
+              <div key={index} className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-20 p-8 rounded-3xl border border-white/20 hover:border-cyan-400/50 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 hover:scale-105 relative overflow-hidden tech-glow">
+                <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-cyan-500/10 to-purple-500/10 rounded-full -translate-y-12 translate-x-12"></div>
                 
                 {/* Rating Stars */}
                 <div className="flex items-center mb-6 relative z-10">
@@ -734,20 +779,20 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
                 </div>
                 
                 {/* Quote */}
-                <blockquote className="text-lg text-gray-700 mb-8 italic leading-relaxed font-light relative z-10">
+                <blockquote className="text-lg text-blue-200/80 mb-8 italic leading-relaxed font-light relative z-10">
                   "{testimonial.text}"
                 </blockquote>
                 
                 {/* Profile */}
                 <div className="flex items-center relative z-10">
-                  <div className="w-14 h-14 bg-gradient-to-br from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-xl mr-4 shadow-lg">
+                  <div className="w-14 h-14 bg-gradient-to-br from-cyan-500 via-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-xl mr-4 tech-glow">
                     {testimonial.name.charAt(0)}
                   </div>
                   <div>
-                    <p className="font-bold text-gray-900 text-lg">
+                    <p className="font-black text-white text-lg tech-text-glow">
                       {testimonial.name}
                     </p>
-                    <p className="text-gray-600 font-medium">
+                    <p className="text-blue-200/80 font-medium">
                       Propietario, {testimonial.business}
                     </p>
                   </div>
@@ -758,11 +803,11 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
 
           {/* Modern Social Proof */}
           <div className="mt-24 text-center">
-            <div className="bg-gradient-to-br from-blue-50 to-purple-50 border border-blue-200 rounded-3xl p-12 max-w-5xl mx-auto shadow-lg">
+            <div className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-20 border border-white/20 rounded-3xl p-12 max-w-5xl mx-auto tech-glow hover:scale-105 transition-all duration-300">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
                 <div className="text-center">
-                  <div className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-3">500+</div>
-                  <div className="text-gray-600 font-medium">Lavanderías activas</div>
+                  <div className="text-4xl font-black bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent mb-3 tech-text-glow">500+</div>
+                  <div className="text-blue-200/80 font-bold">Lavanderías activas</div>
                 </div>
                 <div className="text-center">
                   <div className="text-4xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent mb-3">98%</div>
