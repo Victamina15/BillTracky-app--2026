@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Check, Star, Users, Building, CreditCard, Clock, Shield, HeadphonesIcon, Menu, X, ChevronRight, Zap, TrendingUp, Smartphone, MessageCircle, FileText, Award, Globe, BarChart3, Sparkles, ArrowRight, Play, Briefcase, Target, DollarSign, Rocket, CheckCircle, Phone, Mail, MapPin } from "lucide-react";
+import { Check, Star, Users, Building, CreditCard, Clock, Shield, HeadphonesIcon, Menu, X, ChevronRight, Zap, TrendingUp, Smartphone, MessageCircle, FileText, Award, Globe, BarChart3, Sparkles, ArrowRight, Play, Briefcase, Target, DollarSign, Rocket, CheckCircle, Phone, Mail, MapPin, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import logoPath from "@assets/logo demo 2_1757619097947.png";
