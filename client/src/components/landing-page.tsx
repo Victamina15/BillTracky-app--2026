@@ -3,6 +3,7 @@ import { Check, Star, Users, Building, CreditCard, Clock, Shield, HeadphonesIcon
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import logoPath from "@assets/logo demo 2_1757619097947.png";
+import dashboardImage from "@assets/generated_images/BillTracky_dashboard_interface_mockup_252f60b8.png";
 
 interface LandingPageProps {
   onGetStarted: () => void;
@@ -310,6 +311,96 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
                 </div>
               );
             })}
+          </div>
+        </div>
+      </section>
+
+      {/* Modern Dashboard Preview Section */}
+      <section className="py-24 bg-white relative overflow-hidden">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            {/* Left side - Content */}
+            <div className="order-2 lg:order-1">
+              <div className="inline-flex items-center px-4 py-2 bg-blue-50 border border-blue-200 rounded-full mb-6">
+                <Sparkles className="w-4 h-4 text-blue-600 mr-2" />
+                <span className="text-sm font-medium text-blue-700">Interfaz Intuitiva</span>
+              </div>
+              
+              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
+                Panel de control
+                <span className="block bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                  súper intuitivo
+                </span>
+              </h2>
+              
+              <p className="text-xl text-gray-600 mb-8 leading-relaxed font-light">
+                Controla todo tu negocio desde una sola pantalla. Métricas en tiempo real, 
+                acciones rápidas y gestión completa de órdenes.
+              </p>
+              
+              <div className="space-y-4 mb-8">
+                <div className="flex items-start">
+                  <div className="w-6 h-6 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full flex items-center justify-center flex-shrink-0 mr-4 mt-1">
+                    <Check className="w-4 h-4 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-900 mb-1">Métricas en tiempo real</h3>
+                    <p className="text-gray-600">Ve órdenes, ingresos y pendientes al instante</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start">
+                  <div className="w-6 h-6 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center flex-shrink-0 mr-4 mt-1">
+                    <Check className="w-4 h-4 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-900 mb-1">Acciones rápidas</h3>
+                    <p className="text-gray-600">Crea facturas y busca órdenes en un click</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start">
+                  <div className="w-6 h-6 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center flex-shrink-0 mr-4 mt-1">
+                    <Check className="w-4 h-4 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-900 mb-1">Navegación intuitiva</h3>
+                    <p className="text-gray-600">Acceso fácil a todos los módulos desde el sidebar</p>
+                  </div>
+                </div>
+              </div>
+              
+              <Button 
+                onClick={onGetStarted}
+                className="bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700 px-8 py-3 rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl"
+              >
+                <Play className="mr-2 w-5 h-5" />
+                Probar Dashboard Gratis
+              </Button>
+            </div>
+            
+            {/* Right side - Dashboard Image */}
+            <div className="order-1 lg:order-2 relative">
+              <div className="relative">
+                {/* Decorative elements */}
+                <div className="absolute -top-6 -left-6 w-24 h-24 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-2xl rotate-6"></div>
+                <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-2xl -rotate-6"></div>
+                
+                {/* Dashboard image */}
+                <div className="relative bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-200">
+                  <img 
+                    src={dashboardImage} 
+                    alt="BillTracky Dashboard - Panel de control intuitivo" 
+                    className="w-full h-auto"
+                  />
+                  
+                  {/* Overlay badge */}
+                  <div className="absolute top-4 right-4 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium shadow-lg">
+                    ✨ En vivo
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
