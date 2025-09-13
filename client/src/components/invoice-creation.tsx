@@ -1393,7 +1393,7 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
                     <Button
                       variant="outline"
                       size="sm"
-                      className="tech-button-3d bg-gradient-to-br from-cyan-50 to-blue-50 border-2 border-cyan-300 text-cyan-700 dark:bg-gradient-to-br dark:from-cyan-500/20 dark:to-blue-600/20 dark:text-cyan-300 dark:border-cyan-500/30 hover:from-cyan-100 hover:to-blue-100 hover:border-cyan-400 dark:hover:from-cyan-400/30 dark:hover:to-blue-500/30 transition-all duration-300 transform hover:scale-105 tech-glow"
+                      className="tech-button-3d bg-blue-500 border-2 border-blue-600 text-white hover:bg-blue-600 hover:border-blue-700 dark:bg-blue-600 dark:border-blue-700 dark:hover:bg-blue-700 transition-all duration-300 transform hover:scale-105 tech-glow shadow-lg"
                       onClick={() => setItemQuantity(itemQuantity + 1)}
                       data-testid="button-increase-quantity"
                     >
@@ -1569,7 +1569,7 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
                     <Button
                       variant="outline"
                       size="sm"
-                      className="tech-button-3d bg-gradient-to-br from-cyan-50 to-blue-50 border-2 border-cyan-300 text-cyan-700 dark:bg-gradient-to-br dark:from-cyan-500/20 dark:to-blue-600/20 dark:text-cyan-300 dark:border-cyan-500/30 hover:from-cyan-100 hover:to-blue-100 hover:border-cyan-400 dark:hover:from-cyan-400/30 dark:hover:to-blue-500/30 transition-all duration-300 transform hover:scale-105 tech-glow"
+                      className="tech-button-3d bg-blue-500 border-2 border-blue-600 text-white hover:bg-blue-600 hover:border-blue-700 dark:bg-blue-600 dark:border-blue-700 dark:hover:bg-blue-700 transition-all duration-300 transform hover:scale-105 tech-glow shadow-lg"
                       onClick={() => setItemQuantity(itemQuantity + 1)}
                       data-testid="button-edit-increase-quantity"
                     >
