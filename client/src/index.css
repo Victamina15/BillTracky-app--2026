@@ -343,6 +343,16 @@
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* Enhanced dark mode tech button effects */
+.dark .tech-button-3d {
+  background: linear-gradient(145deg, rgba(59, 130, 246, 0.15), rgba(147, 51, 234, 0.15));
+  border: 1px solid rgba(59, 130, 246, 0.4);
+  box-shadow: 
+    0 4px 15px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+}
+
 .tech-button-3d::before {
   content: '';
   position: absolute;
@@ -359,10 +369,12 @@
 }
 
 .dark .tech-button-3d:hover {
+  transform: translateY(-4px) scale(1.05);
   box-shadow: 
-    0 10px 25px rgba(59, 130, 246, 0.2),
-    0 5px 15px rgba(147, 51, 234, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    0 15px 35px rgba(59, 130, 246, 0.25),
+    0 8px 20px rgba(147, 51, 234, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  border-color: rgba(59, 130, 246, 0.6);
 }
 
 .tech-button-3d:hover::before {
