@@ -1,4 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useQuery, useMutation } from '@tanstack/react-query';
+import { apiRequest, queryClient } from '@/lib/queryClient';
 import { 
   ArrowLeft, 
   Save, 
@@ -78,6 +80,33 @@ interface WhatsAppConfigProps {
 }
 
 export default function WhatsAppConfig({ onBack }: WhatsAppConfigProps) {
+  // Fetch WhatsApp config from backend
+  const { data: whatsappConfig, isLoading: isLoadingConfig } = useQuery({
+    queryKey: ['/api/whatsapp-config'],
+    enabled: true
+  });
+  
+  const [isHydrated, setIsHydrated] = useState(false);
+
+  // Mutation to save WhatsApp config
+  const saveConfigMutation = useMutation({
+    mutationFn: (config: any) => apiRequest('PUT', '/api/whatsapp-config', config),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/whatsapp-config'] });
+      toast({
+        title: "Configuración guardada",
+        description: "Configuración de WhatsApp guardada exitosamente",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "No se pudo guardar la configuración",
+        variant: "destructive"
+      });
+    }
+  });
+
   const [configuracion, setConfiguracion] = useState<ConfiguracionMensajes>({
     pedidoListo: {
       activo: true,
@@ -178,6 +207,21 @@ _{empresa_nombre}_`
   const [canalPreview, setCanalPreview] = useState<'whatsapp' | 'email'>('whatsapp');
   const { toast } = useToast();
 
+  // Sync backend data with local state when loaded (only once to avoid overwriting user edits)
+  useEffect(() => {
+    if (whatsappConfig && typeof whatsappConfig === 'object' && !isHydrated) {
+      setConfiguracion(prev => ({
+        ...prev,
+        pedidoListo: {
+          ...prev.pedidoListo,
+          activo: (whatsappConfig as any).enabled || false,
+          envioAutomatico: (whatsappConfig as any).autoSendOnReady || false
+        }
+      }));
+      setIsHydrated(true);
+    }
+  }, [whatsappConfig, isHydrated]);
+
   const variables: Variables = {
     cliente_nombre: "María González",
     factura_numero: "FAC-2024-001234",
@@ -267,10 +311,16 @@ _{empresa_nombre}_`
   };
 
   const guardarConfiguracion = (): void => {
-    toast({
-      title: "Configuración guardada",
-      description: "Configuración de mensajes guardada exitosamente",
-    });
+    // Map local state to backend schema
+    const backendConfig = {
+      enabled: configuracion.pedidoListo.activo,
+      provider: 'twilio', // Default provider
+      autoSendOnReady: configuracion.pedidoListo.envioAutomatico,
+      retryAttempts: 3,
+      retryDelay: 5,
+    };
+
+    saveConfigMutation.mutate(backendConfig);
   };
 
   const updateConfiguracion = (campo: string, valor: any): void => {
@@ -322,8 +372,18 @@ _{empresa_nombre}_`
           </CardContent>
         </Card>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          {/* Menu Lateral */}
+        {/* Loading State */}
+        {isLoadingConfig ? (
+          <div className="animate-pulse space-y-6">
+            <div className="h-32 bg-muted rounded-lg"></div>
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+              <div className="h-96 bg-muted rounded-lg"></div>
+              <div className="lg:col-span-3 h-96 bg-muted rounded-lg"></div>
+            </div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            {/* Menu Lateral */}
           <Card className="dark:bg-gray-800/50 dark:shadow-lg tech-glow border-border dark:border-cyan-500/20">
             <CardHeader>
               <CardTitle className="text-lg">Tipos de Mensaje</CardTitle>
@@ -544,7 +604,8 @@ _{empresa_nombre}_`
               </CardContent>
             </Card>
           </div>
-        </div>
+          </div>
+        )}
 
         {/* Modal de Vista Previa */}
         <Dialog open={vistaPrevia} onOpenChange={setVistaPrevia}>
