@@ -89,7 +89,7 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
           <div>
             {/* Metrics Cards - Vivos y Profesionales */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-              <div className="bg-white dark:bg-gray-800/50 rounded-xl shadow-sm border border-slate-200 dark:border-cyan-500/20 border-l-4 border-l-sky-600 p-6 dark:backdrop-blur-sm hover:shadow-lg dark:hover:shadow-xl transition-all duration-300 cursor-pointer transform hover:scale-105 hover:-translate-y-1">
+              <div className="bg-white dark:bg-gray-800/50 rounded-xl shadow-sm border border-slate-200 dark:border-cyan-500/20 border-l-4 border-l-sky-300 p-6 dark:backdrop-blur-sm hover:shadow-lg dark:hover:shadow-xl transition-all duration-300 cursor-pointer transform hover:scale-105 hover:-translate-y-1">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-semibold text-slate-700 dark:text-cyan-300">Órdenes Hoy</p>
@@ -98,13 +98,13 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
                     </p>
                     <p className="text-xs text-emerald-600 dark:text-emerald-400 mt-1 font-medium">+3 desde ayer</p>
                   </div>
-                  <div className="w-12 h-12 bg-gradient-to-br from-sky-500 to-sky-600 dark:from-cyan-400/20 dark:to-purple-500/20 rounded-xl flex items-center justify-center text-white tech-glow shadow-lg">
+                  <div className="w-12 h-12 bg-sky-200 dark:from-cyan-400/20 dark:to-purple-500/20 rounded-xl flex items-center justify-center text-sky-700 shadow-sm">
                     <Package className="w-6 h-6" />
                   </div>
                 </div>
               </div>
 
-              <div className="bg-white dark:bg-gray-800/50 rounded-xl shadow-sm border border-slate-200 dark:border-cyan-500/20 border-l-4 border-l-emerald-600 p-6 dark:backdrop-blur-sm hover:shadow-lg dark:hover:shadow-xl transition-all duration-300 cursor-pointer transform hover:scale-105 hover:-translate-y-1">
+              <div className="bg-white dark:bg-gray-800/50 rounded-xl shadow-sm border border-slate-200 dark:border-cyan-500/20 border-l-4 border-l-emerald-300 p-6 dark:backdrop-blur-sm hover:shadow-lg dark:hover:shadow-xl transition-all duration-300 cursor-pointer transform hover:scale-105 hover:-translate-y-1">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-semibold text-slate-700 dark:text-emerald-300">Ingresos Hoy</p>
@@ -113,28 +113,28 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
                     </p>
                     <p className="text-xs text-emerald-600 dark:text-green-400 mt-1 font-medium">+15% vs ayer</p>
                   </div>
-                  <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-emerald-600 dark:from-green-400/20 dark:to-cyan-500/20 rounded-xl flex items-center justify-center text-white tech-glow shadow-lg">
+                  <div className="w-12 h-12 bg-emerald-200 dark:from-green-400/20 dark:to-cyan-500/20 rounded-xl flex items-center justify-center text-emerald-700 shadow-sm">
                     <span className="text-lg font-bold">$</span>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-white dark:bg-gray-800/50 rounded-xl shadow-sm border border-slate-200 dark:border-cyan-500/20 border-l-4 border-l-violet-600 p-6 dark:backdrop-blur-sm hover:shadow-lg dark:hover:shadow-xl transition-all duration-300 cursor-pointer transform hover:scale-105 hover:-translate-y-1">
+              <div className="bg-white dark:bg-gray-800/50 rounded-xl shadow-sm border border-slate-200 dark:border-cyan-500/20 border-l-4 border-l-violet-300 p-6 dark:backdrop-blur-sm hover:shadow-lg dark:hover:shadow-xl transition-all duration-300 cursor-pointer transform hover:scale-105 hover:-translate-y-1">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-semibold text-slate-700 dark:text-purple-300">Pedidos Listo para Entrega</p>
+                    <p className="text-sm font-semibold text-slate-700 dark:text-purple-300">Listo para Entrega</p>
                     <p className="text-2xl font-bold text-slate-900 dark:text-white" data-testid="metric-in-progress">
                       {metricsLoading ? "..." : metrics?.inProgress || 0}
                     </p>
                     <p className="text-xs text-violet-600 dark:text-purple-400 mt-1 font-medium">💬 WhatsApp automático</p>
                   </div>
-                  <div className="w-12 h-12 bg-gradient-to-br from-violet-500 to-violet-600 dark:from-yellow-400/20 dark:to-orange-500/20 rounded-xl flex items-center justify-center text-white tech-glow shadow-lg">
+                  <div className="w-12 h-12 bg-violet-200 dark:from-yellow-400/20 dark:to-orange-500/20 rounded-xl flex items-center justify-center text-violet-700 shadow-sm">
                     <span className="text-lg font-bold">📦</span>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-white dark:bg-gray-800/50 rounded-xl shadow-sm border border-slate-200 dark:border-cyan-500/20 border-l-4 border-l-rose-600 p-6 dark:backdrop-blur-sm hover:shadow-lg dark:hover:shadow-xl transition-all duration-300 cursor-pointer transform hover:scale-105 hover:-translate-y-1">
+              <div className="bg-white dark:bg-gray-800/50 rounded-xl shadow-sm border border-slate-200 dark:border-cyan-500/20 border-l-4 border-l-rose-300 p-6 dark:backdrop-blur-sm hover:shadow-lg dark:hover:shadow-xl transition-all duration-300 cursor-pointer transform hover:scale-105 hover:-translate-y-1">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-semibold text-slate-700 dark:text-rose-300">Pendientes Pago</p>
@@ -145,7 +145,7 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
                       RD${metrics?.pendingPaymentTotal || "0.00"} total
                     </p>
                   </div>
-                  <div className="w-12 h-12 bg-gradient-to-br from-rose-500 to-rose-600 dark:from-red-400/20 dark:to-pink-500/20 rounded-xl flex items-center justify-center text-white tech-glow shadow-lg">
+                  <div className="w-12 h-12 bg-rose-200 dark:from-red-400/20 dark:to-pink-500/20 rounded-xl flex items-center justify-center text-rose-700 shadow-sm">
                     <span className="text-lg font-bold">💳</span>
                   </div>
                 </div>
