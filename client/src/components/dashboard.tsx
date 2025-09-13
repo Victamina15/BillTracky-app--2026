@@ -38,17 +38,18 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
 
   const recentOrders = invoices.slice(0, 3);
 
-  // Helper functions para obtener clases de estado de forma segura
+  // Helper functions para obtener clases de estado con colores sólidos profesionales (contraste AA)
   const getStatusClasses = (status: string | null) => {
-    if (!status) return 'bg-gradient-to-br from-gray-500/20 to-slate-600/20 text-gray-300 border border-gray-400/30 tech-glow';
+    // Solid, vivid professional colors with AA contrast + consistent chip styling
+    if (!status) return 'bg-slate-700 text-white px-2 py-1 text-xs font-semibold rounded-full';
     
     switch(status) {
-      case 'received': return 'bg-gradient-to-br from-cyan-500/20 to-blue-600/20 text-cyan-300 border border-cyan-400/30 tech-glow';
-      case 'in_process': return 'bg-gradient-to-br from-yellow-500/20 to-orange-600/20 text-yellow-300 border border-yellow-400/30 tech-glow'; 
-      case 'ready': return 'bg-gradient-to-br from-purple-500/20 to-pink-600/20 text-purple-300 border border-purple-400/30 tech-glow';
-      case 'delivered': return 'bg-gradient-to-br from-green-500/20 to-emerald-600/20 text-green-300 border border-green-400/30 tech-glow';
-      case 'cancelled': return 'bg-gradient-to-br from-red-500/20 to-pink-600/20 text-red-300 border border-red-400/30 tech-glow';
-      default: return 'bg-gradient-to-br from-gray-500/20 to-slate-600/20 text-gray-300 border border-gray-400/30 tech-glow';
+      case 'received': return 'bg-sky-700 text-white px-2 py-1 text-xs font-semibold rounded-full';
+      case 'in_process': return 'bg-amber-700 text-white px-2 py-1 text-xs font-semibold rounded-full'; 
+      case 'ready': return 'bg-violet-600 text-white px-2 py-1 text-xs font-semibold rounded-full';
+      case 'delivered': return 'bg-emerald-600 text-white px-2 py-1 text-xs font-semibold rounded-full';
+      case 'cancelled': return 'bg-rose-700 text-white px-2 py-1 text-xs font-semibold rounded-full';
+      default: return 'bg-slate-700 text-white px-2 py-1 text-xs font-semibold rounded-full';
     }
   };
 
@@ -86,66 +87,66 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
       default:
         return (
           <div>
-            {/* Metrics Cards - Botones 3D con Colores Tecnológicos Pasteles */}
+            {/* Metrics Cards - Vivos y Profesionales */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-              <div className="bg-cyan-50 dark:bg-gray-800/50 rounded-xl shadow-md dark:shadow-lg tech-glow border border-cyan-200 dark:border-cyan-500/20 p-6 dark:backdrop-blur-sm hover:shadow-lg dark:hover:shadow-xl transition-all duration-300 cursor-pointer transform hover:scale-105 hover:-translate-y-1">
+              <div className="bg-white dark:bg-gray-800/50 rounded-xl shadow-sm border border-slate-200 dark:border-cyan-500/20 border-l-4 border-l-sky-600 p-6 dark:backdrop-blur-sm hover:shadow-lg dark:hover:shadow-xl transition-all duration-300 cursor-pointer transform hover:scale-105 hover:-translate-y-1">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-semibold text-cyan-700 dark:text-cyan-300">Órdenes Hoy</p>
-                    <p className="text-2xl font-bold text-cyan-900 dark:text-white" data-testid="metric-today-orders">
+                    <p className="text-sm font-semibold text-slate-700 dark:text-cyan-300">Órdenes Hoy</p>
+                    <p className="text-2xl font-bold text-slate-900 dark:text-white" data-testid="metric-today-orders">
                       {metricsLoading ? "..." : metrics?.todayOrders || 0}
                     </p>
                     <p className="text-xs text-emerald-600 dark:text-emerald-400 mt-1 font-medium">+3 desde ayer</p>
                   </div>
-                  <div className="w-12 h-12 bg-gradient-to-br from-cyan-200 to-cyan-300 dark:from-cyan-400/20 dark:to-purple-500/20 rounded-xl flex items-center justify-center border border-cyan-300 dark:border-cyan-400/30 tech-glow shadow-lg">
-                    <Package className="w-6 h-6 text-cyan-700 dark:text-cyan-400" />
+                  <div className="w-12 h-12 bg-gradient-to-br from-sky-500 to-sky-600 dark:from-cyan-400/20 dark:to-purple-500/20 rounded-xl flex items-center justify-center text-white tech-glow shadow-lg">
+                    <Package className="w-6 h-6" />
                   </div>
                 </div>
               </div>
 
-              <div className="bg-emerald-50 dark:bg-gray-800/50 rounded-xl shadow-md dark:shadow-lg tech-glow border border-emerald-200 dark:border-cyan-500/20 p-6 dark:backdrop-blur-sm hover:shadow-lg dark:hover:shadow-xl transition-all duration-300 cursor-pointer transform hover:scale-105 hover:-translate-y-1">
+              <div className="bg-white dark:bg-gray-800/50 rounded-xl shadow-sm border border-slate-200 dark:border-cyan-500/20 border-l-4 border-l-emerald-600 p-6 dark:backdrop-blur-sm hover:shadow-lg dark:hover:shadow-xl transition-all duration-300 cursor-pointer transform hover:scale-105 hover:-translate-y-1">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-semibold text-emerald-700 dark:text-emerald-300">Ingresos Hoy</p>
-                    <p className="text-2xl font-bold text-emerald-900 dark:text-white" data-testid="metric-today-revenue">
+                    <p className="text-sm font-semibold text-slate-700 dark:text-emerald-300">Ingresos Hoy</p>
+                    <p className="text-2xl font-bold text-slate-900 dark:text-white" data-testid="metric-today-revenue">
                       {metricsLoading ? "..." : `RD$${metrics?.todayRevenue || "0.00"}`}
                     </p>
-                    <p className="text-xs text-green-600 dark:text-green-400 mt-1 font-medium">+15% vs ayer</p>
+                    <p className="text-xs text-emerald-600 dark:text-green-400 mt-1 font-medium">+15% vs ayer</p>
                   </div>
-                  <div className="w-12 h-12 bg-gradient-to-br from-emerald-200 to-emerald-300 dark:from-green-400/20 dark:to-cyan-500/20 rounded-xl flex items-center justify-center border border-emerald-300 dark:border-green-400/30 tech-glow shadow-lg">
-                    <span className="text-lg font-bold text-emerald-700 dark:text-green-400">$</span>
+                  <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-emerald-600 dark:from-green-400/20 dark:to-cyan-500/20 rounded-xl flex items-center justify-center text-white tech-glow shadow-lg">
+                    <span className="text-lg font-bold">$</span>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-purple-50 dark:bg-gray-800/50 rounded-xl shadow-md dark:shadow-lg tech-glow border border-purple-200 dark:border-cyan-500/20 p-6 dark:backdrop-blur-sm hover:shadow-lg dark:hover:shadow-xl transition-all duration-300 cursor-pointer transform hover:scale-105 hover:-translate-y-1">
+              <div className="bg-white dark:bg-gray-800/50 rounded-xl shadow-sm border border-slate-200 dark:border-cyan-500/20 border-l-4 border-l-violet-600 p-6 dark:backdrop-blur-sm hover:shadow-lg dark:hover:shadow-xl transition-all duration-300 cursor-pointer transform hover:scale-105 hover:-translate-y-1">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-semibold text-purple-700 dark:text-purple-300">Pedidos Listo para Entrega</p>
-                    <p className="text-2xl font-bold text-purple-900 dark:text-white" data-testid="metric-in-progress">
+                    <p className="text-sm font-semibold text-slate-700 dark:text-purple-300">Pedidos Listo para Entrega</p>
+                    <p className="text-2xl font-bold text-slate-900 dark:text-white" data-testid="metric-in-progress">
                       {metricsLoading ? "..." : metrics?.inProgress || 0}
                     </p>
-                    <p className="text-xs text-purple-600 dark:text-purple-400 mt-1 font-medium">💬 WhatsApp automático</p>
+                    <p className="text-xs text-violet-600 dark:text-purple-400 mt-1 font-medium">💬 WhatsApp automático</p>
                   </div>
-                  <div className="w-12 h-12 bg-gradient-to-br from-purple-200 to-purple-300 dark:from-yellow-400/20 dark:to-orange-500/20 rounded-xl flex items-center justify-center border border-purple-300 dark:border-yellow-400/30 tech-glow shadow-lg">
-                    <span className="text-lg font-bold text-purple-700 dark:text-yellow-400">📦</span>
+                  <div className="w-12 h-12 bg-gradient-to-br from-violet-500 to-violet-600 dark:from-yellow-400/20 dark:to-orange-500/20 rounded-xl flex items-center justify-center text-white tech-glow shadow-lg">
+                    <span className="text-lg font-bold">📦</span>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-rose-50 dark:bg-gray-800/50 rounded-xl shadow-md dark:shadow-lg tech-glow border border-rose-200 dark:border-cyan-500/20 p-6 dark:backdrop-blur-sm hover:shadow-lg dark:hover:shadow-xl transition-all duration-300 cursor-pointer transform hover:scale-105 hover:-translate-y-1">
+              <div className="bg-white dark:bg-gray-800/50 rounded-xl shadow-sm border border-slate-200 dark:border-cyan-500/20 border-l-4 border-l-rose-600 p-6 dark:backdrop-blur-sm hover:shadow-lg dark:hover:shadow-xl transition-all duration-300 cursor-pointer transform hover:scale-105 hover:-translate-y-1">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-semibold text-rose-700 dark:text-rose-300">Pendientes Pago</p>
-                    <p className="text-2xl font-bold text-rose-900 dark:text-white" data-testid="metric-pending-payment">
+                    <p className="text-sm font-semibold text-slate-700 dark:text-rose-300">Pendientes Pago</p>
+                    <p className="text-2xl font-bold text-slate-900 dark:text-white" data-testid="metric-pending-payment">
                       {metricsLoading ? "..." : metrics?.pendingPayment || 0}
                     </p>
-                    <p className="text-xs text-red-600 dark:text-red-400 mt-1 font-medium">
+                    <p className="text-xs text-rose-600 dark:text-red-400 mt-1 font-medium">
                       RD${metrics?.pendingPaymentTotal || "0.00"} total
                     </p>
                   </div>
-                  <div className="w-12 h-12 bg-gradient-to-br from-rose-200 to-rose-300 dark:from-red-400/20 dark:to-pink-500/20 rounded-xl flex items-center justify-center border border-rose-300 dark:border-red-400/30 tech-glow shadow-lg">
-                    <span className="text-lg font-bold text-rose-700 dark:text-red-400">💳</span>
+                  <div className="w-12 h-12 bg-gradient-to-br from-rose-500 to-rose-600 dark:from-red-400/20 dark:to-pink-500/20 rounded-xl flex items-center justify-center text-white tech-glow shadow-lg">
+                    <span className="text-lg font-bold">💳</span>
                   </div>
                 </div>
               </div>
@@ -153,60 +154,60 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
 
             {/* Quick Actions and Recent Orders */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-              <div className="bg-slate-50 dark:bg-gray-800/50 rounded-xl shadow-md dark:shadow-lg tech-glow border border-slate-200 dark:border-cyan-500/20 p-6 dark:backdrop-blur-sm">
-                <h3 className="text-lg font-semibold text-slate-900 dark:text-white tech-text-glow mb-4">Acciones Rápidas</h3>
+              <div className="bg-white dark:bg-gray-800/50 rounded-xl shadow-sm border border-slate-200 dark:border-cyan-500/20 p-6 dark:backdrop-blur-sm">
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white tech-text-glow mb-4">Acciones Rápidas</h3>
                 <div className="grid grid-cols-2 gap-4">
                   <button 
                     onClick={() => setActiveTab('invoices')}
-                    className="tech-button-3d bg-gradient-to-br from-blue-100 to-blue-200 dark:from-cyan-500/20 dark:to-blue-600/20 text-blue-900 dark:text-white p-4 rounded-lg border border-blue-300 dark:border-cyan-400/30 hover:from-blue-200 hover:to-blue-300 dark:hover:from-cyan-400/30 dark:hover:to-blue-500/30 transition-all duration-300 text-left shadow-lg hover:shadow-xl transform hover:scale-105"
+                    className="tech-button-3d bg-white border-2 border-sky-300 text-sky-700 dark:from-cyan-500/20 dark:to-blue-600/20 dark:text-white p-4 rounded-lg hover:bg-sky-50 hover:border-sky-400 dark:hover:from-cyan-400/30 dark:hover:to-blue-500/30 transition-all duration-300 text-left shadow-lg hover:shadow-xl transform hover:scale-105"
                     data-testid="quick-action-new-invoice"
                   >
                     <span className="text-lg mb-2 block">➕</span>
-                    <p className="text-sm font-semibold">Nueva Factura</p>
+                    <p className="text-sm font-bold">Nueva Factura</p>
                   </button>
                   <button 
                     onClick={() => setActiveTab('orders')}
-                    className="tech-button-3d bg-gradient-to-br from-purple-100 to-purple-200 dark:from-purple-500/20 dark:to-pink-600/20 text-purple-900 dark:text-white p-4 rounded-lg border border-purple-300 dark:border-purple-400/30 hover:from-purple-200 hover:to-purple-300 dark:hover:from-purple-400/30 dark:hover:to-pink-500/30 transition-all duration-300 text-left shadow-lg hover:shadow-xl transform hover:scale-105"
+                    className="tech-button-3d bg-white border-2 border-violet-300 text-violet-700 dark:from-purple-500/20 dark:to-pink-600/20 dark:text-white p-4 rounded-lg hover:bg-violet-50 hover:border-violet-400 dark:hover:from-purple-400/30 dark:hover:to-pink-500/30 transition-all duration-300 text-left shadow-lg hover:shadow-xl transform hover:scale-105"
                     data-testid="quick-action-search-order"
                   >
                     <span className="text-lg mb-2 block">🔍</span>
-                    <p className="text-sm font-semibold">Buscar Orden</p>
+                    <p className="text-sm font-bold">Buscar Orden</p>
                   </button>
                   <button 
                     onClick={() => setActiveTab('cash-closure')}
-                    className="tech-button-3d bg-gradient-to-br from-emerald-100 to-emerald-200 dark:from-green-500/20 dark:to-emerald-600/20 text-emerald-900 dark:text-white p-4 rounded-lg border border-emerald-300 dark:border-green-400/30 hover:from-emerald-200 hover:to-emerald-300 dark:hover:from-green-400/30 dark:hover:to-emerald-500/30 transition-all duration-300 text-left shadow-lg hover:shadow-xl transform hover:scale-105"
+                    className="tech-button-3d bg-white border-2 border-emerald-300 text-emerald-700 dark:from-green-500/20 dark:to-emerald-600/20 dark:text-white p-4 rounded-lg hover:bg-emerald-50 hover:border-emerald-400 dark:hover:from-green-400/30 dark:hover:to-emerald-500/30 transition-all duration-300 text-left shadow-lg hover:shadow-xl transform hover:scale-105"
                     data-testid="quick-action-cash-closure"
                   >
                     <span className="text-lg mb-2 block">💰</span>
-                    <p className="text-sm font-semibold">Cierre de Caja</p>
+                    <p className="text-sm font-bold">Cierre de Caja</p>
                   </button>
                   <button 
                     onClick={() => setActiveTab('services')}
-                    className="tech-button-3d bg-gradient-to-br from-amber-100 to-amber-200 dark:from-yellow-500/20 dark:to-orange-600/20 text-amber-900 dark:text-white p-4 rounded-lg border border-amber-300 dark:border-yellow-400/30 hover:from-amber-200 hover:to-amber-300 dark:hover:from-yellow-400/30 dark:hover:to-orange-500/30 transition-all duration-300 text-left shadow-lg hover:shadow-xl transform hover:scale-105"
+                    className="tech-button-3d bg-white border-2 border-amber-300 text-amber-700 dark:from-yellow-500/20 dark:to-orange-600/20 dark:text-white p-4 rounded-lg hover:bg-amber-50 hover:border-amber-400 dark:hover:from-yellow-400/30 dark:hover:to-orange-500/30 transition-all duration-300 text-left shadow-lg hover:shadow-xl transform hover:scale-105"
                     data-testid="quick-action-configure"
                   >
                     <span className="text-lg mb-2 block">⚙️</span>
-                    <p className="text-sm font-semibold">Configurar</p>
+                    <p className="text-sm font-bold">Configurar</p>
                   </button>
                 </div>
               </div>
 
-              <div className="bg-indigo-50 dark:bg-gray-800/50 rounded-xl shadow-md dark:shadow-lg tech-glow border border-indigo-200 dark:border-cyan-500/20 p-6 dark:backdrop-blur-sm">
-                <h3 className="text-lg font-semibold text-indigo-900 dark:text-white tech-text-glow mb-4">Órdenes Recientes</h3>
+              <div className="bg-white dark:bg-gray-800/50 rounded-xl shadow-sm border border-slate-200 dark:border-cyan-500/20 p-6 dark:backdrop-blur-sm">
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white tech-text-glow mb-4">Órdenes Recientes</h3>
                 <div className="space-y-3">
                   {recentOrders.map((order: Invoice) => (
-                    <div key={order.id} className="flex items-center justify-between p-3 bg-indigo-100 dark:bg-muted rounded-lg border border-indigo-200 dark:border-transparent hover:shadow-md transition-all duration-200">
+                    <div key={order.id} className="flex items-center justify-between p-3 bg-white dark:bg-muted rounded-lg border border-slate-200 dark:border-transparent hover:bg-slate-50 dark:hover:bg-muted/80 hover:shadow-md transition-all duration-200">
                       <div>
-                        <p className="font-semibold text-indigo-900 dark:text-white" data-testid={`recent-order-${order.id}`}>
+                        <p className="font-bold text-slate-900 dark:text-white" data-testid={`recent-order-${order.id}`}>
                           {order.number}
                         </p>
-                        <p className="text-sm text-indigo-700 dark:text-gray-300">{order.customerName}</p>
+                        <p className="text-sm text-slate-600 dark:text-gray-300">{order.customerName}</p>
                       </div>
                       <div className="text-right">
-                        <span className={`inline-block px-2 py-1 text-xs font-medium rounded-full ${getStatusClasses(order.status)}`}>
+                        <span className={`inline-block ${getStatusClasses(order.status)}`}>
                           {getStatusText(order.status)}
                         </span>
-                        <p className="text-sm font-bold text-indigo-900 dark:text-white mt-1">
+                        <p className="text-sm font-bold text-slate-900 dark:text-white mt-1">
                           RD${parseFloat(order.total).toFixed(2)}
                         </p>
                       </div>

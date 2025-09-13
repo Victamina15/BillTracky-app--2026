@@ -4,31 +4,35 @@
 @tailwind utilities;
 
 :root {
-  /* Light mode - Tech style */
-  --background: hsl(0, 0%, 98%);
-  --foreground: hsl(220, 20%, 15%);
+  /* Vivid Professional Light Mode Colors */
+  --background: hsl(0, 0%, 100%);
+  --foreground: hsl(222, 47%, 11%);
   --card: hsl(0, 0%, 100%);
-  --card-foreground: hsl(220, 20%, 15%);
+  --card-foreground: hsl(222, 47%, 11%);
   --popover: hsl(0, 0%, 100%);
-  --popover-foreground: hsl(220, 20%, 15%);
-  --primary: hsl(194, 96%, 60%);
-  --primary-foreground: hsl(220, 20%, 5%);
-  --secondary: hsl(272, 75%, 60%);
+  --popover-foreground: hsl(222, 47%, 11%);
+  --primary: hsl(221, 83%, 53%);    /* tech blue */
+  --primary-foreground: hsl(0, 0%, 100%);
+  --secondary: hsl(262, 83%, 58%);  /* violet */
   --secondary-foreground: hsl(0, 0%, 100%);
-  --muted: hsl(220, 15%, 95%);
-  --muted-foreground: hsl(220, 10%, 50%);
-  --accent: hsl(194, 96%, 60%);
-  --accent-foreground: hsl(220, 20%, 5%);
+  --muted: hsl(210, 40%, 96%);
+  --muted-foreground: hsl(215, 16%, 47%);
+  --accent: hsl(199, 89%, 48%);     /* sky */
+  --accent-foreground: hsl(0, 0%, 100%);
   --destructive: hsl(0, 84%, 60%);
   --destructive-foreground: hsl(210, 40%, 98%);
-  --border: hsl(220, 15%, 85%);
-  --input: hsl(220, 15%, 90%);
-  --ring: hsl(194, 96%, 60%);
-  --chart-1: hsl(194, 96%, 60%);
-  --chart-2: hsl(272, 75%, 60%);
-  --chart-3: hsl(32, 95%, 55%);
-  --chart-4: hsl(142, 76%, 40%);
-  --chart-5: hsl(340, 75%, 50%);
+  --border: hsl(214, 32%, 91%);
+  --input: hsl(214, 32%, 91%);
+  --ring: hsl(221, 83%, 53%);
+  /* Custom Vivid Tech Colors */
+  --chart-1: hsl(199, 89%, 48%);    /* sky */
+  --chart-2: hsl(262, 83%, 58%);    /* violet */
+  --chart-3: hsl(38, 92%, 50%);     /* amber */
+  --chart-4: hsl(152, 63%, 40%);    /* emerald */
+  --chart-5: hsl(0, 84%, 60%);      /* rose */
+  --info: hsl(199, 89%, 48%);       /* sky */
+  --success: hsl(152, 63%, 40%);    /* emerald */
+  --warning: hsl(38, 92%, 50%);     /* amber */
   --sidebar: hsl(0, 0%, 100%);
   --sidebar-foreground: hsl(220, 20%, 15%);
   --sidebar-primary: hsl(194, 96%, 60%);

@@ -179,26 +179,27 @@ export default function OrderManagement({ onNotification }: OrderManagementProps
     }
   }, [orderItemsError, onNotification]);
 
-  // Configuración de estados
+  // Configuración de estados con colores sólidos profesionales (contraste AA)
   const statusConfig = {
-    received: { name: 'Recibido', colorClass: 'bg-gradient-to-br from-cyan-500/20 to-blue-600/20 text-cyan-300 border border-cyan-400/30 tech-glow', icon: Package },
-    in_process: { name: 'En Proceso', colorClass: 'bg-gradient-to-br from-yellow-500/20 to-orange-600/20 text-yellow-300 border border-yellow-400/30 tech-glow', icon: RefreshCw },
-    ready: { name: 'Listo', colorClass: 'bg-gradient-to-br from-purple-500/20 to-pink-600/20 text-purple-300 border border-purple-400/30 tech-glow', icon: CheckCircle },
-    delivered: { name: 'Entregado', colorClass: 'bg-gradient-to-br from-green-500/20 to-emerald-600/20 text-green-300 border border-green-400/30 tech-glow', icon: Check },
-    cancelled: { name: 'Cancelado', colorClass: 'bg-gradient-to-br from-red-500/20 to-pink-600/20 text-red-300 border border-red-400/30 tech-glow', icon: XCircle },
+    received: { name: 'Recibido', colorClass: 'bg-sky-700 text-white px-2 py-1 text-xs font-semibold rounded-full', icon: Package },
+    in_process: { name: 'En Proceso', colorClass: 'bg-amber-700 text-white px-2 py-1 text-xs font-semibold rounded-full', icon: RefreshCw },
+    ready: { name: 'Listo', colorClass: 'bg-violet-600 text-white px-2 py-1 text-xs font-semibold rounded-full', icon: CheckCircle },
+    delivered: { name: 'Entregado', colorClass: 'bg-emerald-600 text-white px-2 py-1 text-xs font-semibold rounded-full', icon: Check },
+    cancelled: { name: 'Cancelado', colorClass: 'bg-rose-700 text-white px-2 py-1 text-xs font-semibold rounded-full', icon: XCircle },
   };
 
-  // Helper function para obtener clases de estado de forma segura
+  // Helper function para obtener clases de estado con colores sólidos profesionales (contraste AA)
   const getStatusClasses = (status: string | null) => {
-    if (!status) return 'bg-gradient-to-br from-gray-500/20 to-slate-600/20 text-gray-300 border border-gray-400/30 tech-glow';
+    // Solid, vivid professional colors with AA contrast compliance
+    if (!status) return 'bg-slate-700 text-white px-2 py-1 text-xs font-semibold rounded-full';
     
     switch(status) {
-      case 'received': return 'bg-gradient-to-br from-cyan-500/20 to-blue-600/20 text-cyan-300 border border-cyan-400/30 tech-glow';
-      case 'in_process': return 'bg-gradient-to-br from-yellow-500/20 to-orange-600/20 text-yellow-300 border border-yellow-400/30 tech-glow';
-      case 'ready': return 'bg-gradient-to-br from-purple-500/20 to-pink-600/20 text-purple-300 border border-purple-400/30 tech-glow';
-      case 'delivered': return 'bg-gradient-to-br from-green-500/20 to-emerald-600/20 text-green-300 border border-green-400/30 tech-glow';
-      case 'cancelled': return 'bg-gradient-to-br from-red-500/20 to-pink-600/20 text-red-300 border border-red-400/30 tech-glow';
-      default: return 'bg-gradient-to-br from-gray-500/20 to-slate-600/20 text-gray-300 border border-gray-400/30 tech-glow';
+      case 'received': return 'bg-sky-700 text-white px-2 py-1 text-xs font-semibold rounded-full';
+      case 'in_process': return 'bg-amber-700 text-white px-2 py-1 text-xs font-semibold rounded-full';
+      case 'ready': return 'bg-violet-600 text-white px-2 py-1 text-xs font-semibold rounded-full';
+      case 'delivered': return 'bg-emerald-600 text-white px-2 py-1 text-xs font-semibold rounded-full';
+      case 'cancelled': return 'bg-rose-700 text-white px-2 py-1 text-xs font-semibold rounded-full';
+      default: return 'bg-slate-700 text-white px-2 py-1 text-xs font-semibold rounded-full';
     }
   };
 
