@@ -387,7 +387,7 @@ export default function CashClosure({ onBack }: CashClosureProps) {
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Volver
               </Button>
-              <div className="w-12 h-12 bg-green-600 rounded-xl flex items-center justify-center">
+              <div className="w-12 h-12 bg-gradient-to-br from-cyan-500 via-blue-600 to-purple-600 rounded-xl flex items-center justify-center tech-glow">
                 <BarChart3 className="w-6 h-6 text-white" />
               </div>
               <div>
@@ -414,7 +414,7 @@ export default function CashClosure({ onBack }: CashClosureProps) {
               
               <Button
                 onClick={printCashClosure}
-                className="bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/30 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-700"
+                className="tech-button-3d bg-gradient-to-r from-cyan-500/20 via-blue-600/20 to-purple-600/20 hover:from-cyan-400/30 hover:via-blue-500/30 hover:to-purple-500/30 text-cyan-700 dark:text-cyan-300 border border-cyan-300 dark:border-cyan-500/30"
                 data-testid="button-print-closure"
               >
                 <Printer className="w-4 h-4 mr-2" />
@@ -422,7 +422,7 @@ export default function CashClosure({ onBack }: CashClosureProps) {
               </Button>
               <Button
                 onClick={exportToExcel}
-                className="bg-green-50 dark:bg-green-900/20 hover:bg-green-100 dark:hover:bg-green-900/30 text-green-700 dark:text-green-300 border border-green-200 dark:border-green-700"
+                className="tech-button-3d bg-gradient-to-r from-purple-500/20 via-pink-600/20 to-cyan-600/20 hover:from-purple-400/30 hover:via-pink-500/30 hover:to-cyan-500/30 text-purple-700 dark:text-purple-300 border border-purple-300 dark:border-purple-500/30"
                 data-testid="button-export-closure"
               >
                 <Download className="w-4 h-4 mr-2" />
@@ -443,8 +443,8 @@ export default function CashClosure({ onBack }: CashClosureProps) {
                     {dailySummary.totalInvoices}
                   </p>
                 </div>
-                <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/20 rounded-xl flex items-center justify-center">
-                  <FileText className="w-6 h-6 text-blue-600" />
+                <div className="w-12 h-12 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl flex items-center justify-center tech-glow">
+                  <FileText className="w-6 h-6 text-white" />
                 </div>
               </div>
             </CardContent>
@@ -459,8 +459,8 @@ export default function CashClosure({ onBack }: CashClosureProps) {
                     {dailySummary.deliveredInvoices}
                   </p>
                 </div>
-                <div className="w-12 h-12 bg-green-100 dark:bg-green-900/20 rounded-xl flex items-center justify-center">
-                  <CheckCircle className="w-6 h-6 text-green-600" />
+                <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center tech-glow">
+                  <CheckCircle className="w-6 h-6 text-white" />
                 </div>
               </div>
             </CardContent>
@@ -475,8 +475,8 @@ export default function CashClosure({ onBack }: CashClosureProps) {
                     {dailySummary.pendingInvoices}
                   </p>
                 </div>
-                <div className="w-12 h-12 bg-yellow-100 dark:bg-yellow-900/20 rounded-xl flex items-center justify-center">
-                  <Clock className="w-6 h-6 text-yellow-600" />
+                <div className="w-12 h-12 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-xl flex items-center justify-center tech-glow">
+                  <Clock className="w-6 h-6 text-white" />
                 </div>
               </div>
             </CardContent>
@@ -491,7 +491,7 @@ export default function CashClosure({ onBack }: CashClosureProps) {
                     {formatCurrency(dailySummary.totalRevenue)}
                   </p>
                 </div>
-                <div className="w-12 h-12 bg-green-100 dark:bg-green-900/20 rounded-xl flex items-center justify-center">
+                <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center tech-glow">
                   <DollarSign className="w-6 h-6 text-green-600" />
                 </div>
               </div>
@@ -551,7 +551,7 @@ export default function CashClosure({ onBack }: CashClosureProps) {
                       <p className="font-medium">{employeeName}</p>
                       <p className="text-sm text-gray-600 dark:text-gray-400">{stats.sales} ventas</p>
                     </div>
-                    <Badge className="bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-700" data-testid={`employee-${employeeName}-total`}>
+                    <Badge className="bg-gradient-to-r from-cyan-500/20 via-blue-600/20 to-purple-600/20 text-cyan-700 dark:text-cyan-300 border border-cyan-300 dark:border-cyan-500/30 tech-glow" data-testid={`employee-${employeeName}-total`}>
                       {formatCurrency(stats.total)}
                     </Badge>
                   </div>
@@ -574,21 +574,21 @@ export default function CashClosure({ onBack }: CashClosureProps) {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="text-center p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
+              <div className="text-center p-4 bg-gradient-to-br from-cyan-500/10 via-blue-600/10 to-purple-600/10 border border-cyan-300/30 dark:border-cyan-500/30 rounded-lg tech-glow">
                 <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Subtotal</p>
-                <p className="text-xl font-bold text-green-600" data-testid="financial-subtotal">
+                <p className="text-xl font-bold text-cyan-600 dark:text-cyan-400" data-testid="financial-subtotal">
                   {formatCurrency(dailySummary.totalSubtotal)}
                 </p>
               </div>
-              <div className="text-center p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+              <div className="text-center p-4 bg-gradient-to-br from-blue-500/10 via-purple-600/10 to-pink-600/10 border border-blue-300/30 dark:border-blue-500/30 rounded-lg tech-glow">
                 <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">ITBIS (18%)</p>
-                <p className="text-xl font-bold text-blue-600" data-testid="financial-tax">
+                <p className="text-xl font-bold text-blue-600 dark:text-blue-400" data-testid="financial-tax">
                   {formatCurrency(dailySummary.totalTax)}
                 </p>
               </div>
-              <div className="text-center p-4 bg-green-100 dark:bg-green-900/20 rounded-lg border-2 border-green-200 dark:border-green-700">
+              <div className="text-center p-4 bg-gradient-to-br from-purple-500/15 via-pink-600/15 to-cyan-600/15 border-2 border-purple-400/40 dark:border-purple-500/40 rounded-lg tech-glow">
                 <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Total Ingresos</p>
-                <p className="text-2xl font-bold text-green-700" data-testid="financial-total">
+                <p className="text-2xl font-bold text-purple-700 dark:text-purple-300" data-testid="financial-total">
                   {formatCurrency(dailySummary.totalRevenue)}
                 </p>
               </div>
@@ -606,13 +606,13 @@ export default function CashClosure({ onBack }: CashClosureProps) {
               </DialogTitle>
             </DialogHeader>
             <div className="text-center py-4">
-              <div className="w-16 h-16 bg-green-100 dark:bg-green-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                <CheckCircle className="w-8 h-8 text-green-600" />
+              <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4 tech-glow">
+                <CheckCircle className="w-8 h-8 text-white" />
               </div>
               <p className="text-gray-600 dark:text-gray-300 mb-6" data-testid="modal-message">{modalMessage}</p>
               <Button
                 onClick={() => setShowConfirmModal(false)}
-                className="w-full bg-green-600 hover:bg-green-700 text-white"
+                className="w-full bg-gradient-to-r from-green-500 via-emerald-600 to-cyan-600 hover:from-green-400 hover:via-emerald-500 hover:to-cyan-500 text-white tech-glow"
                 data-testid="button-modal-accept"
               >
                 Aceptar
