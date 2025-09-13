@@ -710,18 +710,20 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
         {/* Panel Principal */}
         <div className="lg:col-span-2 space-y-6">
           {/* Información del Cliente */}
-          <Card className="bg-card dark:bg-gray-800/50 border border-border dark:border-cyan-500/20 dark:shadow-lg tech-glow backdrop-blur-sm">
+          <Card className="tech-button-3d bg-white border-2 border-cyan-300 dark:bg-gradient-to-br dark:from-cyan-500/20 dark:to-blue-600/20 dark:border-cyan-500/30 shadow-sm dark:backdrop-blur-sm tech-glow">
             <CardHeader>
               <CardTitle className="flex items-center justify-between">
                 <div className="flex items-center">
-                  <User className="w-6 h-6 mr-3 text-blue-600 dark:text-blue-400" />
-                  Información del Cliente
+                  <div className="w-8 h-8 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-lg flex items-center justify-center mr-3 tech-glow">
+                    <User className="w-5 h-5 text-white" />
+                  </div>
+                  <span className="text-cyan-700 dark:text-cyan-300 tech-text-glow">Información del Cliente</span>
                 </div>
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => setShowCustomerSearchModal(true)}
-                  className="tech-button-3d border-cyan-500/50 text-cyan-400 hover:bg-cyan-500/20"
+                  className="tech-button-3d bg-white border-2 border-cyan-300 text-cyan-700 dark:from-cyan-500/20 dark:to-blue-600/20 dark:text-cyan-300 dark:border-cyan-500/30 hover:bg-cyan-50 hover:border-cyan-400 dark:hover:from-cyan-400/30 dark:hover:to-blue-500/30 transition-all duration-300 transform hover:scale-105"
                   data-testid="button-search-customer"
                 >
                   <Users className="w-4 h-4 mr-2" />
@@ -774,7 +776,7 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
                   <Label>Fecha de Entrega</Label>
                   <Button
                     variant="outline"
-                    className="w-full justify-start"
+                    className="tech-button-3d w-full justify-start bg-white border-2 border-purple-300 text-purple-700 dark:bg-gradient-to-br dark:from-purple-500/20 dark:to-pink-600/20 dark:text-purple-300 dark:border-purple-500/30 hover:bg-purple-50 hover:border-purple-400 dark:hover:from-purple-400/30 dark:hover:to-pink-500/30 transition-all duration-300 tech-glow"
                     onClick={() => setShowDateModal(true)}
                     data-testid="button-select-delivery-date"
                   >
@@ -787,11 +789,13 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
           </Card>
 
           {/* Artículos del Pedido */}
-          <Card>
+          <Card className="tech-button-3d bg-white border-2 border-blue-300 dark:bg-gradient-to-br dark:from-blue-500/20 dark:to-purple-600/20 dark:border-blue-500/30 shadow-sm dark:backdrop-blur-sm tech-glow">
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Calculator className="w-6 h-6 mr-3 text-green-600 dark:text-green-400" />
-                Artículos del Pedido
+                <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center mr-3 tech-glow">
+                  <Calculator className="w-5 h-5 text-white" />
+                </div>
+                <span className="text-blue-700 dark:text-blue-300 tech-text-glow">Artículos del Pedido</span>
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -807,7 +811,7 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
                 </div>
 
                 {/* Fila para agregar nuevo artículo */}
-                <div className="grid grid-cols-6 gap-4 items-center p-3 border rounded-lg bg-gray-50 dark:bg-gray-800">
+                <div className="tech-button-3d grid grid-cols-6 gap-4 items-center p-3 border-2 border-slate-300 dark:border-slate-500/30 rounded-lg bg-gradient-to-r from-slate-50 via-gray-50 to-slate-50 dark:from-slate-800/40 dark:to-slate-700/40">
                   {/* Dropdown de Artículo */}
                   <div>
                     <Select value={selectedService?.id || ""} onValueChange={(value) => {
@@ -886,6 +890,7 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
                       onClick={addItemFromModal}
                       disabled={!selectedService}
                       size="sm"
+                      className="tech-button-3d bg-gradient-to-r from-cyan-500 via-blue-600 to-purple-600 hover:from-cyan-400 hover:via-blue-500 hover:to-purple-500 text-white border-0 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 tech-glow"
                       data-testid="button-add-direct"
                     >
                       <Plus className="w-4 h-4" />
@@ -931,7 +936,7 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
                           size="sm"
                           onClick={() => removeItem(item.id)}
                           data-testid={`button-remove-item-${item.id}`}
-                          className="text-red-500 hover:text-red-700"
+                          className="tech-button-3d bg-white border-2 border-red-300 text-red-600 dark:from-red-500/20 dark:to-pink-600/20 dark:text-red-400 dark:border-red-500/30 hover:bg-red-50 hover:border-red-400 dark:hover:from-red-400/30 dark:hover:to-pink-500/30 transition-all duration-300 transform hover:scale-105 tech-glow"
                         >
                           <Trash2 className="w-4 h-4" />
                         </Button>
@@ -947,11 +952,13 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
         {/* Panel de Resumen */}
         <div className="space-y-6">
           {/* Totales */}
-          <Card>
+          <Card className="tech-button-3d bg-white border-2 border-purple-300 dark:bg-gradient-to-br dark:from-purple-500/20 dark:to-pink-600/20 dark:border-purple-500/30 shadow-sm dark:backdrop-blur-sm tech-glow">
             <CardHeader>
               <CardTitle className="flex items-center">
-                <DollarSign className="w-6 h-6 mr-3 text-green-600 dark:text-green-400" />
-                Resumen
+                <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-600 rounded-lg flex items-center justify-center mr-3 tech-glow">
+                  <DollarSign className="w-5 h-5 text-white" />
+                </div>
+                <span className="text-purple-700 dark:text-purple-300 tech-text-glow">Resumen</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -983,7 +990,7 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
                 {/* Botón aplicar descuento */}
                 <Button
                   variant="outline"
-                  className="w-full bg-red-500 text-white border-red-600 hover:bg-red-600 hover:border-red-700 transition-all duration-300 transform hover:scale-105 dark:hover:shadow-lg active:scale-95"
+                  className="tech-button-3d w-full bg-gradient-to-r from-red-500 via-pink-600 to-red-600 hover:from-red-400 hover:via-pink-500 hover:to-red-500 text-white border-0 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 transition-all duration-300 tech-glow"
                   onClick={() => setShowDiscountModal(true)}
                   data-testid="button-apply-discount"
                 >
@@ -1016,7 +1023,7 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
                   {/* Botón Guardar Pedido - Estilo 3D */}
                   <Button
                     variant="outline"
-                    className="h-12 bg-gradient-to-r from-blue-600 to-blue-700 text-white border-none dark:shadow-lg dark:hover:shadow-xl transform hover:scale-105 active:scale-95 transition-all duration-300 hover:from-blue-700 hover:to-blue-800 relative overflow-hidden"
+                    className="tech-button-3d h-12 bg-gradient-to-r from-cyan-600 to-blue-700 text-white border-none dark:shadow-lg dark:hover:shadow-xl transform hover:scale-105 active:scale-95 transition-all duration-300 hover:from-cyan-700 hover:to-blue-800 relative overflow-hidden tech-glow"
                     onClick={saveOrderDraft}
                     disabled={currentInvoice.items.length === 0 || createInvoiceMutation.isPending || !!savedInvoiceId}
                     data-testid="button-save-order"
@@ -1032,7 +1039,7 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
 
                   {/* Botón Procesar Pago */}
                   <Button
-                    className="h-12 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 dark:shadow-lg dark:hover:shadow-xl transform hover:scale-105 active:scale-95 transition-all duration-300"
+                    className="tech-button-3d h-12 bg-gradient-to-r from-purple-600 to-pink-700 hover:from-purple-700 hover:to-pink-800 dark:shadow-lg dark:hover:shadow-xl transform hover:scale-105 active:scale-95 transition-all duration-300 tech-glow"
                     onClick={processPayment}
                     disabled={currentInvoice.items.length === 0 || !selectedPaymentMethod || createInvoiceMutation.isPending || !!savedInvoiceId}
                     data-testid="button-process-payment"
