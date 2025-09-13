@@ -38,18 +38,18 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
 
   const recentOrders = invoices.slice(0, 3);
 
-  // Helper functions para obtener clases de estado con colores sólidos profesionales (contraste AA)
+  // Helper functions para obtener clases de estado con colores pasteles profesionales
   const getStatusClasses = (status: string | null) => {
-    // Solid, vivid professional colors with AA contrast + consistent chip styling
-    if (!status) return 'bg-slate-700 text-white px-2 py-1 text-xs font-semibold rounded-full';
+    // Pastel colors with dark text for AA contrast + professional appearance
+    if (!status) return 'bg-slate-200 text-slate-800 border border-slate-300 px-2 py-1 text-xs font-semibold rounded-full';
     
     switch(status) {
-      case 'received': return 'bg-sky-700 text-white px-2 py-1 text-xs font-semibold rounded-full';
-      case 'in_process': return 'bg-amber-700 text-white px-2 py-1 text-xs font-semibold rounded-full'; 
-      case 'ready': return 'bg-violet-600 text-white px-2 py-1 text-xs font-semibold rounded-full';
-      case 'delivered': return 'bg-emerald-600 text-white px-2 py-1 text-xs font-semibold rounded-full';
-      case 'cancelled': return 'bg-rose-700 text-white px-2 py-1 text-xs font-semibold rounded-full';
-      default: return 'bg-slate-700 text-white px-2 py-1 text-xs font-semibold rounded-full';
+      case 'received': return 'bg-sky-200 text-sky-800 border border-sky-300 px-2 py-1 text-xs font-semibold rounded-full';
+      case 'in_process': return 'bg-amber-200 text-amber-800 border border-amber-300 px-2 py-1 text-xs font-semibold rounded-full'; 
+      case 'ready': return 'bg-violet-200 text-violet-800 border border-violet-300 px-2 py-1 text-xs font-semibold rounded-full';
+      case 'delivered': return 'bg-emerald-200 text-emerald-800 border border-emerald-300 px-2 py-1 text-xs font-semibold rounded-full';
+      case 'cancelled': return 'bg-rose-200 text-rose-800 border border-rose-300 px-2 py-1 text-xs font-semibold rounded-full';
+      default: return 'bg-slate-200 text-slate-800 border border-slate-300 px-2 py-1 text-xs font-semibold rounded-full';
     }
   };
 
@@ -59,7 +59,7 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
     switch(status) {
       case 'received': return 'Recibido';
       case 'in_process': return 'En Proceso';
-      case 'ready': return 'Listo';
+      case 'ready': return 'Listo para Entrega';
       case 'delivered': return 'Entregado';
       case 'cancelled': return 'Cancelado';
       default: return status;
