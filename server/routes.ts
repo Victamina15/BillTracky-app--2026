@@ -3,6 +3,39 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertCustomerSchema, insertServiceSchema, insertInvoiceSchema, insertInvoiceItemSchema, insertPaymentMethodSchema, insertCompanySettingsSchema, insertMessageTemplateSchema, insertEmployeeSchema, patchOrderStatusSchema, patchOrderPaymentSchema, patchOrderCancelSchema, patchInvoicePaySchema, insertWhatsappConfigSchema } from "@shared/schema";
 import { z } from "zod";
+import type { WhatsappConfig } from "@shared/schema";
+
+// WhatsApp utility function
+async function sendWhatsAppMessage(phone: string, message: string, config: WhatsappConfig): Promise<boolean> {
+  try {
+    // For now, this is a simulation. In production, you would implement:
+    // - Twilio WhatsApp API integration
+    // - WhatsApp Business API integration  
+    // - Other providers based on config.provider
+    
+    console.log(`[WhatsApp] Sending message to ${phone}: ${message}`);
+    console.log(`[WhatsApp] Provider: ${config.provider}, Enabled: ${config.enabled}`);
+    
+    // Simulate API call delay
+    await new Promise(resolve => setTimeout(resolve, 100));
+    
+    // In production, implement actual WhatsApp API calls here:
+    // if (config.provider === 'twilio') {
+    //   // Implement Twilio WhatsApp API
+    //   const client = twilio(config.apiKey, config.apiSecret);
+    //   await client.messages.create({
+    //     body: message,
+    //     from: 'whatsapp:+14155238886', // Your Twilio WhatsApp number
+    //     to: `whatsapp:${phone}`
+    //   });
+    // }
+    
+    return true;
+  } catch (error) {
+    console.error('[WhatsApp] Error sending message:', error);
+    return false;
+  }
+}
 
 // Authentication middleware
 interface AuthenticatedRequest extends Request {
@@ -320,6 +353,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       const updatedInvoice = await storage.updateInvoice(id, updates);
+      
+      // WhatsApp automation: Send message when status changes to 'ready' (idempotent)
+      if (status === 'ready' && currentStatus !== 'ready') {
+        try {
+          const whatsappConfig = await storage.getWhatsappConfig();
+          if (whatsappConfig && whatsappConfig.enabled && whatsappConfig.autoSendOnReady && invoice.customerPhone) {
+            // Send WhatsApp message
+            const message = `¡Hola ${invoice.customerName}! Su orden ${invoice.number} está lista para entrega. Puede pasar a recogerla cuando guste. ¡Gracias!`;
+            await sendWhatsAppMessage(invoice.customerPhone, message, whatsappConfig);
+            console.log(`WhatsApp sent to ${invoice.customerPhone} for order ${invoice.number}`);
+          }
+        } catch (error) {
+          console.error('Error sending WhatsApp message:', error);
+          // Don't fail the status update if WhatsApp fails
+        }
+      }
+      
       res.json(updatedInvoice);
       
     } catch (error) {
