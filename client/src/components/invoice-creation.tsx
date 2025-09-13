@@ -890,6 +890,7 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
                       onClick={addItemFromModal}
                       disabled={!selectedService}
                       size="sm"
+                      variant="plain"
                       className="tech-button-3d bg-gradient-to-r from-cyan-500 via-blue-600 to-purple-600 hover:from-cyan-400 hover:via-blue-500 hover:to-purple-500 text-white border-0 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 transition-all duration-300 tech-glow disabled:opacity-50 disabled:cursor-not-allowed"
                       data-testid="button-add-direct"
                     >
@@ -989,6 +990,7 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
               <div className="space-y-4 pt-4 border-t">
                 {/* Botón aplicar descuento */}
                 <Button
+                  variant="plain"
                   className="tech-button-3d w-full bg-gradient-to-r from-cyan-500 via-blue-600 to-purple-600 hover:from-cyan-400 hover:via-blue-500 hover:to-purple-500 text-white border-0 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 transition-all duration-300 tech-glow"
                   onClick={() => setShowDiscountModal(true)}
                   data-testid="button-apply-discount"
@@ -1389,6 +1391,7 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
                     />
                     <Button
                       size="sm"
+                      variant="plain"
                       className="tech-button-3d bg-gradient-to-r from-cyan-500 via-blue-600 to-purple-600 hover:from-cyan-400 hover:via-blue-500 hover:to-purple-500 text-white border-0 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 transition-all duration-300 tech-glow"
                       onClick={() => setItemQuantity(itemQuantity + 1)}
                       data-testid="button-increase-quantity"
@@ -1564,6 +1567,7 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
                     />
                     <Button
                       size="sm"
+                      variant="plain"
                       className="tech-button-3d bg-gradient-to-r from-cyan-500 via-blue-600 to-purple-600 hover:from-cyan-400 hover:via-blue-500 hover:to-purple-500 text-white border-0 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 transition-all duration-300 tech-glow"
                       onClick={() => setItemQuantity(itemQuantity + 1)}
                       data-testid="button-edit-increase-quantity"
