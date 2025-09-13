@@ -990,7 +990,7 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
                 {/* Botón aplicar descuento */}
                 <Button
                   variant="outline"
-                  className="tech-button-3d w-full bg-gradient-to-r from-red-500 via-pink-600 to-red-600 hover:from-red-400 hover:via-pink-500 hover:to-red-500 text-white border-0 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 transition-all duration-300 tech-glow"
+                  className="tech-button-3d w-full bg-gradient-to-r from-cyan-500 via-blue-600 to-purple-600 hover:from-cyan-400 hover:via-blue-500 hover:to-purple-500 text-white border-0 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 transition-all duration-300 tech-glow"
                   onClick={() => setShowDiscountModal(true)}
                   data-testid="button-apply-discount"
                 >
