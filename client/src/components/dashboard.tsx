@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FileText, LogOut, Home, Package, Users, Settings, CreditCard, BarChart3, Building2, MessageCircle, Menu, X, CheckCircle } from "lucide-react";
+import { FileText, LogOut, Home, Package, Users, Settings, CreditCard, BarChart3, Building2, MessageCircle, Menu, X, CheckCircle, Clock } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { type Employee, type Invoice } from "@shared/schema";
 import InvoiceCreation from "./invoice-creation";
@@ -105,48 +105,48 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
                 </div>
               </div>
 
-              <div className="bg-white dark:bg-gray-800/50 rounded-xl shadow-sm border border-slate-200 dark:border-cyan-500/20 border-l-4 border-l-emerald-300 p-6 dark:backdrop-blur-sm hover:shadow-lg dark:hover:shadow-xl transition-all duration-300 cursor-pointer transform hover:scale-105 hover:-translate-y-1">
+              <div className="tech-button-3d bg-white border-2 border-emerald-300 text-emerald-700 dark:from-green-500/20 dark:to-cyan-600/20 dark:text-white dark:border-emerald-500/30 rounded-xl shadow-sm p-6 hover:bg-emerald-50 hover:border-emerald-400 dark:hover:from-green-400/30 dark:hover:to-cyan-500/30 transition-all duration-300 cursor-pointer transform hover:scale-105 hover:-translate-y-1 dark:backdrop-blur-sm">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-semibold text-slate-700 dark:text-emerald-300">Ingresos Hoy</p>
-                    <p className="text-2xl font-bold text-slate-900 dark:text-white" data-testid="metric-today-revenue">
+                    <p className="text-sm font-semibold text-emerald-700 dark:text-emerald-300">Ingresos Hoy</p>
+                    <p className="text-2xl font-bold text-emerald-900 dark:text-white" data-testid="metric-today-revenue">
                       {metricsLoading ? "..." : `RD$${metrics?.todayRevenue || "0.00"}`}
                     </p>
-                    <p className="text-xs text-emerald-600 dark:text-green-400 mt-1 font-medium">+15% vs ayer</p>
+                    <p className="text-xs text-green-600 dark:text-green-400 mt-1 font-medium">+15% vs ayer</p>
                   </div>
-                  <div className="w-12 h-12 bg-emerald-200 dark:from-green-400/20 dark:to-cyan-500/20 rounded-xl flex items-center justify-center text-emerald-700 shadow-sm">
+                  <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-cyan-600 rounded-xl flex items-center justify-center text-white shadow-lg tech-glow">
                     <span className="text-lg font-bold">$</span>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-white dark:bg-gray-800/50 rounded-xl shadow-sm border border-slate-200 dark:border-cyan-500/20 border-l-4 border-l-violet-300 p-6 dark:backdrop-blur-sm hover:shadow-lg dark:hover:shadow-xl transition-all duration-300 cursor-pointer transform hover:scale-105 hover:-translate-y-1">
+              <div className="tech-button-3d bg-white border-2 border-blue-300 text-blue-700 dark:from-blue-500/20 dark:to-purple-600/20 dark:text-white dark:border-blue-500/30 rounded-xl shadow-sm p-6 hover:bg-blue-50 hover:border-blue-400 dark:hover:from-blue-400/30 dark:hover:to-purple-500/30 transition-all duration-300 cursor-pointer transform hover:scale-105 hover:-translate-y-1 dark:backdrop-blur-sm">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-semibold text-slate-700 dark:text-purple-300">Listo para Entrega</p>
-                    <p className="text-2xl font-bold text-slate-900 dark:text-white" data-testid="metric-ready-for-delivery">
+                    <p className="text-sm font-semibold text-blue-700 dark:text-blue-300">Listo para Entrega</p>
+                    <p className="text-2xl font-bold text-blue-900 dark:text-white" data-testid="metric-ready-for-delivery">
                       {metricsLoading ? "..." : metrics?.readyForDelivery || 0}
                     </p>
-                    <p className="text-xs text-violet-600 dark:text-purple-400 mt-1 font-medium">💬 WhatsApp automático</p>
+                    <p className="text-xs text-purple-600 dark:text-purple-400 mt-1 font-medium">💬 WhatsApp automático</p>
                   </div>
-                  <div className="w-12 h-12 bg-violet-200 dark:from-yellow-400/20 dark:to-orange-500/20 rounded-xl flex items-center justify-center text-violet-700 shadow-sm">
+                  <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center text-white shadow-lg tech-glow">
                     <CheckCircle className="w-6 h-6" />
                   </div>
                 </div>
               </div>
 
-              <div className="bg-white dark:bg-gray-800/50 rounded-xl shadow-sm border border-slate-200 dark:border-cyan-500/20 border-l-4 border-l-rose-300 p-6 dark:backdrop-blur-sm hover:shadow-lg dark:hover:shadow-xl transition-all duration-300 cursor-pointer transform hover:scale-105 hover:-translate-y-1">
+              <div className="tech-button-3d bg-white border-2 border-cyan-300 text-cyan-700 dark:from-cyan-500/20 dark:to-blue-600/20 dark:text-white dark:border-cyan-500/30 rounded-xl shadow-sm p-6 hover:bg-cyan-50 hover:border-cyan-400 dark:hover:from-cyan-400/30 dark:hover:to-blue-500/30 transition-all duration-300 cursor-pointer transform hover:scale-105 hover:-translate-y-1 dark:backdrop-blur-sm">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-semibold text-slate-700 dark:text-rose-300">Pendientes Pago</p>
-                    <p className="text-2xl font-bold text-slate-900 dark:text-white" data-testid="metric-pending-payment">
+                    <p className="text-sm font-semibold text-cyan-700 dark:text-cyan-300">Pendientes Pago</p>
+                    <p className="text-2xl font-bold text-cyan-900 dark:text-white" data-testid="metric-pending-payment">
                       {metricsLoading ? "..." : metrics?.pendingPayment || 0}
                     </p>
-                    <p className="text-xs text-rose-600 dark:text-red-400 mt-1 font-medium">
+                    <p className="text-xs text-blue-600 dark:text-blue-400 mt-1 font-medium">
                       RD${metrics?.pendingPaymentTotal || "0.00"} total
                     </p>
                   </div>
-                  <div className="w-12 h-12 bg-rose-200 dark:from-red-400/20 dark:to-pink-500/20 rounded-xl flex items-center justify-center text-rose-700 shadow-sm">
+                  <div className="w-12 h-12 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl flex items-center justify-center text-white shadow-lg tech-glow">
                     <CreditCard className="w-6 h-6" />
                   </div>
                 </div>
@@ -193,22 +193,27 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
                 </div>
               </div>
 
-              <div className="bg-white dark:bg-gray-800/50 rounded-xl shadow-sm border border-slate-200 dark:border-cyan-500/20 p-6 dark:backdrop-blur-sm">
-                <h3 className="text-lg font-bold text-slate-900 dark:text-white tech-text-glow mb-4">Órdenes Recientes</h3>
+              <div className="tech-button-3d bg-white border-2 border-slate-300 dark:from-gray-800/50 dark:to-gray-700/50 dark:border-slate-500/30 rounded-xl shadow-sm p-6 dark:backdrop-blur-sm">
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white tech-text-glow mb-4 flex items-center gap-2">
+                  <div className="w-6 h-6 bg-gradient-to-br from-purple-500 to-cyan-600 rounded flex items-center justify-center tech-glow">
+                    <Clock className="w-4 h-4 text-white" />
+                  </div>
+                  Órdenes Recientes
+                </h3>
                 <div className="space-y-3">
                   {recentOrders.map((order: Invoice) => (
-                    <div key={order.id} className="flex items-center justify-between p-3 bg-white dark:bg-muted rounded-lg border border-slate-200 dark:border-transparent hover:bg-slate-50 dark:hover:bg-muted/80 hover:shadow-md transition-all duration-200">
+                    <div key={order.id} className="tech-button-3d flex items-center justify-between p-3 bg-white border border-slate-300/50 dark:from-slate-800/40 dark:to-slate-700/40 dark:border-slate-500/30 rounded-lg hover:bg-slate-50 dark:hover:from-slate-700/60 dark:hover:to-slate-600/60 hover:shadow-md hover:scale-[1.02] transition-all duration-200">
                       <div>
-                        <p className="font-bold text-slate-900 dark:text-white" data-testid={`recent-order-${order.id}`}>
+                        <p className="font-bold text-slate-900 dark:text-white tech-text-glow" data-testid={`recent-order-${order.id}`}>
                           {order.number}
                         </p>
-                        <p className="text-sm text-slate-600 dark:text-gray-300">{order.customerName}</p>
+                        <p className="text-sm text-slate-600 dark:text-slate-300 font-medium">{order.customerName}</p>
                       </div>
                       <div className="text-right">
-                        <span className={`inline-block ${getStatusClasses(order.status)}`}>
+                        <span className={`inline-block ${getStatusClasses(order.status)} font-semibold`}>
                           {getStatusText(order.status)}
                         </span>
-                        <p className="text-sm font-bold text-slate-900 dark:text-white mt-1">
+                        <p className="text-sm font-bold text-slate-900 dark:text-white mt-1 tech-text-glow">
                           RD${parseFloat(order.total).toFixed(2)}
                         </p>
                       </div>
