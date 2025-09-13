@@ -26,6 +26,7 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
     todayOrders: number;
     todayRevenue: string;
     inProgress: number;
+    readyForDelivery: number;
     pendingPayment: number;
     pendingPaymentTotal: string;
   }>({
@@ -123,8 +124,8 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-semibold text-slate-700 dark:text-purple-300">Listo para Entrega</p>
-                    <p className="text-2xl font-bold text-slate-900 dark:text-white" data-testid="metric-in-progress">
-                      {metricsLoading ? "..." : metrics?.inProgress || 0}
+                    <p className="text-2xl font-bold text-slate-900 dark:text-white" data-testid="metric-ready-for-delivery">
+                      {metricsLoading ? "..." : metrics?.readyForDelivery || 0}
                     </p>
                     <p className="text-xs text-violet-600 dark:text-purple-400 mt-1 font-medium">💬 WhatsApp automático</p>
                   </div>

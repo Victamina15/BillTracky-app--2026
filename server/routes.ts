@@ -475,6 +475,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const todayRevenue = todayInvoices.reduce((sum, inv) => sum + parseFloat(inv.total), 0);
       const inProgress = invoices.filter(inv => inv.status === 'in_process').length;
+      const readyForDelivery = invoices.filter(inv => inv.status === 'ready').length;
       const pendingPayment = invoices.filter(inv => inv.paymentMethod === 'pending').length;
       const pendingPaymentTotal = invoices
         .filter(inv => inv.paymentMethod === 'pending')
@@ -484,6 +485,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         todayOrders: todayInvoices.length,
         todayRevenue: todayRevenue.toFixed(2),
         inProgress,
+        readyForDelivery,
         pendingPayment,
         pendingPaymentTotal: pendingPaymentTotal.toFixed(2)
       });
