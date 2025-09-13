@@ -1391,9 +1391,9 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
                       data-testid="input-quantity"
                     />
                     <Button
-                      variant="outline"
-                      size="sm"
-                      className="tech-button-3d bg-blue-500 border-2 border-blue-600 text-white hover:bg-blue-600 hover:border-blue-700 dark:bg-blue-600 dark:border-blue-700 dark:hover:bg-blue-700 transition-all duration-300 transform hover:scale-105 tech-glow shadow-lg"
+                      variant="default"
+                      size="icon"
+                      className="shadow-md"
                       onClick={() => setItemQuantity(itemQuantity + 1)}
                       data-testid="button-increase-quantity"
                     >
@@ -1567,9 +1567,9 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
                       data-testid="input-edit-quantity"
                     />
                     <Button
-                      variant="outline"
-                      size="sm"
-                      className="tech-button-3d bg-blue-500 border-2 border-blue-600 text-white hover:bg-blue-600 hover:border-blue-700 dark:bg-blue-600 dark:border-blue-700 dark:hover:bg-blue-700 transition-all duration-300 transform hover:scale-105 tech-glow shadow-lg"
+                      variant="default"
+                      size="icon"
+                      className="shadow-md"
                       onClick={() => setItemQuantity(itemQuantity + 1)}
                       data-testid="button-edit-increase-quantity"
                     >
