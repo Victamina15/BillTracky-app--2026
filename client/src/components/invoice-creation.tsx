@@ -1116,7 +1116,7 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
                   <Button
                     key={customer.id}
                     variant="outline"
-                    className="w-full p-4 h-auto justify-start text-left"
+                    className="tech-button-3d w-full p-4 h-auto justify-start text-left bg-gradient-to-br from-blue-50 to-cyan-50 border-2 border-blue-300 text-blue-700 dark:bg-gradient-to-br dark:from-blue-500/20 dark:to-cyan-600/20 dark:text-blue-300 dark:border-blue-500/30 hover:from-blue-100 hover:to-cyan-100 hover:border-blue-400 dark:hover:from-blue-400/30 dark:hover:to-cyan-500/30 transition-all duration-300 transform hover:scale-105 tech-glow"
                     onClick={() => selectCustomer(customer)}
                     data-testid={`button-select-customer-${customer.id}`}
                   >
@@ -1598,7 +1598,7 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
           <div className="flex space-x-3 pt-4 border-t">
             <Button
               variant="outline"
-              className="flex-1"
+              className="tech-button-3d flex-1 bg-gradient-to-br from-gray-50 to-slate-50 border-2 border-gray-300 text-gray-700 dark:bg-gradient-to-br dark:from-gray-500/20 dark:to-slate-600/20 dark:text-gray-300 dark:border-gray-500/30 hover:from-gray-100 hover:to-slate-100 hover:border-gray-400 dark:hover:from-gray-400/30 dark:hover:to-slate-500/30 transition-all duration-300 transform hover:scale-105 tech-glow"
               onClick={() => setShowEditItemModal(false)}
               data-testid="button-cancel-edit-item"
             >
@@ -1647,7 +1647,7 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
             {/* Botón Imprimir */}
             <Button
               variant="outline"
-              className="w-full p-4 h-auto justify-start bg-gray-50 hover:bg-gray-100 border-gray-200 dark:shadow-sm dark:hover:shadow-md transition-all duration-200"
+              className="tech-button-3d w-full p-4 h-auto justify-start bg-gradient-to-br from-gray-50 to-slate-50 border-2 border-gray-300 text-gray-700 dark:bg-gradient-to-br dark:from-gray-500/20 dark:to-slate-600/20 dark:text-gray-300 dark:border-gray-500/30 hover:from-gray-100 hover:to-slate-100 hover:border-gray-400 dark:hover:from-gray-400/30 dark:hover:to-slate-500/30 transition-all duration-300 transform hover:scale-105 tech-glow"
               onClick={() => {
                 window.print();
                 setShowActionsModal(false);
@@ -1668,7 +1668,7 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
             {/* Botón WhatsApp */}
             <Button
               variant="outline"
-              className="w-full p-4 h-auto justify-start bg-green-50 hover:bg-green-100 border-green-200 dark:shadow-sm dark:hover:shadow-md transition-all duration-200"
+              className="tech-button-3d w-full p-4 h-auto justify-start bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-300 text-green-700 dark:bg-gradient-to-br dark:from-green-500/20 dark:to-emerald-600/20 dark:text-green-300 dark:border-green-500/30 hover:from-green-100 hover:to-emerald-100 hover:border-green-400 dark:hover:from-green-400/30 dark:hover:to-emerald-500/30 transition-all duration-300 transform hover:scale-105 tech-glow"
               onClick={() => {
                 const phoneNumber = currentInvoice.customerPhone.replace(/[^\d]/g, '');
                 const message = isDraft 
@@ -1697,7 +1697,7 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
             {/* Botón Email */}
             <Button
               variant="outline"
-              className="w-full p-4 h-auto justify-start bg-blue-50 hover:bg-blue-100 border-blue-200 dark:shadow-sm dark:hover:shadow-md transition-all duration-200"
+              className="tech-button-3d w-full p-4 h-auto justify-start bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-300 text-blue-700 dark:bg-gradient-to-br dark:from-blue-500/20 dark:to-indigo-600/20 dark:text-blue-300 dark:border-blue-500/30 hover:from-blue-100 hover:to-indigo-100 hover:border-blue-400 dark:hover:from-blue-400/30 dark:hover:to-indigo-500/30 transition-all duration-300 transform hover:scale-105 tech-glow"
               onClick={() => {
                 const subject = `${isDraft ? 'Pedido Recibido' : 'Factura de Lavandería'} - Billtracky`;
                 const body = isDraft
@@ -1741,7 +1741,7 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
             {/* Botón Cerrar */}
             <Button
               variant="outline"
-              className="flex-1"
+              className="tech-button-3d flex-1 bg-gradient-to-br from-gray-50 to-slate-50 border-2 border-gray-300 text-gray-700 dark:bg-gradient-to-br dark:from-gray-500/20 dark:to-slate-600/20 dark:text-gray-300 dark:border-gray-500/30 hover:from-gray-100 hover:to-slate-100 hover:border-gray-400 dark:hover:from-gray-400/30 dark:hover:to-slate-500/30 transition-all duration-300 transform hover:scale-105 tech-glow"
               onClick={() => setShowActionsModal(false)}
               data-testid="button-close-actions"
             >
