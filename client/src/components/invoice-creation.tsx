@@ -890,8 +890,8 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
                       onClick={addItemFromModal}
                       disabled={!selectedService}
                       size="sm"
-                      variant="plain"
-                      className="tech-button-3d bg-gradient-to-r from-cyan-500 via-blue-600 to-purple-600 hover:from-cyan-400 hover:via-blue-500 hover:to-purple-500 text-white border-0 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 transition-all duration-300 tech-glow disabled:opacity-50 disabled:cursor-not-allowed"
+                      variant="outline"
+                      className="tech-button-3d bg-gradient-to-br from-cyan-50 to-blue-50 border-2 border-cyan-300 text-cyan-700 dark:bg-gradient-to-br dark:from-cyan-500/20 dark:to-blue-600/20 dark:text-cyan-300 dark:border-cyan-500/30 hover:from-cyan-100 hover:to-blue-100 hover:border-cyan-400 dark:hover:from-cyan-400/30 dark:hover:to-blue-500/30 transition-all duration-300 transform hover:scale-105 tech-glow disabled:opacity-50"
                       data-testid="button-add-direct"
                     >
                       <Plus className="w-4 h-4" />
