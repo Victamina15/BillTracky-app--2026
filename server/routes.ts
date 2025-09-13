@@ -1,7 +1,7 @@
 import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertCustomerSchema, insertServiceSchema, insertInvoiceSchema, insertInvoiceItemSchema, insertPaymentMethodSchema, insertCompanySettingsSchema, insertMessageTemplateSchema, insertEmployeeSchema, patchOrderStatusSchema, patchOrderPaymentSchema, patchOrderCancelSchema, patchInvoicePaySchema } from "@shared/schema";
+import { insertCustomerSchema, insertServiceSchema, insertInvoiceSchema, insertInvoiceItemSchema, insertPaymentMethodSchema, insertCompanySettingsSchema, insertMessageTemplateSchema, insertEmployeeSchema, patchOrderStatusSchema, patchOrderPaymentSchema, patchOrderCancelSchema, patchInvoicePaySchema, insertWhatsappConfigSchema } from "@shared/schema";
 import { z } from "zod";
 
 // Authentication middleware
@@ -558,6 +558,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const settingsData = insertCompanySettingsSchema.parse(req.body);
       const settings = await storage.updateCompanySettings(settingsData);
       res.json(settings);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Server error" });
+    }
+  });
+
+  // WhatsApp Configuration
+  app.get("/api/whatsapp-config", async (req, res) => {
+    try {
+      const config = await storage.getWhatsappConfig();
+      res.json(config);
+    } catch (error) {
+      res.status(500).json({ message: "Server error" });
+    }
+  });
+
+  app.put("/api/whatsapp-config", async (req, res) => {
+    try {
+      const configData = insertWhatsappConfigSchema.parse(req.body);
+      const config = await storage.updateWhatsappConfig(configData);
+      res.json(config);
     } catch (error) {
       if (error instanceof z.ZodError) {
         return res.status(400).json({ message: "Invalid data", errors: error.errors });
