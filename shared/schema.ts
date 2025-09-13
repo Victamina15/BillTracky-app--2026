@@ -197,6 +197,20 @@ export const counters = pgTable("counters", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+// Configuración WhatsApp
+export const whatsappConfig = pgTable("whatsapp_config", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  apiKey: text("api_key"), // API key del proveedor WhatsApp (encriptado)
+  phoneNumber: text("phone_number").notNull(), // Número de teléfono asociado
+  provider: text("provider").default("twilio"), // 'twilio', 'whatsapp_cloud_api', 'custom'
+  baseUrl: text("base_url"), // URL base para API custom
+  enabled: boolean("enabled").default(false),
+  autoSendOnReady: boolean("auto_send_on_ready").default(false),
+  retryAttempts: integer("retry_attempts").default(3),
+  retryDelay: integer("retry_delay").default(5), // minutos
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 // Insert schemas
 export const insertEmployeeSchema = createInsertSchema(employees).omit({
   id: true,
@@ -266,6 +280,11 @@ export const insertCounterSchema = createInsertSchema(counters).omit({
   updatedAt: true,
 });
 
+export const insertWhatsappConfigSchema = createInsertSchema(whatsappConfig).omit({
+  id: true,
+  updatedAt: true,
+});
+
 // Types
 export type Employee = typeof employees.$inferSelect;
 export type InsertEmployee = z.infer<typeof insertEmployeeSchema>;
@@ -305,6 +324,9 @@ export type InsertUserSession = z.infer<typeof insertUserSessionSchema>;
 
 export type Counter = typeof counters.$inferSelect;
 export type InsertCounter = z.infer<typeof insertCounterSchema>;
+
+export type WhatsappConfig = typeof whatsappConfig.$inferSelect;
+export type InsertWhatsappConfig = z.infer<typeof insertWhatsappConfigSchema>;
 
 // PATCH request schemas for order management
 export const patchOrderStatusSchema = z.object({
