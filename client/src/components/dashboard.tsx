@@ -90,16 +90,16 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
           <div>
             {/* Metrics Cards - Vivos y Profesionales */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-              <div className="bg-white dark:bg-gray-800/50 rounded-xl shadow-sm border border-slate-200 dark:border-cyan-500/20 border-l-4 border-l-sky-300 p-6 dark:backdrop-blur-sm hover:shadow-lg dark:hover:shadow-xl transition-all duration-300 cursor-pointer transform hover:scale-105 hover:-translate-y-1">
+              <div className="tech-button-3d bg-white border-2 border-violet-300 text-violet-700 dark:from-purple-500/20 dark:to-pink-600/20 dark:text-white dark:border-purple-500/30 rounded-xl shadow-sm p-6 hover:bg-violet-50 hover:border-violet-400 dark:hover:from-purple-400/30 dark:hover:to-pink-500/30 transition-all duration-300 cursor-pointer transform hover:scale-105 hover:-translate-y-1 dark:backdrop-blur-sm">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-semibold text-slate-700 dark:text-cyan-300">Órdenes Hoy</p>
-                    <p className="text-2xl font-bold text-slate-900 dark:text-white" data-testid="metric-today-orders">
+                    <p className="text-sm font-semibold text-violet-700 dark:text-purple-300">Órdenes Hoy</p>
+                    <p className="text-2xl font-bold text-violet-900 dark:text-white" data-testid="metric-today-orders">
                       {metricsLoading ? "..." : metrics?.todayOrders || 0}
                     </p>
-                    <p className="text-xs text-emerald-600 dark:text-emerald-400 mt-1 font-medium">+3 desde ayer</p>
+                    <p className="text-xs text-purple-600 dark:text-purple-400 mt-1 font-medium">+3 desde ayer</p>
                   </div>
-                  <div className="w-12 h-12 bg-sky-200 dark:from-cyan-400/20 dark:to-purple-500/20 rounded-xl flex items-center justify-center text-sky-700 shadow-sm">
+                  <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center text-white shadow-lg tech-glow">
                     <Package className="w-6 h-6" />
                   </div>
                 </div>
