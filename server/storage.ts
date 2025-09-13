@@ -1,4 +1,4 @@
-import { type Employee, type InsertEmployee, type Customer, type InsertCustomer, type Service, type InsertService, type Invoice, type InsertInvoice, type InvoiceItem, type InsertInvoiceItem, type PaymentMethod, type InsertPaymentMethod, type CompanySettings, type InsertCompanySettings, type MessageTemplate, type InsertMessageTemplate, type Counter, type InsertCounter, employees, customers, services, invoices, invoiceItems, paymentMethods, companySettings, messageTemplates, counters } from "@shared/schema";
+import { type Employee, type InsertEmployee, type Customer, type InsertCustomer, type Service, type InsertService, type Invoice, type InsertInvoice, type InvoiceItem, type InsertInvoiceItem, type PaymentMethod, type InsertPaymentMethod, type CompanySettings, type InsertCompanySettings, type MessageTemplate, type InsertMessageTemplate, type Counter, type InsertCounter, type WhatsappConfig, type InsertWhatsappConfig, employees, customers, services, invoices, invoiceItems, paymentMethods, companySettings, messageTemplates, counters, whatsappConfig } from "@shared/schema";
 import { randomUUID } from "crypto";
 import { db } from "./db";
 import { eq, desc, sql } from "drizzle-orm";
@@ -55,6 +55,10 @@ export interface IStorage {
   getMessageTemplateByType(type: string): Promise<MessageTemplate | undefined>;
   createMessageTemplate(template: InsertMessageTemplate): Promise<MessageTemplate>;
   updateMessageTemplate(id: string, updates: Partial<MessageTemplate>): Promise<MessageTemplate | undefined>;
+  
+  // WhatsApp Configuration
+  getWhatsappConfig(): Promise<WhatsappConfig | undefined>;
+  updateWhatsappConfig(config: InsertWhatsappConfig): Promise<WhatsappConfig>;
 }
 
 export class MemStorage implements IStorage {
@@ -66,6 +70,7 @@ export class MemStorage implements IStorage {
   private paymentMethods: Map<string, PaymentMethod>;
   private companySettings: CompanySettings | undefined;
   private messageTemplates: Map<string, MessageTemplate>;
+  private whatsappConfig: WhatsappConfig | undefined;
   private invoiceCounter: number;
 
   constructor() {
@@ -76,6 +81,7 @@ export class MemStorage implements IStorage {
     this.invoiceItems = new Map();
     this.paymentMethods = new Map();
     this.messageTemplates = new Map();
+    this.whatsappConfig = undefined;
     this.invoiceCounter = 10;
     
     this.seedData();
@@ -560,6 +566,28 @@ export class MemStorage implements IStorage {
     this.messageTemplates.set(id, updated);
     return updated;
   }
+
+  // WhatsApp Configuration
+  async getWhatsappConfig(): Promise<WhatsappConfig | undefined> {
+    return this.whatsappConfig;
+  }
+
+  async updateWhatsappConfig(config: InsertWhatsappConfig): Promise<WhatsappConfig> {
+    const updated: WhatsappConfig = {
+      ...config,
+      id: this.whatsappConfig?.id || randomUUID(),
+      apiKey: config.apiKey ?? null,
+      provider: config.provider ?? 'twilio',
+      baseUrl: config.baseUrl ?? null,
+      enabled: config.enabled ?? false,
+      autoSendOnReady: config.autoSendOnReady ?? false,
+      retryAttempts: config.retryAttempts ?? 3,
+      retryDelay: config.retryDelay ?? 5,
+      updatedAt: new Date()
+    };
+    this.whatsappConfig = updated;
+    return updated;
+  }
 }
 
 // DatabaseStorage implementation using PostgreSQL with Drizzle ORM
@@ -813,6 +841,30 @@ export class DatabaseStorage implements IStorage {
       .where(eq(messageTemplates.id, id))
       .returning();
     return updated || undefined;
+  }
+
+  // WhatsApp Configuration
+  async getWhatsappConfig(): Promise<WhatsappConfig | undefined> {
+    const [config] = await db.select().from(whatsappConfig).limit(1);
+    return config || undefined;
+  }
+
+  async updateWhatsappConfig(config: InsertWhatsappConfig): Promise<WhatsappConfig> {
+    // First, try to get existing config
+    const existing = await this.getWhatsappConfig();
+    
+    if (existing) {
+      // Update existing config
+      const [updated] = await db.update(whatsappConfig)
+        .set({ ...config, updatedAt: new Date() })
+        .where(eq(whatsappConfig.id, existing.id))
+        .returning();
+      return updated;
+    } else {
+      // Create new config
+      const [newConfig] = await db.insert(whatsappConfig).values(config).returning();
+      return newConfig;
+    }
   }
 }
 
