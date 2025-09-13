@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FileText, LogOut, Home, Package, Users, Settings, CreditCard, BarChart3, Building2, MessageCircle, Menu, X } from "lucide-react";
+import { FileText, LogOut, Home, Package, Users, Settings, CreditCard, BarChart3, Building2, MessageCircle, Menu, X, CheckCircle } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { type Employee, type Invoice } from "@shared/schema";
 import InvoiceCreation from "./invoice-creation";
@@ -129,7 +129,7 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
                     <p className="text-xs text-violet-600 dark:text-purple-400 mt-1 font-medium">💬 WhatsApp automático</p>
                   </div>
                   <div className="w-12 h-12 bg-violet-200 dark:from-yellow-400/20 dark:to-orange-500/20 rounded-xl flex items-center justify-center text-violet-700 shadow-sm">
-                    <span className="text-lg font-bold">📦</span>
+                    <CheckCircle className="w-6 h-6" />
                   </div>
                 </div>
               </div>
@@ -146,7 +146,7 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
                     </p>
                   </div>
                   <div className="w-12 h-12 bg-rose-200 dark:from-red-400/20 dark:to-pink-500/20 rounded-xl flex items-center justify-center text-rose-700 shadow-sm">
-                    <span className="text-lg font-bold">💳</span>
+                    <CreditCard className="w-6 h-6" />
                   </div>
                 </div>
               </div>
