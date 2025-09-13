@@ -990,8 +990,8 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
               <div className="space-y-4 pt-4 border-t">
                 {/* Botón aplicar descuento */}
                 <Button
-                  variant="plain"
-                  className="tech-button-3d w-full bg-gradient-to-r from-cyan-500 via-blue-600 to-purple-600 hover:from-cyan-400 hover:via-blue-500 hover:to-purple-500 text-white border-0 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 transition-all duration-300 tech-glow"
+                  variant="outline"
+                  className="tech-button-3d w-full bg-gradient-to-br from-cyan-50 to-blue-50 border-2 border-cyan-300 text-cyan-700 dark:bg-gradient-to-br dark:from-cyan-500/20 dark:to-blue-600/20 dark:text-cyan-300 dark:border-cyan-500/30 hover:from-cyan-100 hover:to-blue-100 hover:border-cyan-400 dark:hover:from-cyan-400/30 dark:hover:to-blue-500/30 transition-all duration-300 transform hover:scale-105 tech-glow"
                   onClick={() => setShowDiscountModal(true)}
                   data-testid="button-apply-discount"
                 >
@@ -1024,7 +1024,7 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
                   {/* Botón Guardar Pedido - Estilo 3D */}
                   <Button
                     variant="outline"
-                    className="tech-button-3d h-12 bg-gradient-to-r from-cyan-600 to-blue-700 text-white border-0 shadow-lg hover:shadow-xl dark:shadow-lg dark:hover:shadow-xl transform hover:scale-105 active:scale-95 transition-all duration-300 hover:from-cyan-700 hover:to-blue-800 relative overflow-hidden tech-glow"
+                    className="tech-button-3d h-12 bg-gradient-to-br from-cyan-50 to-blue-50 border-2 border-cyan-300 text-cyan-700 dark:bg-gradient-to-br dark:from-cyan-500/20 dark:to-blue-600/20 dark:text-cyan-300 dark:border-cyan-500/30 hover:from-cyan-100 hover:to-blue-100 hover:border-cyan-400 dark:hover:from-cyan-400/30 dark:hover:to-blue-500/30 transition-all duration-300 transform hover:scale-105 tech-glow relative overflow-hidden"
                     onClick={saveOrderDraft}
                     disabled={currentInvoice.items.length === 0 || createInvoiceMutation.isPending || !!savedInvoiceId}
                     data-testid="button-save-order"
@@ -1040,7 +1040,8 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
 
                   {/* Botón Procesar Pago */}
                   <Button
-                    className="tech-button-3d h-12 bg-gradient-to-r from-purple-600 to-pink-700 hover:from-purple-700 hover:to-pink-800 shadow-lg hover:shadow-xl dark:shadow-lg dark:hover:shadow-xl transform hover:scale-105 active:scale-95 transition-all duration-300 tech-glow border-0 text-white"
+                    variant="outline"
+                    className="tech-button-3d h-12 bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-300 text-purple-700 dark:bg-gradient-to-br dark:from-purple-500/20 dark:to-pink-600/20 dark:text-purple-300 dark:border-purple-500/30 hover:from-purple-100 hover:to-pink-100 hover:border-purple-400 dark:hover:from-purple-400/30 dark:hover:to-pink-500/30 transition-all duration-300 transform hover:scale-105 tech-glow"
                     onClick={processPayment}
                     disabled={currentInvoice.items.length === 0 || !selectedPaymentMethod || createInvoiceMutation.isPending || !!savedInvoiceId}
                     data-testid="button-process-payment"
@@ -1069,12 +1070,12 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
                 {/* Botón de acciones */}
                 <Button
                   variant="outline"
-                  className="tech-button-3d w-full bg-gradient-to-br from-blue-600 to-purple-700 text-white border-0 hover:from-blue-700 hover:to-purple-800 transition-all duration-300 transform hover:scale-105 dark:hover:shadow-xl active:scale-95 shadow-lg hover:shadow-xl tech-glow"
+                  className="tech-button-3d w-full bg-gradient-to-br from-cyan-50 to-blue-50 border-2 border-cyan-300 text-cyan-700 dark:bg-gradient-to-br dark:from-cyan-500/20 dark:to-blue-600/20 dark:text-cyan-300 dark:border-cyan-500/30 hover:from-cyan-100 hover:to-blue-100 hover:border-cyan-400 dark:hover:from-cyan-400/30 dark:hover:to-blue-500/30 transition-all duration-300 transform hover:scale-105 tech-glow"
                   onClick={() => setShowActionsModal(true)}
                   disabled={!savedInvoiceId}
                   data-testid="button-invoice-actions"
                 >
-                  <span className="text-lg mr-2">⚡</span>
+                  <span className="text-lg mr-2">🚀</span>
                   Acciones de Factura
                 </Button>
               </div>
@@ -1391,8 +1392,8 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
                     />
                     <Button
                       size="sm"
-                      variant="plain"
-                      className="tech-button-3d bg-gradient-to-r from-cyan-500 via-blue-600 to-purple-600 hover:from-cyan-400 hover:via-blue-500 hover:to-purple-500 text-white border-0 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 transition-all duration-300 tech-glow"
+                      variant="outline"
+                      className="tech-button-3d bg-gradient-to-br from-cyan-50 to-blue-50 border-2 border-cyan-300 text-cyan-700 dark:bg-gradient-to-br dark:from-cyan-500/20 dark:to-blue-600/20 dark:text-cyan-300 dark:border-cyan-500/30 hover:from-cyan-100 hover:to-blue-100 hover:border-cyan-400 dark:hover:from-cyan-400/30 dark:hover:to-blue-500/30 transition-all duration-300 transform hover:scale-105 tech-glow"
                       onClick={() => setItemQuantity(itemQuantity + 1)}
                       data-testid="button-increase-quantity"
                     >
@@ -1567,8 +1568,8 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
                     />
                     <Button
                       size="sm"
-                      variant="plain"
-                      className="tech-button-3d bg-gradient-to-r from-cyan-500 via-blue-600 to-purple-600 hover:from-cyan-400 hover:via-blue-500 hover:to-purple-500 text-white border-0 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 transition-all duration-300 tech-glow"
+                      variant="outline"
+                      className="tech-button-3d bg-gradient-to-br from-cyan-50 to-blue-50 border-2 border-cyan-300 text-cyan-700 dark:bg-gradient-to-br dark:from-cyan-500/20 dark:to-blue-600/20 dark:text-cyan-300 dark:border-cyan-500/30 hover:from-cyan-100 hover:to-blue-100 hover:border-cyan-400 dark:hover:from-cyan-400/30 dark:hover:to-blue-500/30 transition-all duration-300 transform hover:scale-105 tech-glow"
                       onClick={() => setItemQuantity(itemQuantity + 1)}
                       data-testid="button-edit-increase-quantity"
                     >
