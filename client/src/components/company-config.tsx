@@ -109,7 +109,7 @@ export default function CompanyConfig({ onBack }: CompanyConfigProps) {
       ...prev,
       horarios: {
         ...prev.horarios,
-        [dia]: { ...prev.horarios[dia], [campo]: valor }
+        [dia]: { ...prev.horarios[dia as keyof typeof prev.horarios], [campo]: valor }
       }
     }));
   };
@@ -164,110 +164,107 @@ export default function CompanyConfig({ onBack }: CompanyConfigProps) {
   return (
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-6xl mx-auto">
-        {/* Header */}
-        <Card className="mb-6 dark:bg-gray-800/50 dark:shadow-lg tech-glow border-border dark:border-cyan-500/20">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                {onBack && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={onBack}
-                    className="mr-3"
-                    data-testid="button-back-company-config"
-                  >
-                    <X className="h-4 w-4 mr-2" />
-                    Volver
-                  </Button>
-                )}
-                <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center">
-                  <Building2 className="w-6 h-6 text-primary-foreground" />
-                </div>
-                <div>
-                  <h1 className="text-2xl font-bold text-foreground">Configuración de Empresa</h1>
-                  <p className="text-muted-foreground">Datos generales y configuración del negocio</p>
-                </div>
+        {/* Header con diseño tech-3D */}
+        <div className="tech-button-3d bg-gradient-to-br from-white to-slate-50 dark:from-slate-800 dark:to-slate-900 border-2 border-slate-200 dark:border-slate-600 rounded-xl shadow-2xl backdrop-blur-sm p-6 mb-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              {onBack && (
+                <Button
+                  onClick={onBack}
+                  className="tech-button-3d bg-white border-2 border-slate-300 text-slate-700 dark:from-slate-500/20 dark:to-slate-600/20 dark:text-white dark:border-slate-500/30 rounded-lg shadow-sm p-3 hover:bg-slate-50 hover:border-slate-400 dark:hover:from-slate-400/30 dark:hover:to-slate-500/30 transition-all duration-300 cursor-pointer transform hover:scale-105 hover:-translate-y-1 dark:backdrop-blur-sm font-bold mr-3"
+                  data-testid="button-back-company-config"
+                >
+                  <X className="h-4 w-4 mr-2" />
+                  Volver
+                </Button>
+              )}
+              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 via-indigo-600 to-purple-600 rounded-xl flex items-center justify-center tech-glow shadow-xl transform hover:scale-105 transition-all duration-300">
+                <Building2 className="w-8 h-8 text-white" />
               </div>
-              
-              <div className="flex space-x-3">
-                <Button
-                  variant="outline"
-                  onClick={() => setShowPreview(true)}
-                  data-testid="button-preview-company"
-                >
-                  <Eye className="w-4 h-4 mr-2" />
-                  Vista Previa
-                </Button>
-                <Button
-                  onClick={saveConfig}
-                  disabled={!hasChanges}
-                  data-testid="button-save-company-config"
-                >
-                  <Save className="w-4 h-4 mr-2" />
-                  Guardar Cambios
-                </Button>
+              <div>
+                <h1 className="text-3xl font-black bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">🏢 Configuración de Empresa</h1>
+                <p className="text-slate-600 dark:text-slate-300 font-semibold">Datos generales y configuración del negocio</p>
               </div>
             </div>
-          </CardContent>
-        </Card>
+              
+            <div className="flex space-x-3">
+              <Button
+                onClick={() => setShowPreview(true)}
+                className="tech-button-3d bg-white border-2 border-blue-300 text-blue-700 dark:from-blue-500/20 dark:to-indigo-600/20 dark:text-white dark:border-blue-500/30 rounded-lg shadow-sm p-3 hover:bg-blue-50 hover:border-blue-400 dark:hover:from-blue-400/30 dark:hover:to-indigo-500/30 transition-all duration-300 cursor-pointer transform hover:scale-105 hover:-translate-y-1 dark:backdrop-blur-sm font-bold"
+                data-testid="button-preview-company"
+              >
+                <Eye className="w-4 h-4 mr-2" />
+                Vista Previa
+              </Button>
+              <Button
+                onClick={saveConfig}
+                disabled={!hasChanges}
+                className="tech-button-3d bg-white border-2 border-green-300 text-green-700 dark:from-green-500/20 dark:to-emerald-600/20 dark:text-white dark:border-green-500/30 rounded-lg shadow-sm p-3 hover:bg-green-50 hover:border-green-400 dark:hover:from-green-400/30 dark:hover:to-emerald-500/30 transition-all duration-300 cursor-pointer transform hover:scale-105 hover:-translate-y-1 dark:backdrop-blur-sm font-bold disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                data-testid="button-save-company-config"
+              >
+                <Save className="w-4 h-4 mr-2" />
+                Guardar Cambios
+              </Button>
+            </div>
+          </div>
+        </div>
 
-        {/* Tabs Navigation */}
-        <Card className="mb-6 dark:bg-gray-800/50 dark:shadow-lg tech-glow border-border dark:border-cyan-500/20">
-          <div className="border-b border-border">
-            <nav className="flex space-x-8 px-6">
+        {/* Navegación de Pestañas con diseño tech-3D */}
+        <div className="tech-button-3d bg-gradient-to-br from-white to-slate-50 dark:from-slate-800 dark:to-slate-900 border-2 border-slate-200 dark:border-slate-600 rounded-xl shadow-2xl backdrop-blur-sm mb-6">
+          <div className="border-b border-slate-200 dark:border-slate-600">
+            <nav className="flex space-x-4 p-6">
               <button
                 onClick={() => setActiveTab('general')}
-                className={`py-4 px-2 border-b-2 font-medium text-sm flex items-center space-x-2 transition-colors ${
+                className={`tech-button-3d px-4 py-3 rounded-lg font-bold text-sm flex items-center space-x-2 transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 ${
                   activeTab === 'general'
-                    ? 'border-primary text-primary'
-                    : 'border-transparent text-muted-foreground hover:text-foreground'
+                    ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white border-2 border-blue-300 shadow-lg tech-glow'
+                    : 'bg-white border-2 border-slate-300 text-slate-700 dark:from-slate-500/20 dark:to-slate-600/20 dark:text-white dark:border-slate-500/30 hover:bg-blue-50 hover:border-blue-300 dark:hover:from-blue-400/30 dark:hover:to-indigo-500/30'
                 }`}
                 data-testid="tab-general-config"
               >
                 <Building2 className="w-4 h-4" />
-                <span>Información General</span>
+                <span>🏢 Información General</span>
               </button>
               <button
                 onClick={() => setActiveTab('contacto')}
-                className={`py-4 px-2 border-b-2 font-medium text-sm flex items-center space-x-2 transition-colors ${
+                className={`tech-button-3d px-4 py-3 rounded-lg font-bold text-sm flex items-center space-x-2 transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 ${
                   activeTab === 'contacto'
-                    ? 'border-primary text-primary'
-                    : 'border-transparent text-muted-foreground hover:text-foreground'
+                    ? 'bg-gradient-to-r from-green-500 to-emerald-600 text-white border-2 border-green-300 shadow-lg tech-glow'
+                    : 'bg-white border-2 border-slate-300 text-slate-700 dark:from-slate-500/20 dark:to-slate-600/20 dark:text-white dark:border-slate-500/30 hover:bg-green-50 hover:border-green-300 dark:hover:from-green-400/30 dark:hover:to-emerald-500/30'
                 }`}
                 data-testid="tab-contact-config"
               >
                 <Phone className="w-4 h-4" />
-                <span>Contacto y Ubicación</span>
+                <span>📞 Contacto y Ubicación</span>
               </button>
               <button
                 onClick={() => setActiveTab('horarios')}
-                className={`py-4 px-2 border-b-2 font-medium text-sm flex items-center space-x-2 transition-colors ${
+                className={`tech-button-3d px-4 py-3 rounded-lg font-bold text-sm flex items-center space-x-2 transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 ${
                   activeTab === 'horarios'
-                    ? 'border-primary text-primary'
-                    : 'border-transparent text-muted-foreground hover:text-foreground'
+                    ? 'bg-gradient-to-r from-purple-500 to-pink-600 text-white border-2 border-purple-300 shadow-lg tech-glow'
+                    : 'bg-white border-2 border-slate-300 text-slate-700 dark:from-slate-500/20 dark:to-slate-600/20 dark:text-white dark:border-slate-500/30 hover:bg-purple-50 hover:border-purple-300 dark:hover:from-purple-400/30 dark:hover:to-pink-500/30'
                 }`}
                 data-testid="tab-schedule-config"
               >
                 <Clock className="w-4 h-4" />
-                <span>Horarios de Atención</span>
+                <span>⏰ Horarios de Atención</span>
               </button>
               <button
                 onClick={() => setActiveTab('facturacion')}
-                className={`py-4 px-2 border-b-2 font-medium text-sm flex items-center space-x-2 transition-colors ${
+                className={`tech-button-3d px-4 py-3 rounded-lg font-bold text-sm flex items-center space-x-2 transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 ${
                   activeTab === 'facturacion'
-                    ? 'border-primary text-primary'
-                    : 'border-transparent text-muted-foreground hover:text-foreground'
+                    ? 'bg-gradient-to-r from-orange-500 to-red-600 text-white border-2 border-orange-300 shadow-lg tech-glow'
+                    : 'bg-white border-2 border-slate-300 text-slate-700 dark:from-slate-500/20 dark:to-slate-600/20 dark:text-white dark:border-slate-500/30 hover:bg-orange-50 hover:border-orange-300 dark:hover:from-orange-400/30 dark:hover:to-red-500/30'
                 }`}
                 data-testid="tab-billing-config"
               >
                 <Settings className="w-4 h-4" />
-                <span>Configuración de Factura</span>
+                <span>⚙️ Configuración de Factura</span>
               </button>
             </nav>
           </div>
 
-          <CardContent className="p-6">
+          <div className="p-6">
             {/* General Tab */}
             {activeTab === 'general' && (
               <div className="space-y-6">
@@ -640,8 +637,8 @@ export default function CompanyConfig({ onBack }: CompanyConfigProps) {
                 </div>
               </div>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
         {/* Confirmation Modal */}
         <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
