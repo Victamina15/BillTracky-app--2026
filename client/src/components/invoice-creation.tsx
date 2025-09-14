@@ -789,13 +789,13 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
           </Card>
 
           {/* Artículos del Pedido */}
-          <Card className="tech-button-3d bg-white dark:bg-gray-800/50 border-2 border-blue-300 dark:border-blue-500/30 rounded-xl shadow-sm hover:bg-blue-50 hover:border-blue-400 dark:hover:bg-gray-700/50 transition-all duration-300 dark:backdrop-blur-sm">
+          <Card className="bg-white dark:bg-gray-800/50 border-2 border-blue-300 dark:border-blue-500/30 rounded-xl shadow-sm">
             <CardHeader>
               <CardTitle className="flex items-center">
-                <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center mr-3 tech-glow">
+                <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center mr-3">
                   <Calculator className="w-5 h-5 text-white" />
                 </div>
-                <span className="text-blue-700 dark:text-blue-300 tech-text-glow">Artículos del Pedido</span>
+                <span className="text-blue-700 dark:text-blue-300">Artículos del Pedido</span>
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -811,7 +811,7 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
                 </div>
 
                 {/* Fila para agregar nuevo artículo */}
-                <div className="tech-button-3d grid grid-cols-6 gap-4 items-center p-3 border-2 border-slate-300 dark:border-slate-500/30 rounded-lg bg-gradient-to-r from-slate-50 via-gray-50 to-slate-50 dark:from-slate-800/40 dark:to-slate-700/40">
+                <div className="grid grid-cols-6 gap-4 items-center p-3 border-2 border-slate-300 dark:border-slate-500/30 rounded-lg bg-white dark:bg-gray-800/50">
                   {/* Dropdown de Artículo */}
                   <div>
                     <Select value={selectedService?.id || ""} onValueChange={(value) => {
