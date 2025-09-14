@@ -648,6 +648,9 @@ export class MemStorage implements IStorage {
       // Filter by date if since is provided
       if (since && invoice.date && new Date(invoice.date) < since) continue;
       
+      // Skip unpaid invoices
+      if (!invoice.paid) continue;
+      
       const customerId = invoice.customerId;
       if (!customerId) continue;
       
@@ -1121,6 +1124,9 @@ export class DatabaseStorage implements IStorage {
     for (const invoice of allInvoicesResult) {
       // Filter by date if since is provided
       if (since && invoice.date && new Date(invoice.date) < since) continue;
+      
+      // Skip unpaid invoices
+      if (!invoice.paid) continue;
       
       const customerId = invoice.customerId;
       if (!customerId) continue;

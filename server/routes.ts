@@ -7,17 +7,17 @@ import type { WhatsappConfig } from "@shared/schema";
 
 // Validation schemas for customer analytics
 const customersQuerySchema = z.object({
-  limit: z.string().optional().transform(val => val ? Math.min(Math.max(parseInt(val), 1), 100) : 3),
-  since: z.string().optional().transform(val => val ? new Date(val) : undefined)
+  limit: z.coerce.number().int().min(1).max(100).default(3).catch(3),
+  since: z.coerce.date().refine(d => !isNaN(d.getTime()), 'Invalid date').optional()
 });
 
 const inactiveCustomersQuerySchema = z.object({
-  days: z.string().optional().transform(val => val ? Math.min(Math.max(parseInt(val), 1), 365) : 30)
+  days: z.coerce.number().int().min(1).max(365).default(30).catch(30)
 });
 
 const sendInactiveMessageSchema = z.object({
-  days: z.number().min(1).max(365).optional().default(30),
-  templateId: z.string().optional()
+  days: z.coerce.number().int().min(1).max(365).default(30),
+  templateId: z.string().uuid().optional()
 });
 
 // WhatsApp utility function
