@@ -1,7 +1,12 @@
-import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { apiRequest, queryClient } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Users, UserCheck, UserX, TrendingUp, Crown, Award, Calendar } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Users, UserCheck, UserX, TrendingUp, Crown, Award, Calendar, Send } from "lucide-react";
 
 interface CustomerOverview {
   totalCustomers: number;
@@ -19,7 +24,19 @@ interface TopCustomer {
   ordersCount: number;
 }
 
+interface InactiveCustomer {
+  id: string;
+  name: string;
+  phone: string;
+  email?: string;
+  lastOrderDate: string;
+  daysSinceLastOrder: number;
+}
+
 export default function CustomersDashboard() {
+  const [inactiveDays, setInactiveDays] = useState<number>(30);
+  const { toast } = useToast();
+  
   // Fetch customer overview metrics
   const { data: overview, isLoading: overviewLoading } = useQuery<CustomerOverview>({
     queryKey: ["/api/customers/overview"],
@@ -33,6 +50,37 @@ export default function CustomersDashboard() {
   // Fetch top frequent customers
   const { data: topFrequent = [], isLoading: frequentLoading, error: frequentError } = useQuery<TopCustomer[]>({
     queryKey: ["/api/customers/top-orders", { limit: 3 }],
+  });
+
+  // Fetch inactive customers based on selected days
+  const { data: inactiveCustomers = [], isLoading: inactiveLoading, error: inactiveError } = useQuery<InactiveCustomer[]>({
+    queryKey: ["/api/customers/inactive", { days: inactiveDays }],
+  });
+
+  // Send reminders mutation
+  const sendRemindersMutation = useMutation({
+    mutationFn: async (days: number) => {
+      return apiRequest('/api/messages/send-inactive', {
+        method: 'POST',
+        body: { days }
+      });
+    },
+    onSuccess: (result: any) => {
+      const { summary } = result;
+      toast({
+        title: "Recordatorios enviados",
+        description: `Se enviaron ${summary.sent} recordatorios de ${summary.attempted} clientes`,
+      });
+      // Invalidate the inactive customers query to refresh the list
+      queryClient.invalidateQueries({ queryKey: ['/api/customers/inactive', { days: inactiveDays }] });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "No se pudieron enviar los recordatorios",
+        variant: "destructive",
+      });
+    }
   });
 
   return (
@@ -284,6 +332,108 @@ export default function CustomersDashboard() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Inactive Customers Management */}
+      <Card className="tech-button-3d bg-gradient-to-br from-red-50 to-orange-50 dark:from-red-900/20 dark:to-orange-900/20 border-2 border-red-300 dark:border-red-500/30 rounded-xl">
+        <CardHeader data-testid="header-inactive-management">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
+            <CardTitle className="flex items-center text-red-700 dark:text-red-300">
+              <Calendar className="w-5 h-5 mr-2" />
+              Gestión de Clientes Inactivos
+            </CardTitle>
+            
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-2">
+                <span className="text-sm text-red-600 dark:text-red-400">
+                  Inactivos por más de:
+                </span>
+                <Select value={inactiveDays.toString()} onValueChange={(value) => setInactiveDays(Number(value))}>
+                  <SelectTrigger className="w-24" data-testid="select-inactive-days">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="30">30 días</SelectItem>
+                    <SelectItem value="60">60 días</SelectItem>
+                    <SelectItem value="90">90 días</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <Button
+                onClick={() => sendRemindersMutation.mutate(inactiveDays)}
+                disabled={inactiveCustomers.length === 0 || sendRemindersMutation.isPending}
+                className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white"
+                data-testid="button-send-reminders"
+              >
+                <Send className="w-4 h-4 mr-2" />
+                {sendRemindersMutation.isPending ? 'Enviando...' : 'Enviar Recordatorios'}
+              </Button>
+            </div>
+          </div>
+        </CardHeader>
+        
+        <CardContent>
+          {inactiveLoading ? (
+            <div className="space-y-4">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="animate-pulse flex items-center space-x-4 p-4 bg-red-100 dark:bg-red-900/20 rounded-lg">
+                  <div className="w-12 h-12 bg-red-300 rounded-full"></div>
+                  <div className="flex-1 space-y-2">
+                    <div className="h-4 bg-red-300 rounded w-1/3"></div>
+                    <div className="h-3 bg-red-200 rounded w-1/2"></div>
+                  </div>
+                  <div className="h-6 bg-red-300 rounded w-16"></div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {inactiveCustomers.map((customer, index) => (
+                <div 
+                  key={customer.id} 
+                  className="flex items-center justify-between p-4 bg-gradient-to-r from-red-50 to-orange-50 dark:from-red-900/30 dark:to-orange-900/30 rounded-lg border border-red-200 dark:border-red-500/30"
+                  data-testid={`row-inactive-${customer.id}`}
+                >
+                  <div className="flex items-center space-x-4">
+                    <div className="w-12 h-12 bg-gradient-to-br from-red-400 to-orange-400 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                      {customer.name.charAt(0).toUpperCase()}
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-red-700 dark:text-red-300" data-testid={`text-inactive-name-${customer.id}`}>
+                        {customer.name}
+                      </h3>
+                      <p className="text-sm text-red-600 dark:text-red-400" data-testid={`text-inactive-phone-${customer.id}`}>
+                        {customer.phone} • Última orden: {new Date(customer.lastOrderDate).toLocaleDateString()}
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <Badge variant="destructive" className="bg-red-500 dark:bg-red-600" data-testid={`text-inactive-days-${customer.id}`}>
+                    {customer.daysSinceLastOrder} días
+                  </Badge>
+                </div>
+              ))}
+              
+              {inactiveError && (
+                <p className="text-center text-red-600 dark:text-red-400 py-4" data-testid="error-inactive-customers">
+                  Error al cargar clientes inactivos
+                </p>
+              )}
+              
+              {!inactiveLoading && !inactiveError && inactiveCustomers.length === 0 && (
+                <div className="text-center py-8" data-testid="empty-inactive-customers">
+                  <div className="w-16 h-16 bg-green-100 dark:bg-green-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <UserCheck className="w-8 h-8 text-green-600" />
+                  </div>
+                  <p className="text-green-600 dark:text-green-400 font-medium">
+                    ¡Excelente! No hay clientes inactivos en los últimos {inactiveDays} días
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }
