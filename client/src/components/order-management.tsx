@@ -239,9 +239,12 @@ export default function OrderManagement({ onNotification }: OrderManagementProps
       order.customerPhone?.includes(searchTerm) || false;
     
     const matchesStatus = filterStatus === 'all' || order.status === filterStatus;
+    
+    // Filtrado mejorado por método de pago
     const matchesPayment = filterPayment === 'all' || 
                           (filterPayment === 'paid' && order.paid) ||
-                          (filterPayment === 'pending' && !order.paid);
+                          (filterPayment === 'pending' && !order.paid) ||
+                          (order.paid && order.paymentMethod === filterPayment);
     
     return matchesSearch && matchesStatus && matchesPayment;
   });
@@ -334,9 +337,12 @@ export default function OrderManagement({ onNotification }: OrderManagementProps
         </div>
         
         <div className="flex items-center gap-2">
-          <Badge variant="outline" className="px-3 py-1">
-            {filteredOrders.length} órdenes
-          </Badge>
+          <div className="tech-button-3d bg-white border-2 border-violet-300 text-violet-700 dark:from-purple-500/20 dark:to-pink-600/20 dark:text-white dark:border-purple-500/30 rounded-xl shadow-sm px-4 py-2 hover:bg-violet-50 hover:border-violet-400 dark:hover:from-purple-400/30 dark:hover:to-pink-500/30 transition-all duration-300 cursor-pointer transform hover:scale-105 hover:-translate-y-1 dark:backdrop-blur-sm">
+            <div className="flex items-center gap-2">
+              <Package className="w-5 h-5" />
+              <span className="font-bold">{filteredOrders.length} órdenes</span>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -345,18 +351,18 @@ export default function OrderManagement({ onNotification }: OrderManagementProps
         <CardContent className="p-4">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-600 dark:text-blue-400 h-4 w-4" />
               <Input
                 placeholder="Buscar por número, cliente o teléfono..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
+                className="pl-10 tech-button-3d bg-white border-2 border-blue-300 text-blue-700 dark:from-blue-500/20 dark:to-blue-600/20 dark:text-white dark:border-blue-500/30 rounded-lg shadow-sm hover:bg-blue-50 hover:border-blue-400 dark:hover:from-blue-400/30 dark:hover:to-blue-500/30 transition-all duration-300 focus:ring-2 focus:ring-blue-500/50"
                 data-testid="input-search-orders"
               />
             </div>
             
             <Select value={filterStatus} onValueChange={setFilterStatus} data-testid="select-status-filter">
-              <SelectTrigger>
+              <SelectTrigger className="tech-button-3d bg-white border-2 border-orange-300 text-orange-700 dark:from-orange-500/20 dark:to-orange-600/20 dark:text-white dark:border-orange-500/30 rounded-lg shadow-sm hover:bg-orange-50 hover:border-orange-400 dark:hover:from-orange-400/30 dark:hover:to-orange-500/30 transition-all duration-300">
                 <SelectValue placeholder="Estado" />
               </SelectTrigger>
               <SelectContent>
@@ -370,13 +376,26 @@ export default function OrderManagement({ onNotification }: OrderManagementProps
             </Select>
 
             <Select value={filterPayment} onValueChange={setFilterPayment} data-testid="select-payment-filter">
-              <SelectTrigger>
-                <SelectValue placeholder="Pago" />
+              <SelectTrigger className="tech-button-3d bg-white border-2 border-emerald-300 text-emerald-700 dark:from-emerald-500/20 dark:to-emerald-600/20 dark:text-white dark:border-emerald-500/30 rounded-lg shadow-sm hover:bg-emerald-50 hover:border-emerald-400 dark:hover:from-emerald-400/30 dark:hover:to-emerald-500/30 transition-all duration-300">
+                <SelectValue placeholder="Métodos de Pago" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="tech-button-3d bg-white dark:from-slate-800 dark:to-slate-900 border-2 border-emerald-200 dark:border-emerald-500/50 shadow-xl">
                 <SelectItem value="all">Todos los pagos</SelectItem>
                 <SelectItem value="paid">Pagado</SelectItem>
                 <SelectItem value="pending">Pendiente</SelectItem>
+                <div className="border-t border-emerald-300 dark:border-emerald-500/50 my-2 mx-2"></div>
+                {paymentMethods.filter(pm => pm.active).map((method) => {
+                  const config = paymentMethodConfig[method.code as keyof typeof paymentMethodConfig] || { name: method.name, icon: CreditCard, color: 'text-emerald-600' };
+                  const IconComponent = config.icon;
+                  return (
+                    <SelectItem key={method.code} value={method.code} className="hover:bg-gradient-to-br hover:from-emerald-100 hover:to-emerald-200 dark:hover:from-emerald-900/30 dark:hover:to-emerald-800/30 py-3">
+                      <div className="flex items-center gap-3">
+                        <IconComponent className={`h-4 w-4 ${config.color}`} />
+                        <span className="font-medium">{method.name}</span>
+                      </div>
+                    </SelectItem>
+                  );
+                })}
               </SelectContent>
             </Select>
 
@@ -433,7 +452,16 @@ export default function OrderManagement({ onNotification }: OrderManagementProps
                         <StatusIcon className="h-4 w-4 mr-2" />
                         {status?.name || order.status}
                       </Badge>
-                      {!order.paid && (
+                      {order.paid ? (
+                        <div className="tech-button-3d bg-gradient-to-br from-green-100 to-emerald-200 dark:from-green-900/30 dark:to-emerald-800/30 border-2 border-green-400 dark:border-green-500/50 text-green-800 dark:text-green-300 px-2 py-1 rounded-lg text-xs font-bold flex items-center">
+                          <CheckCircle className="h-3 w-3 mr-1" />
+                          PAGADO - {(() => {
+                            const method = paymentMethods.find(pm => pm.code === order.paymentMethod);
+                            const config = paymentMethodConfig[order.paymentMethod as keyof typeof paymentMethodConfig];
+                            return config ? config.name : (method?.name || order.paymentMethod || 'Método desconocido');
+                          })()}
+                        </div>
+                      ) : (
                         <div className="tech-button-3d bg-gradient-to-br from-yellow-100 to-orange-200 dark:from-yellow-900/30 dark:to-orange-800/30 border-2 border-yellow-400 dark:border-yellow-500/50 text-yellow-800 dark:text-yellow-300 px-2 py-1 rounded-lg text-xs font-bold flex items-center animate-pulse">
                           <AlertCircle className="h-3 w-3 mr-1" />
                           COBRO PENDIENTE
