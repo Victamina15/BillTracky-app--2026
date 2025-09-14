@@ -12,16 +12,9 @@ export async function apiRequest(
   url: string,
   data?: unknown | undefined,
 ): Promise<Response> {
-  // Get employee ID from localStorage for authentication
-  const employeeId = localStorage.getItem('employeeId');
-  const headers: Record<string, string> = data ? { "Content-Type": "application/json" } : {};
-  if (employeeId) {
-    headers['x-employee-id'] = employeeId;
-  }
-
   const res = await fetch(url, {
     method,
-    headers,
+    headers: data ? { "Content-Type": "application/json" } : {},
     body: data ? JSON.stringify(data) : undefined,
     credentials: "include",
   });
@@ -36,31 +29,8 @@ export const getQueryFn: <T>(options: {
 }) => QueryFunction<T> =
   ({ on401: unauthorizedBehavior }) =>
   async ({ queryKey }) => {
-    // Build URL from query key - handle objects as query parameters
-    const [baseUrl, params] = queryKey;
-    let url = baseUrl as string;
-    if (params && typeof params === 'object') {
-      const searchParams = new URLSearchParams();
-      Object.entries(params).forEach(([key, value]) => {
-        if (value !== undefined && value !== null) {
-          searchParams.append(key, String(value));
-        }
-      });
-      if (searchParams.toString()) {
-        url += '?' + searchParams.toString();
-      }
-    }
-
-    // Get employee ID from localStorage for authentication
-    const employeeId = localStorage.getItem('employeeId');
-    const headers: Record<string, string> = {};
-    if (employeeId) {
-      headers['x-employee-id'] = employeeId;
-    }
-
-    const res = await fetch(url, {
+    const res = await fetch(queryKey.join("/") as string, {
       credentials: "include",
-      headers,
     });
 
     if (unauthorizedBehavior === "returnNull" && res.status === 401) {

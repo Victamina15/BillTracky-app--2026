@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FileText, LogOut, Home, Package, Users, Settings, CreditCard, BarChart3, Building2, MessageCircle, Menu, X, CheckCircle, Clock, LineChart } from "lucide-react";
+import { FileText, LogOut, Home, Package, Users, Settings, CreditCard, BarChart3, Building2, MessageCircle, Menu, X, CheckCircle, Clock } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { type Employee, type Invoice } from "@shared/schema";
 import InvoiceCreation from "./invoice-creation";
@@ -11,7 +11,6 @@ import CashClosure from "./cash-closure";
 import CompanyConfig from "./company-config";
 import WhatsAppConfig from "./whatsapp-config";
 import { useQuery } from "@tanstack/react-query";
-import { Link } from "wouter";
 
 interface DashboardProps {
   user: Employee;
@@ -354,16 +353,6 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
               <Users className="w-4 h-4 mr-3" />
               Clientes
             </button>
-            
-            <Link href="/customers-dashboard">
-              <button 
-                className="w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-300 tech-button-3d text-gray-300 hover:text-cyan-400 hover:scale-105"
-                data-testid="link-customers-dashboard"
-              >
-                <LineChart className="w-4 h-4 mr-3" />
-                Dashboard de Clientes
-              </button>
-            </Link>
             
             <button 
               onClick={() => setActiveTab('company-config')} 
