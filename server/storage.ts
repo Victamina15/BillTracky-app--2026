@@ -59,6 +59,13 @@ export interface IStorage {
   // WhatsApp Configuration
   getWhatsappConfig(): Promise<WhatsappConfig | undefined>;
   updateWhatsappConfig(config: InsertWhatsappConfig): Promise<WhatsappConfig>;
+  
+  // Customer Analytics
+  getTopSpendingCustomers(limit?: number, since?: Date): Promise<Array<Customer & { totalSpent: string; ordersCount: number }>>;
+  getTopFrequentCustomers(limit?: number, since?: Date): Promise<Array<Customer & { ordersCount: number; totalSpent: string }>>;
+  getInactiveCustomers(daysSinceLastOrder: number): Promise<Array<Customer & { lastOrderAt: Date | null; daysSinceLastOrder: number }>>;
+  getCustomerStats(customerId: string): Promise<{ customer: Customer; totalSpent: string; ordersCount: number; avgOrderValue: string; lastOrderAt: Date | null; orderDates: Date[] } | undefined>;
+  getCustomersOverview(): Promise<{ totalCustomers: number; activeCustomers: number; inactiveCustomers: number; avgOrderValue: string }>;
 }
 
 export class MemStorage implements IStorage {
@@ -588,6 +595,202 @@ export class MemStorage implements IStorage {
     this.whatsappConfig = updated;
     return updated;
   }
+
+  // Customer Analytics Implementation (MemStorage)
+  async getTopSpendingCustomers(limit = 3, since?: Date): Promise<Array<Customer & { totalSpent: string; ordersCount: number }>> {
+    const allCustomers = Array.from(this.customers.values());
+    const allInvoices = Array.from(this.invoices.values());
+    
+    // Calculate real metrics from invoices
+    const customerMetrics = new Map<string, { totalSpent: number; ordersCount: number }>();
+    
+    for (const invoice of allInvoices) {
+      // Filter by date if since is provided
+      if (since && invoice.date && new Date(invoice.date) < since) continue;
+      
+      // Skip unpaid invoices
+      if (!invoice.paid) continue;
+      
+      const customerId = invoice.customerId;
+      if (!customerId) continue;
+      
+      const current = customerMetrics.get(customerId) || { totalSpent: 0, ordersCount: 0 };
+      current.totalSpent += parseFloat(invoice.total);
+      current.ordersCount += 1;
+      customerMetrics.set(customerId, current);
+    }
+    
+    // Combine with customer data and sort by spending
+    const results: Array<Customer & { totalSpent: string; ordersCount: number }> = [];
+    
+    for (const customer of allCustomers) {
+      const metrics = customerMetrics.get(customer.id) || { totalSpent: 0, ordersCount: 0 };
+      results.push({
+        ...customer,
+        totalSpent: metrics.totalSpent.toFixed(2),
+        ordersCount: metrics.ordersCount,
+      });
+    }
+    
+    return results
+      .sort((a, b) => parseFloat(b.totalSpent) - parseFloat(a.totalSpent))
+      .slice(0, limit);
+  }
+
+  async getTopFrequentCustomers(limit = 3, since?: Date): Promise<Array<Customer & { ordersCount: number; totalSpent: string }>> {
+    const allCustomers = Array.from(this.customers.values());
+    const allInvoices = Array.from(this.invoices.values());
+    
+    // Calculate real metrics from invoices
+    const customerMetrics = new Map<string, { totalSpent: number; ordersCount: number }>();
+    
+    for (const invoice of allInvoices) {
+      // Filter by date if since is provided
+      if (since && invoice.date && new Date(invoice.date) < since) continue;
+      
+      const customerId = invoice.customerId;
+      if (!customerId) continue;
+      
+      const current = customerMetrics.get(customerId) || { totalSpent: 0, ordersCount: 0 };
+      current.totalSpent += parseFloat(invoice.total);
+      current.ordersCount += 1;
+      customerMetrics.set(customerId, current);
+    }
+    
+    // Combine with customer data and sort by frequency
+    const results: Array<Customer & { ordersCount: number; totalSpent: string }> = [];
+    
+    for (const customer of allCustomers) {
+      const metrics = customerMetrics.get(customer.id) || { totalSpent: 0, ordersCount: 0 };
+      results.push({
+        ...customer,
+        ordersCount: metrics.ordersCount,
+        totalSpent: metrics.totalSpent.toFixed(2),
+      });
+    }
+    
+    return results
+      .sort((a, b) => b.ordersCount - a.ordersCount)
+      .slice(0, limit);
+  }
+
+  async getInactiveCustomers(daysSinceLastOrder: number): Promise<Array<Customer & { lastOrderAt: Date | null; daysSinceLastOrder: number }>> {
+    const allCustomers = Array.from(this.customers.values());
+    const allInvoices = Array.from(this.invoices.values());
+    const cutoffDate = new Date();
+    cutoffDate.setDate(cutoffDate.getDate() - daysSinceLastOrder);
+    
+    // Find last order date for each customer
+    const customerLastOrders = new Map<string, Date>();
+    
+    for (const invoice of allInvoices) {
+      const customerId = invoice.customerId;
+      if (!customerId) continue;
+      
+      if (!invoice.date) continue;
+      const invoiceDate = new Date(invoice.date);
+      const currentLast = customerLastOrders.get(customerId);
+      
+      if (!currentLast || invoiceDate > currentLast) {
+        customerLastOrders.set(customerId, invoiceDate);
+      }
+    }
+    
+    // Filter inactive customers
+    const results: Array<Customer & { lastOrderAt: Date | null; daysSinceLastOrder: number }> = [];
+    const now = new Date();
+    
+    for (const customer of allCustomers) {
+      const lastOrderAt = customerLastOrders.get(customer.id) || null;
+      const daysSince = lastOrderAt 
+        ? Math.floor((now.getTime() - lastOrderAt.getTime()) / (1000 * 60 * 60 * 24))
+        : 999;
+      
+      if (!lastOrderAt || lastOrderAt < cutoffDate) {
+        results.push({
+          ...customer,
+          lastOrderAt,
+          daysSinceLastOrder: daysSince,
+        });
+      }
+    }
+    
+    return results.sort((a, b) => b.daysSinceLastOrder - a.daysSinceLastOrder);
+  }
+
+  async getCustomerStats(customerId: string): Promise<{ customer: Customer; totalSpent: string; ordersCount: number; avgOrderValue: string; lastOrderAt: Date | null; orderDates: Date[] } | undefined> {
+    const customer = this.customers.get(customerId);
+    if (!customer) return undefined;
+    
+    const customerInvoices = Array.from(this.invoices.values())
+      .filter(invoice => invoice.customerId === customerId);
+    
+    let totalSpent = 0;
+    let ordersCount = 0;
+    let lastOrderAt: Date | null = null;
+    const orderDates: Date[] = [];
+    
+    for (const invoice of customerInvoices) {
+      if (invoice.paid) {
+        totalSpent += parseFloat(invoice.total);
+        ordersCount += 1;
+      }
+      
+      if (!invoice.date) continue;
+      const invoiceDate = new Date(invoice.date);
+      orderDates.push(invoiceDate);
+      
+      if (!lastOrderAt || invoiceDate > lastOrderAt) {
+        lastOrderAt = invoiceDate;
+      }
+    }
+    
+    const avgOrderValue = ordersCount > 0 ? (totalSpent / ordersCount).toFixed(2) : "0.00";
+    
+    return {
+      customer,
+      totalSpent: totalSpent.toFixed(2),
+      ordersCount,
+      avgOrderValue,
+      lastOrderAt,
+      orderDates: orderDates.sort((a, b) => b.getTime() - a.getTime()),
+    };
+  }
+
+  async getCustomersOverview(): Promise<{ totalCustomers: number; activeCustomers: number; inactiveCustomers: number; avgOrderValue: string }> {
+    const allCustomers = Array.from(this.customers.values());
+    const allInvoices = Array.from(this.invoices.values());
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    
+    // Find customers with recent orders
+    const recentCustomers = new Set<string>();
+    let totalRevenue = 0;
+    let totalOrders = 0;
+    
+    for (const invoice of allInvoices) {
+      if (invoice.paid) {
+        totalRevenue += parseFloat(invoice.total);
+        totalOrders += 1;
+      }
+      
+      if (invoice.customerId && invoice.date && new Date(invoice.date) >= thirtyDaysAgo) {
+        recentCustomers.add(invoice.customerId);
+      }
+    }
+    
+    const totalCustomers = allCustomers.length;
+    const activeCustomers = recentCustomers.size;
+    const inactiveCustomers = totalCustomers - activeCustomers;
+    const avgOrderValue = totalOrders > 0 ? (totalRevenue / totalOrders).toFixed(2) : "0.00";
+    
+    return {
+      totalCustomers,
+      activeCustomers,
+      inactiveCustomers,
+      avgOrderValue,
+    };
+  }
 }
 
 // DatabaseStorage implementation using PostgreSQL with Drizzle ORM
@@ -865,6 +1068,201 @@ export class DatabaseStorage implements IStorage {
       const [newConfig] = await db.insert(whatsappConfig).values(config).returning();
       return newConfig;
     }
+  }
+
+  // Customer Analytics Implementation
+  async getTopSpendingCustomers(limit = 3, since?: Date): Promise<Array<Customer & { totalSpent: string; ordersCount: number }>> {
+    const allCustomersResult = await db.select().from(customers);
+    const allInvoicesResult = await db.select().from(invoices);
+    
+    // Calculate real metrics from invoices
+    const customerMetrics = new Map<string, { totalSpent: number; ordersCount: number }>();
+    
+    for (const invoice of allInvoicesResult) {
+      // Filter by date if since is provided
+      if (since && invoice.date && new Date(invoice.date) < since) continue;
+      
+      // Skip unpaid invoices
+      if (!invoice.paid) continue;
+      
+      const customerId = invoice.customerId;
+      if (!customerId) continue;
+      
+      const current = customerMetrics.get(customerId) || { totalSpent: 0, ordersCount: 0 };
+      current.totalSpent += parseFloat(invoice.total);
+      current.ordersCount += 1;
+      customerMetrics.set(customerId, current);
+    }
+    
+    // Combine with customer data and sort by spending
+    const results: Array<Customer & { totalSpent: string; ordersCount: number }> = [];
+    
+    for (const customer of allCustomersResult) {
+      const metrics = customerMetrics.get(customer.id) || { totalSpent: 0, ordersCount: 0 };
+      results.push({
+        ...customer,
+        totalSpent: metrics.totalSpent.toFixed(2),
+        ordersCount: metrics.ordersCount,
+      });
+    }
+    
+    return results
+      .sort((a, b) => parseFloat(b.totalSpent) - parseFloat(a.totalSpent))
+      .slice(0, limit);
+  }
+
+  async getTopFrequentCustomers(limit = 3, since?: Date): Promise<Array<Customer & { ordersCount: number; totalSpent: string }>> {
+    const allCustomersResult = await db.select().from(customers);
+    const allInvoicesResult = await db.select().from(invoices);
+    
+    // Calculate real metrics from invoices
+    const customerMetrics = new Map<string, { totalSpent: number; ordersCount: number }>();
+    
+    for (const invoice of allInvoicesResult) {
+      // Filter by date if since is provided
+      if (since && invoice.date && new Date(invoice.date) < since) continue;
+      
+      const customerId = invoice.customerId;
+      if (!customerId) continue;
+      
+      const current = customerMetrics.get(customerId) || { totalSpent: 0, ordersCount: 0 };
+      current.totalSpent += parseFloat(invoice.total);
+      current.ordersCount += 1;
+      customerMetrics.set(customerId, current);
+    }
+    
+    // Combine with customer data and sort by frequency
+    const results: Array<Customer & { ordersCount: number; totalSpent: string }> = [];
+    
+    for (const customer of allCustomersResult) {
+      const metrics = customerMetrics.get(customer.id) || { totalSpent: 0, ordersCount: 0 };
+      results.push({
+        ...customer,
+        ordersCount: metrics.ordersCount,
+        totalSpent: metrics.totalSpent.toFixed(2),
+      });
+    }
+    
+    return results
+      .sort((a, b) => b.ordersCount - a.ordersCount)
+      .slice(0, limit);
+  }
+
+  async getInactiveCustomers(daysSinceLastOrder: number): Promise<Array<Customer & { lastOrderAt: Date | null; daysSinceLastOrder: number }>> {
+    const allCustomersResult = await db.select().from(customers);
+    const allInvoicesResult = await db.select().from(invoices);
+    const cutoffDate = new Date();
+    cutoffDate.setDate(cutoffDate.getDate() - daysSinceLastOrder);
+    
+    // Find last order date for each customer
+    const customerLastOrders = new Map<string, Date>();
+    
+    for (const invoice of allInvoicesResult) {
+      const customerId = invoice.customerId;
+      if (!customerId) continue;
+      
+      if (!invoice.date) continue;
+      const invoiceDate = new Date(invoice.date);
+      const currentLast = customerLastOrders.get(customerId);
+      
+      if (!currentLast || invoiceDate > currentLast) {
+        customerLastOrders.set(customerId, invoiceDate);
+      }
+    }
+    
+    // Filter inactive customers
+    const results: Array<Customer & { lastOrderAt: Date | null; daysSinceLastOrder: number }> = [];
+    const now = new Date();
+    
+    for (const customer of allCustomersResult) {
+      const lastOrderAt = customerLastOrders.get(customer.id) || null;
+      const daysSince = lastOrderAt 
+        ? Math.floor((now.getTime() - lastOrderAt.getTime()) / (1000 * 60 * 60 * 24))
+        : 999;
+      
+      if (!lastOrderAt || lastOrderAt < cutoffDate) {
+        results.push({
+          ...customer,
+          lastOrderAt,
+          daysSinceLastOrder: daysSince,
+        });
+      }
+    }
+    
+    return results.sort((a, b) => b.daysSinceLastOrder - a.daysSinceLastOrder);
+  }
+
+  async getCustomerStats(customerId: string): Promise<{ customer: Customer; totalSpent: string; ordersCount: number; avgOrderValue: string; lastOrderAt: Date | null; orderDates: Date[] } | undefined> {
+    const [customer] = await db.select().from(customers).where(eq(customers.id, customerId));
+    if (!customer) return undefined;
+    
+    const customerInvoices = await db.select().from(invoices).where(eq(invoices.customerId, customerId));
+    
+    let totalSpent = 0;
+    let ordersCount = 0;
+    let lastOrderAt: Date | null = null;
+    const orderDates: Date[] = [];
+    
+    for (const invoice of customerInvoices) {
+      if (invoice.paid) {
+        totalSpent += parseFloat(invoice.total);
+        ordersCount += 1;
+      }
+      
+      if (!invoice.date) continue;
+      const invoiceDate = new Date(invoice.date);
+      orderDates.push(invoiceDate);
+      
+      if (!lastOrderAt || invoiceDate > lastOrderAt) {
+        lastOrderAt = invoiceDate;
+      }
+    }
+    
+    const avgOrderValue = ordersCount > 0 ? (totalSpent / ordersCount).toFixed(2) : "0.00";
+    
+    return {
+      customer,
+      totalSpent: totalSpent.toFixed(2),
+      ordersCount,
+      avgOrderValue,
+      lastOrderAt,
+      orderDates: orderDates.sort((a, b) => b.getTime() - a.getTime()),
+    };
+  }
+
+  async getCustomersOverview(): Promise<{ totalCustomers: number; activeCustomers: number; inactiveCustomers: number; avgOrderValue: string }> {
+    const allCustomersResult = await db.select().from(customers);
+    const allInvoicesResult = await db.select().from(invoices);
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    
+    // Find customers with recent orders
+    const recentCustomers = new Set<string>();
+    let totalRevenue = 0;
+    let totalOrders = 0;
+    
+    for (const invoice of allInvoicesResult) {
+      if (invoice.paid) {
+        totalRevenue += parseFloat(invoice.total);
+        totalOrders += 1;
+      }
+      
+      if (invoice.customerId && invoice.date && new Date(invoice.date) >= thirtyDaysAgo) {
+        recentCustomers.add(invoice.customerId);
+      }
+    }
+    
+    const totalCustomers = allCustomersResult.length;
+    const activeCustomers = recentCustomers.size;
+    const inactiveCustomers = totalCustomers - activeCustomers;
+    const avgOrderValue = totalOrders > 0 ? (totalRevenue / totalOrders).toFixed(2) : "0.00";
+    
+    return {
+      totalCustomers,
+      activeCustomers,
+      inactiveCustomers,
+      avgOrderValue,
+    };
   }
 }
 
