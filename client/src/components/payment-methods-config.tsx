@@ -88,9 +88,11 @@ export default function PaymentMethodsConfig({ onNotification }: PaymentMethodsC
   });
 
   const handleSubmit = (data: any) => {
+    console.log("Form submitted with data:", data);
     // Generate code from name (lowercase, no spaces, alphanumeric only)
     const code = data.name.toLowerCase().replace(/[^a-z0-9]/g, '_').replace(/_{2,}/g, '_').replace(/^_|_$/g, '');
     const submitData = { ...data, code };
+    console.log("Submitting data:", submitData);
     createMethodMutation.mutate(submitData);
   };
 
@@ -114,6 +116,10 @@ export default function PaymentMethodsConfig({ onNotification }: PaymentMethodsC
   };
 
   const handleToggleActive = (id: string, currentActive: boolean) => {
+    // Cambiar automáticamente a vista "todos" para que el usuario vea el cambio
+    if (filterActive !== "all") {
+      setFilterActive("all");
+    }
     toggleMethodMutation.mutate({ id, active: !currentActive });
   };
 
