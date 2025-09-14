@@ -397,136 +397,150 @@ export default function OrderManagement({ onNotification }: OrderManagementProps
       </Card>
 
       {/* Lista de órdenes */}
-      <div className="grid gap-4">
+      <div className="grid gap-6">
         {filteredOrders.map((order) => {
           const status = statusConfig[order.status as keyof typeof statusConfig];
           const StatusIcon = status?.icon || Package;
           const paymentMethod = paymentMethodConfig[order.paymentMethod as keyof typeof paymentMethodConfig];
           
           return (
-            <Card key={order.id} className="bg-card dark:bg-gray-800/50 hover:shadow-md dark:hover:shadow-xl tech-glow border border-border dark:border-cyan-500/20 transition-shadow" data-testid={`card-order-${order.id}`}>
+            <Card key={order.id} className="tech-button-3d bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800/50 dark:to-slate-900/50 hover:shadow-xl dark:hover:shadow-cyan-500/25 border-2 border-slate-200 dark:border-cyan-500/30 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl" data-testid={`card-order-${order.id}`}>
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
-                  <div className="flex-1 grid grid-cols-1 md:grid-cols-6 gap-4 items-center">
-                    <div>
-                      <div className="font-semibold text-primary" data-testid={`text-order-number-${order.id}`}>
+                  <div className="flex-1 grid grid-cols-1 md:grid-cols-5 gap-4 items-center">
+                    <div className="space-y-1">
+                      <div className="font-bold text-lg bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent" data-testid={`text-order-number-${order.id}`}>
                         {order.number}
                       </div>
-                      <div className="text-sm text-muted-foreground">
+                      <div className="text-sm text-slate-600 dark:text-slate-400 font-medium">
                         {formatDate(order.date)}
                       </div>
                     </div>
                     
-                    <div>
-                      <div className="font-medium text-foreground" data-testid={`text-customer-name-${order.id}`}>
+                    <div className="space-y-1">
+                      <div className="font-bold text-slate-800 dark:text-slate-200" data-testid={`text-customer-name-${order.id}`}>
+                        <User className="w-4 h-4 inline mr-2 text-slate-500" />
                         {order.customerName}
                       </div>
-                      <div className="text-sm text-muted-foreground">
+                      <div className="text-sm text-slate-600 dark:text-slate-400 flex items-center">
+                        <Phone className="w-3 h-3 mr-1" />
                         {order.customerPhone}
                       </div>
                     </div>
                     
-                    <div>
-                      <Badge className={getStatusClasses(order.status)} data-testid={`badge-status-${order.id}`}>
-                        <StatusIcon className="h-3 w-3 mr-1" />
+                    <div className="flex flex-col gap-2">
+                      <Badge className="tech-button-3d bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-900/30 dark:to-blue-800/30 border-2 border-blue-300 dark:border-blue-500/50 text-blue-800 dark:text-blue-300 font-bold px-3 py-1 rounded-lg shadow-lg" data-testid={`badge-status-${order.id}`}>
+                        <StatusIcon className="h-4 w-4 mr-2" />
                         {status?.name || order.status}
                       </Badge>
-                    </div>
-                    
-                    <div>
-                      <div className="font-semibold text-foreground" data-testid={`text-total-${order.id}`}>
-                        {formatCurrency(order.total)}
-                      </div>
-                      <div className="text-sm text-muted-foreground">
-                        Fecha entrega: {formatDate(order.deliveryDate)}
-                      </div>
-                    </div>
-                    
-                    <div>
-                      <Badge 
-                        className={getPaymentClasses(order.paid)}
-                        data-testid={`badge-payment-${order.id}`}
-                      >
-                        {order.paid ? "Pagado" : "Pendiente"}
-                      </Badge>
-                      {paymentMethod && (
-                        <div className="text-sm text-muted-foreground mt-1">
-                          {paymentMethod.name}
+                      {!order.paid && (
+                        <div className="tech-button-3d bg-gradient-to-br from-yellow-100 to-orange-200 dark:from-yellow-900/30 dark:to-orange-800/30 border-2 border-yellow-400 dark:border-yellow-500/50 text-yellow-800 dark:text-yellow-300 px-2 py-1 rounded-lg text-xs font-bold flex items-center animate-pulse">
+                          <AlertCircle className="h-3 w-3 mr-1" />
+                          COBRO PENDIENTE
                         </div>
                       )}
                     </div>
                     
-                    {/* Menú de acciones compacto */}
-                    <div className="flex items-center gap-2 justify-end">
-                      {/* Acciones rápidas principales */}
+                    <div className="space-y-1">
+                      <div className="font-black text-2xl bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent" data-testid={`text-total-${order.id}`}>
+                        {formatCurrency(order.total)}
+                      </div>
+                      <div className="text-sm text-slate-600 dark:text-slate-400 flex items-center">
+                        <Calendar className="w-3 h-3 mr-1" />
+                        {formatDate(order.deliveryDate)}
+                      </div>
+                    </div>
+                    
+                    
+                    {/* Panel de acciones profesionales */}
+                    <div className="flex items-center gap-3 justify-end">
+                      {/* BOTÓN DE COBRO PROMINENTE para pagos pendientes */}
+                      {!order.paid && (
+                        <Button
+                          size="sm"
+                          onClick={() => {
+                            setSelectedOrder(order);
+                            setShowPaymentModal(true);
+                          }}
+                          className="tech-button-3d bg-gradient-to-br from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold px-4 py-2 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 border-2 border-green-400"
+                          data-testid={`button-collect-payment-${order.id}`}
+                          title="Cobrar pago pendiente"
+                        >
+                          <DollarSign className="h-4 w-4 mr-2" />
+                          COBRAR
+                        </Button>
+                      )}
+                      
+                      {/* Botones de acción principales mejorados */}
                       <Button
                         size="sm"
-                        variant="ghost"
                         onClick={() => openDetailsModal(order)}
-                        className="h-8 w-8 p-0"
+                        className="tech-button-3d bg-gradient-to-br from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold px-3 py-2 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 border-2 border-blue-400"
                         data-testid={`button-details-${order.id}`}
-                        title="Ver detalles"
+                        title="Ver detalles completos"
                       >
                         <Eye className="h-4 w-4" />
                       </Button>
                       
                       <Button
                         size="sm"
-                        variant="ghost"
                         onClick={() => {
                           const phoneNumber = order.customerPhone.replace(/[^\d]/g, '');
                           const message = `¡Hola ${order.customerName}! Tu pedido ${order.number} está ${order.status === 'ready' ? 'listo para recoger' : 'en proceso'}. Total: ${formatCurrency(order.total)}`;
                           const whatsappUrl = `https://wa.me/1${phoneNumber}?text=${encodeURIComponent(message)}`;
                           window.open(whatsappUrl, '_blank');
                         }}
-                        className="h-8 w-8 p-0 text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300"
+                        className="tech-button-3d bg-gradient-to-br from-green-600 to-teal-700 hover:from-green-700 hover:to-teal-800 text-white font-semibold px-3 py-2 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 border-2 border-green-500"
                         data-testid={`button-whatsapp-${order.id}`}
-                        title="Enviar WhatsApp"
+                        title="Enviar notificación por WhatsApp"
                       >
                         <Phone className="h-4 w-4" />
                       </Button>
                       
-                      {/* Menú dropdown para más acciones */}
+                      {/* Menú dropdown mejorado con diseño 3D */}
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button
                             size="sm"
-                            variant="ghost"
-                            className="h-8 w-8 p-0"
+                            className="tech-button-3d bg-gradient-to-br from-slate-400 to-slate-600 hover:from-slate-500 hover:to-slate-700 text-white font-semibold px-3 py-2 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 border-2 border-slate-300"
                             data-testid={`button-actions-${order.id}`}
+                            title="Más opciones"
                           >
                             <MoreVertical className="h-4 w-4" />
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-56">
+                        <DropdownMenuContent align="end" className="w-64 tech-button-3d bg-gradient-to-br from-white to-slate-50 dark:from-slate-800 dark:to-slate-900 border-2 border-slate-200 dark:border-slate-600 shadow-xl">
                           <DropdownMenuItem
                             onClick={() => openWorkTicketModal(order)}
+                            className="hover:bg-gradient-to-br hover:from-purple-100 hover:to-purple-200 dark:hover:from-purple-900/30 dark:hover:to-purple-800/30 text-purple-700 dark:text-purple-300 font-medium"
                             data-testid={`menu-ticket-${order.id}`}
                           >
-                            <FileText className="mr-2 h-4 w-4" />
+                            <FileText className="mr-3 h-5 w-5" />
                             Ticket de Trabajo
                           </DropdownMenuItem>
                           
                           <DropdownMenuItem
                             onClick={() => window.print()}
+                            className="hover:bg-gradient-to-br hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-900/30 dark:hover:to-blue-800/30 text-blue-700 dark:text-blue-300 font-medium"
                             data-testid={`menu-print-${order.id}`}
                           >
-                            <Printer className="mr-2 h-4 w-4" />
+                            <Printer className="mr-3 h-5 w-5" />
                             Imprimir Recibo
                           </DropdownMenuItem>
                           
                           {order.status !== 'cancelled' && order.status !== 'delivered' && (
                             <>
-                              <DropdownMenuSeparator />
+                              <DropdownMenuSeparator className="bg-gradient-to-r from-transparent via-slate-300 to-transparent dark:via-slate-600" />
                               
                               <DropdownMenuItem
                                 onClick={() => {
                                   setSelectedOrder(order);
                                   setShowStatusModal(true);
                                 }}
+                                className="hover:bg-gradient-to-br hover:from-orange-100 hover:to-orange-200 dark:hover:from-orange-900/30 dark:hover:to-orange-800/30 text-orange-700 dark:text-orange-300 font-medium"
                                 data-testid={`menu-status-${order.id}`}
                               >
-                                <RefreshCw className="mr-2 h-4 w-4" />
+                                <RefreshCw className="mr-3 h-5 w-5" />
                                 Cambiar Estado
                               </DropdownMenuItem>
                               
@@ -536,25 +550,25 @@ export default function OrderManagement({ onNotification }: OrderManagementProps
                                     setSelectedOrder(order);
                                     setShowPaymentModal(true);
                                   }}
-                                  className="text-green-700 dark:text-green-400"
+                                  className="hover:bg-gradient-to-br hover:from-green-100 hover:to-green-200 dark:hover:from-green-900/30 dark:hover:to-green-800/30 text-green-700 dark:text-green-300 font-medium"
                                   data-testid={`menu-payment-${order.id}`}
                                 >
-                                  <DollarSign className="mr-2 h-4 w-4" />
+                                  <DollarSign className="mr-3 h-5 w-5" />
                                   Procesar Pago
                                 </DropdownMenuItem>
                               )}
                               
-                              <DropdownMenuSeparator />
+                              <DropdownMenuSeparator className="bg-gradient-to-r from-transparent via-red-300 to-transparent dark:via-red-600" />
                               
                               <DropdownMenuItem
                                 onClick={() => {
                                   setSelectedOrder(order);
                                   setShowCancelModal(true);
                                 }}
-                                className="text-red-700 dark:text-red-400"
+                                className="hover:bg-gradient-to-br hover:from-red-100 hover:to-red-200 dark:hover:from-red-900/30 dark:hover:to-red-800/30 text-red-700 dark:text-red-300 font-medium"
                                 data-testid={`menu-cancel-${order.id}`}
                               >
-                                <X className="mr-2 h-4 w-4" />
+                                <XCircle className="mr-3 h-5 w-5" />
                                 Cancelar Orden
                               </DropdownMenuItem>
                             </>
@@ -821,56 +835,101 @@ export default function OrderManagement({ onNotification }: OrderManagementProps
         </DialogContent>
       </Dialog>
 
-      {/* Modal de pago */}
+      {/* Modal de pago profesional mejorado */}
       <Dialog open={showPaymentModal} onOpenChange={setShowPaymentModal}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Procesar Pago</DialogTitle>
+        <DialogContent className="tech-button-3d bg-gradient-to-br from-white to-slate-50 dark:from-slate-800 dark:to-slate-900 border-2 border-green-200 dark:border-green-500/50 shadow-2xl max-w-md">
+          <DialogHeader className="text-center">
+            <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent flex items-center justify-center gap-3">
+              <DollarSign className="h-8 w-8 text-green-600" />
+              Cobrar Pago
+            </DialogTitle>
           </DialogHeader>
-          <div className="space-y-4">
-            <p>Procesar pago para la orden <strong>{selectedOrder?.number}</strong></p>
-            <div>
-              <Label htmlFor="payment-method">Método de pago</Label>
+          
+          <div className="space-y-6 py-4">
+            {/* Información de la orden */}
+            <div className="tech-button-3d bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/30 dark:to-blue-800/30 border-2 border-blue-200 dark:border-blue-500/30 rounded-xl p-4">
+              <div className="text-center space-y-2">
+                <div className="text-lg font-bold text-blue-800 dark:text-blue-300">
+                  Orden: {selectedOrder?.number}
+                </div>
+                <div className="text-3xl font-black bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
+                  {selectedOrder && formatCurrency(selectedOrder.total)}
+                </div>
+                <div className="text-sm text-slate-600 dark:text-slate-400">
+                  Cliente: {selectedOrder?.customerName}
+                </div>
+              </div>
+            </div>
+            
+            {/* Método de pago */}
+            <div className="space-y-3">
+              <Label className="text-lg font-bold text-slate-700 dark:text-slate-300">Método de pago</Label>
               <Select value={selectedPaymentMethod} onValueChange={setSelectedPaymentMethod} data-testid="select-payment-method">
-                <SelectTrigger>
-                  <SelectValue placeholder="Selecciona método de pago" />
+                <SelectTrigger className="tech-button-3d border-2 border-slate-300 dark:border-slate-600 rounded-lg h-12 text-lg">
+                  <SelectValue placeholder="Selecciona cómo pagar" />
                 </SelectTrigger>
-                <SelectContent>
-                  {paymentMethods.filter((pm: PaymentMethod) => pm.active).map((method: PaymentMethod) => (
-                    <SelectItem key={method.id} value={method.id}>
-                      {method.name}
-                    </SelectItem>
-                  ))}
+                <SelectContent className="tech-button-3d bg-gradient-to-br from-white to-slate-50 dark:from-slate-800 dark:to-slate-900 border-2 border-slate-200 dark:border-slate-600">
+                  {paymentMethods.filter((pm: PaymentMethod) => pm.active).map((method: PaymentMethod) => {
+                    const config = paymentMethodConfig[method.code as keyof typeof paymentMethodConfig] || { name: method.name, icon: CreditCard, color: 'text-gray-600' };
+                    const IconComponent = config.icon;
+                    return (
+                      <SelectItem key={method.id} value={method.id} className="hover:bg-gradient-to-br hover:from-green-100 hover:to-green-200 dark:hover:from-green-900/30 dark:hover:to-green-800/30 py-3 text-base">
+                        <div className="flex items-center gap-3">
+                          <IconComponent className={`h-5 w-5 ${config.color}`} />
+                          {method.name}
+                        </div>
+                      </SelectItem>
+                    );
+                  })}
                 </SelectContent>
               </Select>
             </div>
             
+            {/* Referencia si es necesaria */}
             {(() => {
               const method = paymentMethods.find((pm: PaymentMethod) => pm.id === selectedPaymentMethod);
               return method?.requiresReference && (
-                <div>
-                  <Label htmlFor="payment-reference">Referencia de pago</Label>
+                <div className="space-y-3">
+                  <Label className="text-lg font-bold text-slate-700 dark:text-slate-300">Referencia de pago</Label>
                   <Input
                     id="payment-reference"
-                    placeholder="Número de referencia"
+                    placeholder="Número de referencia o código"
                     value={paymentReference}
                     onChange={(e) => setPaymentReference(e.target.value)}
+                    className="tech-button-3d border-2 border-slate-300 dark:border-slate-600 rounded-lg h-12 text-lg"
                     data-testid="input-payment-reference"
                   />
                 </div>
               );
             })()}
             
-            <div className="flex justify-end gap-2">
-              <Button variant="outline" onClick={() => setShowPaymentModal(false)} data-testid="button-cancel-payment">
+            {/* Botones de acción */}
+            <div className="flex gap-4 pt-4">
+              <Button 
+                variant="outline" 
+                onClick={() => setShowPaymentModal(false)} 
+                className="tech-button-3d flex-1 bg-gradient-to-br from-slate-100 to-slate-200 hover:from-slate-200 hover:to-slate-300 dark:from-slate-700 dark:to-slate-800 border-2 border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 font-semibold py-3 rounded-lg"
+                data-testid="button-cancel-payment"
+              >
                 Cancelar
               </Button>
               <Button 
                 onClick={handlePayment} 
                 disabled={!selectedPaymentMethod || paymentMutation.isPending}
+                className="tech-button-3d flex-1 bg-gradient-to-br from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold py-3 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50"
                 data-testid="button-process-payment"
               >
-                {paymentMutation.isPending ? "Procesando..." : "Procesar Pago"}
+                {paymentMutation.isPending ? (
+                  <div className="flex items-center gap-2">
+                    <RefreshCw className="h-4 w-4 animate-spin" />
+                    Procesando...
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <DollarSign className="h-5 w-5" />
+                    COBRAR AHORA
+                  </div>
+                )}
               </Button>
             </div>
           </div>
