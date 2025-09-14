@@ -307,6 +307,7 @@ export class MemStorage implements IStorage {
       showAddressOnInvoice: true,
       showPhoneOnInvoice: true,
       showEmailOnInvoice: true,
+      taxRate: '0.18',
       updatedAt: new Date()
     };
 
@@ -578,6 +579,7 @@ export class MemStorage implements IStorage {
       showAddressOnInvoice: settings.showAddressOnInvoice ?? true,
       showPhoneOnInvoice: settings.showPhoneOnInvoice ?? true,
       showEmailOnInvoice: settings.showEmailOnInvoice ?? true,
+      taxRate: settings.taxRate ?? '0.18',
       updatedAt: new Date()
     };
     this.companySettings = updated;

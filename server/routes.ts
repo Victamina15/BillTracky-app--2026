@@ -1,7 +1,7 @@
 import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertCustomerSchema, insertServiceSchema, insertInvoiceSchema, insertInvoiceItemSchema, insertPaymentMethodSchema, insertCompanySettingsSchema, insertMessageTemplateSchema, insertEmployeeSchema, patchOrderStatusSchema, patchOrderPaymentSchema, patchOrderCancelSchema, patchInvoicePaySchema, insertWhatsappConfigSchema } from "@shared/schema";
+import { insertCustomerSchema, insertServiceSchema, insertInvoiceSchema, insertInvoiceItemSchema, insertPaymentMethodSchema, insertCompanySettingsSchema, insertMessageTemplateSchema, insertEmployeeSchema, patchOrderStatusSchema, patchOrderPaymentSchema, patchOrderCancelSchema, patchInvoicePaySchema, insertWhatsappConfigSchema, createCashClosureSchema, insertCashClosurePaymentSchema, metricsQuerySchema, cashClosuresQuerySchema, insertAirtableConfigSchema } from "@shared/schema";
 import { z } from "zod";
 import type { WhatsappConfig } from "@shared/schema";
 
@@ -733,6 +733,245 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { id } = req.params;
       await storage.deleteEmployee(id);
       res.json({ message: "Employee deleted successfully" });
+    } catch (error) {
+      res.status(500).json({ message: "Server error" });
+    }
+  });
+
+  // Cash Closures Routes
+  app.get("/api/cash-closures", requireAuthentication, async (req, res) => {
+    try {
+      const queryData = cashClosuresQuerySchema.parse(req.query);
+      const closures = await storage.getCashClosures(
+        queryData.dateFrom,
+        queryData.dateTo
+      );
+      res.json(closures);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid query parameters", errors: error.errors });
+      }
+      res.status(500).json({ message: "Server error" });
+    }
+  });
+
+  app.get("/api/cash-closures/:id", requireAuthentication, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const closure = await storage.getCashClosure(id);
+      
+      if (!closure) {
+        return res.status(404).json({ message: "Cash closure not found" });
+      }
+      
+      // Get payment breakdown
+      const payments = await storage.getCashClosurePayments(id);
+      
+      res.json({ ...closure, payments });
+    } catch (error) {
+      res.status(500).json({ message: "Server error" });
+    }
+  });
+
+  app.get("/api/cash-closures/by-date/:date", requireAuthentication, async (req, res) => {
+    try {
+      const { date } = req.params;
+      const closure = await storage.getCashClosureByDate(date);
+      
+      if (!closure) {
+        return res.status(404).json({ message: "No closure found for this date" });
+      }
+      
+      // Get payment breakdown
+      const payments = await storage.getCashClosurePayments(closure.id);
+      
+      res.json({ ...closure, payments });
+    } catch (error) {
+      res.status(500).json({ message: "Server error" });
+    }
+  });
+
+  app.post("/api/cash-closures", requireAuthentication, async (req: AuthenticatedRequest, res) => {
+    try {
+      const closureData = createCashClosureSchema.parse(req.body);
+      
+      // Check if closure already exists for this date
+      const existingClosure = await storage.getCashClosureByDate(closureData.closingDate);
+      if (existingClosure) {
+        return res.status(409).json({ message: "Cash closure already exists for this date" });
+      }
+      
+      // Get company settings for tax calculation
+      const companySettings = await storage.getCompanySettings();
+      const taxRate = companySettings?.taxRate ? parseFloat(companySettings.taxRate) : 0.18; // Use configured tax rate or fallback to 18%
+      
+      // Calculate system metrics for the closing date
+      const metrics = await storage.getDailyMetrics(closureData.closingDate);
+      
+      // Extract ONLY cash payments from payment breakdown for accurate cash drawer calculation
+      const cashPayment = metrics.paymentBreakdown.find(payment => 
+        payment.method.toLowerCase() === 'cash' || payment.method.toLowerCase() === 'efectivo'
+      );
+      const cashPaymentsTotal = cashPayment ? cashPayment.total : 0;
+      
+      // Calculate expected cash in drawer (opening cash + cash payments received)
+      const openingCashAmount = parseFloat(closureData.openingCash?.toString() ?? "0");
+      const systemCash = openingCashAmount + cashPaymentsTotal;
+      
+      // Calculate variance if counted cash was provided (counted vs expected cash)
+      const variance = closureData.countedCash !== undefined 
+        ? closureData.countedCash - systemCash 
+        : null;
+
+      // Create closure with snapshot data
+      const closure = await storage.createCashClosure({
+        closingDate: new Date(closureData.closingDate),
+        employeeId: req.employee.id,
+        openingCash: closureData.openingCash?.toString() ?? "0",
+        countedCash: closureData.countedCash?.toString() ?? null,
+        systemCash: systemCash.toString(),
+        variance: variance?.toString() ?? null,
+        notes: closureData.notes ?? null,
+        snapshotSubtotal: (metrics.totalSales / (1 + taxRate)).toString(),
+        snapshotTax: (metrics.totalSales - (metrics.totalSales / (1 + taxRate))).toString(),
+        snapshotTotal: metrics.totalSales.toString(),
+        snapshotTotalInvoices: metrics.totalInvoices,
+        snapshotDeliveredInvoices: metrics.deliveredInvoices,
+        snapshotPendingInvoices: metrics.pendingInvoices,
+        snapshotTotalItems: metrics.totalItems
+      });
+
+      // Create payment breakdown records
+      for (const payment of metrics.paymentBreakdown) {
+        await storage.createCashClosurePayment({
+          cashClosureId: closure.id,
+          methodCode: payment.method,
+          methodName: payment.method, // Would ideally map this to proper name
+          quantity: payment.count,
+          total: payment.total.toString()
+        });
+      }
+
+      // Get complete closure with payments
+      const payments = await storage.getCashClosurePayments(closure.id);
+      
+      res.status(201).json({ ...closure, payments });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Server error" });
+    }
+  });
+
+  app.put("/api/cash-closures/:id", requireAuthentication, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const updates = req.body;
+      
+      // Calculate variance if countedCash is being updated
+      if (updates.countedCash !== undefined && updates.systemCash) {
+        updates.variance = (parseFloat(updates.countedCash) - parseFloat(updates.systemCash)).toString();
+      }
+      
+      const closure = await storage.updateCashClosure(id, updates);
+      
+      if (!closure) {
+        return res.status(404).json({ message: "Cash closure not found" });
+      }
+      
+      res.json(closure);
+    } catch (error) {
+      res.status(500).json({ message: "Server error" });
+    }
+  });
+
+  // Metrics Routes
+  app.get("/api/metrics/daily/:date", requireAuthentication, async (req, res) => {
+    try {
+      const { date } = req.params;
+      const metrics = await storage.getDailyMetrics(date);
+      res.json(metrics);
+    } catch (error) {
+      res.status(500).json({ message: "Server error" });
+    }
+  });
+
+  app.get("/api/metrics/monthly/:month", requireAuthentication, async (req, res) => {
+    try {
+      const { month } = req.params; // Format: YYYY-MM
+      const metrics = await storage.getMonthlyMetrics(month);
+      res.json(metrics);
+    } catch (error) {
+      res.status(500).json({ message: "Server error" });
+    }
+  });
+
+  app.get("/api/metrics/range", requireAuthentication, async (req, res) => {
+    try {
+      const queryData = metricsQuerySchema.parse(req.query);
+      
+      if (queryData.from && queryData.to) {
+        const metrics = await storage.getDateRangeMetrics(queryData.from, queryData.to);
+        res.json(metrics);
+      } else if (queryData.month) {
+        const metrics = await storage.getMonthlyMetrics(queryData.month);
+        res.json(metrics);
+      } else if (queryData.date) {
+        const metrics = await storage.getDailyMetrics(queryData.date);
+        res.json(metrics);
+      } else {
+        res.status(400).json({ message: "Invalid query parameters" });
+      }
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid query parameters", errors: error.errors });
+      }
+      res.status(500).json({ message: "Server error" });
+    }
+  });
+
+  // Airtable Configuration Routes
+  app.get("/api/airtable/config", requireAuthentication, async (req, res) => {
+    try {
+      const config = await storage.getAirtableConfig();
+      if (!config) {
+        return res.json({ enabled: false });
+      }
+      
+      // Don't expose the API token in responses
+      const { apiToken, ...safeConfig } = config;
+      res.json({ ...safeConfig, hasApiToken: !!apiToken });
+    } catch (error) {
+      res.status(500).json({ message: "Server error" });
+    }
+  });
+
+  app.put("/api/airtable/config", requireAuthentication, async (req, res) => {
+    try {
+      const configData = insertAirtableConfigSchema.parse(req.body);
+      const config = await storage.updateAirtableConfig(configData);
+      
+      // Don't expose the API token in responses
+      const { apiToken, ...safeConfig } = config;
+      res.json({ ...safeConfig, hasApiToken: !!apiToken });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Server error" });
+    }
+  });
+
+  // Airtable Sync Queue Routes
+  app.get("/api/airtable/sync-queue", async (req, res) => {
+    try {
+      const { status, entityType } = req.query;
+      const items = await storage.getAirtableSyncQueueItems(
+        status as string | undefined,
+        entityType as string | undefined
+      );
+      res.json(items);
     } catch (error) {
       res.status(500).json({ message: "Server error" });
     }

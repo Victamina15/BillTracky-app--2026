@@ -98,6 +98,7 @@ export const companySettings = pgTable("company_settings", {
   website: text("website"),
   logo: text("logo"),
   invoiceFooter: text("invoice_footer"),
+  taxRate: decimal("tax_rate", { precision: 5, scale: 4 }).default("0.18"), // Tax rate (e.g., 0.18 for 18%)
   showRncOnInvoice: boolean("show_rnc_on_invoice").default(true),
   showAddressOnInvoice: boolean("show_address_on_invoice").default(true),
   showPhoneOnInvoice: boolean("show_phone_on_invoice").default(true),
@@ -457,6 +458,11 @@ export const metricsQuerySchema = z.object({
   range: z.enum(['7d', '30d', '90d']).optional(),
 });
 
+export const cashClosuresQuerySchema = z.object({
+  dateFrom: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid dateFrom format, expected YYYY-MM-DD").optional(),
+  dateTo: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid dateTo format, expected YYYY-MM-DD").optional(),
+});
+
 export const airtableConfigSchema = z.object({
   enabled: z.boolean(),
   baseId: z.string().min(1).optional(),
@@ -471,4 +477,5 @@ export type PatchOrderCancel = z.infer<typeof patchOrderCancelSchema>;
 export type PatchInvoicePay = z.infer<typeof patchInvoicePaySchema>;
 export type CreateCashClosure = z.infer<typeof createCashClosureSchema>;
 export type MetricsQuery = z.infer<typeof metricsQuerySchema>;
+export type CashClosuresQuery = z.infer<typeof cashClosuresQuerySchema>;
 export type AirtableConfigUpdate = z.infer<typeof airtableConfigSchema>;
