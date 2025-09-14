@@ -1,4 +1,4 @@
-import { type Employee, type InsertEmployee, type Customer, type InsertCustomer, type Service, type InsertService, type Invoice, type InsertInvoice, type InvoiceItem, type InsertInvoiceItem, type PaymentMethod, type InsertPaymentMethod, type CompanySettings, type InsertCompanySettings, type MessageTemplate, type InsertMessageTemplate, type Counter, type InsertCounter, type WhatsappConfig, type InsertWhatsappConfig, employees, customers, services, invoices, invoiceItems, paymentMethods, companySettings, messageTemplates, counters, whatsappConfig } from "@shared/schema";
+import { type Employee, type InsertEmployee, type Customer, type InsertCustomer, type Service, type InsertService, type Invoice, type InsertInvoice, type InvoiceItem, type InsertInvoiceItem, type PaymentMethod, type InsertPaymentMethod, type CompanySettings, type InsertCompanySettings, type MessageTemplate, type InsertMessageTemplate, type Counter, type InsertCounter, type WhatsappConfig, type InsertWhatsappConfig, type CashClosure, type InsertCashClosure, type CashClosurePayment, type InsertCashClosurePayment, type AirtableConfig, type InsertAirtableConfig, type AirtableSyncQueue, type InsertAirtableSyncQueue, employees, customers, services, invoices, invoiceItems, paymentMethods, companySettings, messageTemplates, counters, whatsappConfig, cashClosures, cashClosurePayments, airtableConfig, airtableSyncQueue } from "@shared/schema";
 import { randomUUID } from "crypto";
 import { db } from "./db";
 import { eq, desc, sql } from "drizzle-orm";
@@ -59,6 +59,52 @@ export interface IStorage {
   // WhatsApp Configuration
   getWhatsappConfig(): Promise<WhatsappConfig | undefined>;
   updateWhatsappConfig(config: InsertWhatsappConfig): Promise<WhatsappConfig>;
+  
+  // Cash Closures
+  getCashClosure(id: string): Promise<CashClosure | undefined>;
+  getCashClosures(dateFrom?: string, dateTo?: string): Promise<CashClosure[]>;
+  getCashClosureByDate(date: string): Promise<CashClosure | undefined>;
+  createCashClosure(closure: InsertCashClosure): Promise<CashClosure>;
+  updateCashClosure(id: string, updates: Partial<CashClosure>): Promise<CashClosure | undefined>;
+  
+  // Cash Closure Payments
+  getCashClosurePayments(cashClosureId: string): Promise<CashClosurePayment[]>;
+  createCashClosurePayment(payment: InsertCashClosurePayment): Promise<CashClosurePayment>;
+  deleteCashClosurePayments(cashClosureId: string): Promise<void>;
+  
+  // Airtable Configuration
+  getAirtableConfig(): Promise<AirtableConfig | undefined>;
+  updateAirtableConfig(config: InsertAirtableConfig): Promise<AirtableConfig>;
+  
+  // Airtable Sync Queue
+  getAirtableSyncQueueItems(status?: string, entityType?: string): Promise<AirtableSyncQueue[]>;
+  createAirtableSyncQueueItem(item: InsertAirtableSyncQueue): Promise<AirtableSyncQueue>;
+  updateAirtableSyncQueueItem(id: string, updates: Partial<AirtableSyncQueue>): Promise<AirtableSyncQueue | undefined>;
+  deleteAirtableSyncQueueItem(id: string): Promise<void>;
+  
+  // Metrics and Analytics
+  getDailyMetrics(date: string): Promise<{
+    totalSales: number;
+    totalInvoices: number;
+    totalItems: number;
+    deliveredInvoices: number;
+    pendingInvoices: number;
+    paymentBreakdown: Array<{ method: string; total: number; count: number }>;
+  }>;
+  getMonthlyMetrics(month: string): Promise<{
+    totalSales: number;
+    totalInvoices: number;
+    averageDailySales: number;
+    bestDay: { date: string; sales: number };
+    paymentBreakdown: Array<{ method: string; total: number; count: number }>;
+  }>;
+  getDateRangeMetrics(from: string, to: string): Promise<{
+    totalSales: number;
+    totalInvoices: number;
+    dailyTrends: Array<{ date: string; sales: number; invoices: number }>;
+    topServices: Array<{ name: string; quantity: number; revenue: number }>;
+    paymentBreakdown: Array<{ method: string; total: number; count: number }>;
+  }>;
 }
 
 export class MemStorage implements IStorage {
@@ -71,6 +117,10 @@ export class MemStorage implements IStorage {
   private companySettings: CompanySettings | undefined;
   private messageTemplates: Map<string, MessageTemplate>;
   private whatsappConfig: WhatsappConfig | undefined;
+  private cashClosures: Map<string, CashClosure>;
+  private cashClosurePayments: Map<string, CashClosurePayment>;
+  private airtableConfig: AirtableConfig | undefined;
+  private airtableSyncQueue: Map<string, AirtableSyncQueue>;
   private invoiceCounter: number;
 
   constructor() {
@@ -82,6 +132,10 @@ export class MemStorage implements IStorage {
     this.paymentMethods = new Map();
     this.messageTemplates = new Map();
     this.whatsappConfig = undefined;
+    this.cashClosures = new Map();
+    this.cashClosurePayments = new Map();
+    this.airtableConfig = undefined;
+    this.airtableSyncQueue = new Map();
     this.invoiceCounter = 10;
     
     this.seedData();
@@ -588,6 +642,307 @@ export class MemStorage implements IStorage {
     this.whatsappConfig = updated;
     return updated;
   }
+
+  // Cash Closures
+  async getCashClosure(id: string): Promise<CashClosure | undefined> {
+    return this.cashClosures.get(id);
+  }
+
+  async getCashClosures(dateFrom?: string, dateTo?: string): Promise<CashClosure[]> {
+    const allClosures = Array.from(this.cashClosures.values());
+    if (!dateFrom && !dateTo) {
+      return allClosures.sort((a, b) => new Date(b.closingDate).getTime() - new Date(a.closingDate).getTime());
+    }
+    
+    return allClosures.filter(closure => {
+      const closureDate = new Date(closure.closingDate).toISOString().split('T')[0];
+      if (dateFrom && closureDate < dateFrom) return false;
+      if (dateTo && closureDate > dateTo) return false;
+      return true;
+    }).sort((a, b) => new Date(b.closingDate).getTime() - new Date(a.closingDate).getTime());
+  }
+
+  async getCashClosureByDate(date: string): Promise<CashClosure | undefined> {
+    return Array.from(this.cashClosures.values()).find(closure => 
+      new Date(closure.closingDate).toISOString().split('T')[0] === date
+    );
+  }
+
+  async createCashClosure(closure: InsertCashClosure): Promise<CashClosure> {
+    const id = randomUUID();
+    const newClosure: CashClosure = {
+      ...closure,
+      id,
+      openedAt: new Date(),
+      closedAt: closure.closedAt ?? null,
+      openingCash: closure.openingCash ?? "0",
+      countedCash: closure.countedCash ?? null,
+      variance: closure.variance ?? null,
+      notes: closure.notes ?? null,
+      createdAt: new Date()
+    };
+    this.cashClosures.set(id, newClosure);
+    return newClosure;
+  }
+
+  async updateCashClosure(id: string, updates: Partial<CashClosure>): Promise<CashClosure | undefined> {
+    const closure = this.cashClosures.get(id);
+    if (!closure) return undefined;
+    
+    const updated = { ...closure, ...updates };
+    this.cashClosures.set(id, updated);
+    return updated;
+  }
+
+  // Cash Closure Payments
+  async getCashClosurePayments(cashClosureId: string): Promise<CashClosurePayment[]> {
+    return Array.from(this.cashClosurePayments.values()).filter(payment => 
+      payment.cashClosureId === cashClosureId
+    );
+  }
+
+  async createCashClosurePayment(payment: InsertCashClosurePayment): Promise<CashClosurePayment> {
+    const id = randomUUID();
+    const newPayment: CashClosurePayment = { ...payment, id };
+    this.cashClosurePayments.set(id, newPayment);
+    return newPayment;
+  }
+
+  async deleteCashClosurePayments(cashClosureId: string): Promise<void> {
+    const payments = await this.getCashClosurePayments(cashClosureId);
+    payments.forEach(payment => this.cashClosurePayments.delete(payment.id));
+  }
+
+  // Airtable Configuration
+  async getAirtableConfig(): Promise<AirtableConfig | undefined> {
+    return this.airtableConfig;
+  }
+
+  async updateAirtableConfig(config: InsertAirtableConfig): Promise<AirtableConfig> {
+    const updated: AirtableConfig = {
+      ...config,
+      id: this.airtableConfig?.id || randomUUID(),
+      enabled: config.enabled ?? false,
+      baseId: config.baseId ?? null,
+      tableInvoices: config.tableInvoices ?? 'Invoices',
+      tableInvoiceItems: config.tableInvoiceItems ?? 'Invoice Items',
+      apiToken: config.apiToken ?? null,
+      lastSyncDate: config.lastSyncDate ?? null,
+      syncStatus: config.syncStatus ?? 'idle',
+      lastError: config.lastError ?? null,
+      updatedAt: new Date()
+    };
+    this.airtableConfig = updated;
+    return updated;
+  }
+
+  // Airtable Sync Queue
+  async getAirtableSyncQueueItems(status?: string, entityType?: string): Promise<AirtableSyncQueue[]> {
+    return Array.from(this.airtableSyncQueue.values()).filter(item => {
+      if (status && item.status !== status) return false;
+      if (entityType && item.entityType !== entityType) return false;
+      return true;
+    }).sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime());
+  }
+
+  async createAirtableSyncQueueItem(item: InsertAirtableSyncQueue): Promise<AirtableSyncQueue> {
+    const id = randomUUID();
+    const newItem: AirtableSyncQueue = {
+      ...item,
+      id,
+      status: item.status ?? 'pending',
+      retries: item.retries ?? 0,
+      maxRetries: item.maxRetries ?? 3,
+      lastError: item.lastError ?? null,
+      externalId: item.externalId ?? null,
+      lastSyncedAt: item.lastSyncedAt ?? null,
+      createdAt: new Date()
+    };
+    this.airtableSyncQueue.set(id, newItem);
+    return newItem;
+  }
+
+  async updateAirtableSyncQueueItem(id: string, updates: Partial<AirtableSyncQueue>): Promise<AirtableSyncQueue | undefined> {
+    const item = this.airtableSyncQueue.get(id);
+    if (!item) return undefined;
+    
+    const updated = { ...item, ...updates };
+    this.airtableSyncQueue.set(id, updated);
+    return updated;
+  }
+
+  async deleteAirtableSyncQueueItem(id: string): Promise<void> {
+    this.airtableSyncQueue.delete(id);
+  }
+
+  // Metrics and Analytics
+  async getDailyMetrics(date: string): Promise<{
+    totalSales: number;
+    totalInvoices: number;
+    totalItems: number;
+    deliveredInvoices: number;
+    pendingInvoices: number;
+    paymentBreakdown: Array<{ method: string; total: number; count: number }>;
+  }> {
+    const invoicesOfDay = Array.from(this.invoices.values()).filter(invoice => {
+      const invoiceDate = new Date(invoice.date || 0).toISOString().split('T')[0];
+      return invoiceDate === date;
+    });
+
+    const totalSales = invoicesOfDay.reduce((sum, inv) => sum + parseFloat(inv.total), 0);
+    const totalInvoices = invoicesOfDay.length;
+    const deliveredInvoices = invoicesOfDay.filter(inv => inv.delivered).length;
+    const pendingInvoices = invoicesOfDay.filter(inv => !inv.delivered && inv.status !== 'cancelled').length;
+    
+    // Get total items
+    const invoiceIds = invoicesOfDay.map(inv => inv.id);
+    const items = Array.from(this.invoiceItems.values()).filter(item => invoiceIds.includes(item.invoiceId));
+    const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
+
+    // Payment breakdown
+    const paymentBreakdown = new Map<string, { total: number; count: number }>();
+    invoicesOfDay.forEach(invoice => {
+      if (!invoice.paymentMethod || invoice.paymentMethod === 'pending') return;
+      const current = paymentBreakdown.get(invoice.paymentMethod) || { total: 0, count: 0 };
+      paymentBreakdown.set(invoice.paymentMethod, {
+        total: current.total + parseFloat(invoice.total),
+        count: current.count + 1
+      });
+    });
+
+    return {
+      totalSales,
+      totalInvoices,
+      totalItems,
+      deliveredInvoices,
+      pendingInvoices,
+      paymentBreakdown: Array.from(paymentBreakdown.entries()).map(([method, data]) => ({
+        method,
+        total: data.total,
+        count: data.count
+      }))
+    };
+  }
+
+  async getMonthlyMetrics(month: string): Promise<{
+    totalSales: number;
+    totalInvoices: number;
+    averageDailySales: number;
+    bestDay: { date: string; sales: number };
+    paymentBreakdown: Array<{ method: string; total: number; count: number }>;
+  }> {
+    const invoicesOfMonth = Array.from(this.invoices.values()).filter(invoice => {
+      const invoiceMonth = new Date(invoice.date || 0).toISOString().substring(0, 7);
+      return invoiceMonth === month;
+    });
+
+    const totalSales = invoicesOfMonth.reduce((sum, inv) => sum + parseFloat(inv.total), 0);
+    const totalInvoices = invoicesOfMonth.length;
+    
+    // Group by day to find best day and calculate average
+    const dailySales = new Map<string, number>();
+    invoicesOfMonth.forEach(invoice => {
+      const day = new Date(invoice.date || 0).toISOString().split('T')[0];
+      const current = dailySales.get(day) || 0;
+      dailySales.set(day, current + parseFloat(invoice.total));
+    });
+
+    const bestDay = Array.from(dailySales.entries()).reduce((best, [date, sales]) => 
+      sales > best.sales ? { date, sales } : best, { date: '', sales: 0 });
+    
+    const averageDailySales = dailySales.size > 0 ? totalSales / dailySales.size : 0;
+
+    // Payment breakdown
+    const paymentBreakdown = new Map<string, { total: number; count: number }>();
+    invoicesOfMonth.forEach(invoice => {
+      if (!invoice.paymentMethod || invoice.paymentMethod === 'pending') return;
+      const current = paymentBreakdown.get(invoice.paymentMethod) || { total: 0, count: 0 };
+      paymentBreakdown.set(invoice.paymentMethod, {
+        total: current.total + parseFloat(invoice.total),
+        count: current.count + 1
+      });
+    });
+
+    return {
+      totalSales,
+      totalInvoices,
+      averageDailySales,
+      bestDay,
+      paymentBreakdown: Array.from(paymentBreakdown.entries()).map(([method, data]) => ({
+        method,
+        total: data.total,
+        count: data.count
+      }))
+    };
+  }
+
+  async getDateRangeMetrics(from: string, to: string): Promise<{
+    totalSales: number;
+    totalInvoices: number;
+    dailyTrends: Array<{ date: string; sales: number; invoices: number }>;
+    topServices: Array<{ name: string; quantity: number; revenue: number }>;
+    paymentBreakdown: Array<{ method: string; total: number; count: number }>;
+  }> {
+    const invoicesInRange = Array.from(this.invoices.values()).filter(invoice => {
+      const invoiceDate = new Date(invoice.date || 0).toISOString().split('T')[0];
+      return invoiceDate >= from && invoiceDate <= to;
+    });
+
+    const totalSales = invoicesInRange.reduce((sum, inv) => sum + parseFloat(inv.total), 0);
+    const totalInvoices = invoicesInRange.length;
+
+    // Daily trends
+    const dailyTrends = new Map<string, { sales: number; invoices: number }>();
+    invoicesInRange.forEach(invoice => {
+      const day = new Date(invoice.date || 0).toISOString().split('T')[0];
+      const current = dailyTrends.get(day) || { sales: 0, invoices: 0 };
+      dailyTrends.set(day, {
+        sales: current.sales + parseFloat(invoice.total),
+        invoices: current.invoices + 1
+      });
+    });
+
+    // Top services (simplified implementation)
+    const serviceStats = new Map<string, { quantity: number; revenue: number }>();
+    const invoiceIds = invoicesInRange.map(inv => inv.id);
+    const items = Array.from(this.invoiceItems.values()).filter(item => invoiceIds.includes(item.invoiceId));
+    
+    items.forEach(item => {
+      const current = serviceStats.get(item.serviceName) || { quantity: 0, revenue: 0 };
+      serviceStats.set(item.serviceName, {
+        quantity: current.quantity + item.quantity,
+        revenue: current.revenue + parseFloat(item.unitPrice) * item.quantity
+      });
+    });
+
+    // Payment breakdown
+    const paymentBreakdown = new Map<string, { total: number; count: number }>();
+    invoicesInRange.forEach(invoice => {
+      if (!invoice.paymentMethod || invoice.paymentMethod === 'pending') return;
+      const current = paymentBreakdown.get(invoice.paymentMethod) || { total: 0, count: 0 };
+      paymentBreakdown.set(invoice.paymentMethod, {
+        total: current.total + parseFloat(invoice.total),
+        count: current.count + 1
+      });
+    });
+
+    return {
+      totalSales,
+      totalInvoices,
+      dailyTrends: Array.from(dailyTrends.entries())
+        .map(([date, data]) => ({ date, ...data }))
+        .sort((a, b) => a.date.localeCompare(b.date)),
+      topServices: Array.from(serviceStats.entries())
+        .map(([name, data]) => ({ name, ...data }))
+        .sort((a, b) => b.revenue - a.revenue)
+        .slice(0, 10),
+      paymentBreakdown: Array.from(paymentBreakdown.entries()).map(([method, data]) => ({
+        method,
+        total: data.total,
+        count: data.count
+      }))
+    };
+  }
 }
 
 // DatabaseStorage implementation using PostgreSQL with Drizzle ORM
@@ -877,6 +1232,286 @@ export class DatabaseStorage implements IStorage {
       const [newConfig] = await db.insert(whatsappConfig).values(config).returning();
       return newConfig;
     }
+  }
+
+  // Cash Closures
+  async getCashClosure(id: string): Promise<CashClosure | undefined> {
+    const [closure] = await db.select().from(cashClosures).where(eq(cashClosures.id, id));
+    return closure || undefined;
+  }
+
+  async getCashClosures(dateFrom?: string, dateTo?: string): Promise<CashClosure[]> {
+    const conditions = [];
+    if (dateFrom) conditions.push(sql`${cashClosures.closingDate} >= ${dateFrom}`);
+    if (dateTo) conditions.push(sql`${cashClosures.closingDate} <= ${dateTo}`);
+    
+    if (conditions.length > 0) {
+      return await db.select().from(cashClosures)
+        .where(sql.join(conditions, sql` AND `))
+        .orderBy(desc(cashClosures.closingDate));
+    }
+    
+    return await db.select().from(cashClosures)
+      .orderBy(desc(cashClosures.closingDate));
+  }
+
+  async getCashClosureByDate(date: string): Promise<CashClosure | undefined> {
+    const [closure] = await db.select().from(cashClosures)
+      .where(sql`DATE(${cashClosures.closingDate}) = ${date}`);
+    return closure || undefined;
+  }
+
+  async createCashClosure(closure: InsertCashClosure): Promise<CashClosure> {
+    const [newClosure] = await db.insert(cashClosures).values(closure).returning();
+    return newClosure;
+  }
+
+  async updateCashClosure(id: string, updates: Partial<CashClosure>): Promise<CashClosure | undefined> {
+    const [updated] = await db.update(cashClosures)
+      .set(updates)
+      .where(eq(cashClosures.id, id))
+      .returning();
+    return updated || undefined;
+  }
+
+  // Cash Closure Payments
+  async getCashClosurePayments(cashClosureId: string): Promise<CashClosurePayment[]> {
+    return await db.select().from(cashClosurePayments)
+      .where(eq(cashClosurePayments.cashClosureId, cashClosureId));
+  }
+
+  async createCashClosurePayment(payment: InsertCashClosurePayment): Promise<CashClosurePayment> {
+    const [newPayment] = await db.insert(cashClosurePayments).values(payment).returning();
+    return newPayment;
+  }
+
+  async deleteCashClosurePayments(cashClosureId: string): Promise<void> {
+    await db.delete(cashClosurePayments).where(eq(cashClosurePayments.cashClosureId, cashClosureId));
+  }
+
+  // Airtable Configuration
+  async getAirtableConfig(): Promise<AirtableConfig | undefined> {
+    const [config] = await db.select().from(airtableConfig);
+    return config || undefined;
+  }
+
+  async updateAirtableConfig(config: InsertAirtableConfig): Promise<AirtableConfig> {
+    const existing = await this.getAirtableConfig();
+    
+    if (existing) {
+      const [updated] = await db.update(airtableConfig)
+        .set({ ...config, updatedAt: new Date() })
+        .where(eq(airtableConfig.id, existing.id))
+        .returning();
+      return updated;
+    } else {
+      const [newConfig] = await db.insert(airtableConfig).values(config).returning();
+      return newConfig;
+    }
+  }
+
+  // Airtable Sync Queue
+  async getAirtableSyncQueueItems(status?: string, entityType?: string): Promise<AirtableSyncQueue[]> {
+    const conditions = [];
+    if (status) conditions.push(eq(airtableSyncQueue.status, status));
+    if (entityType) conditions.push(eq(airtableSyncQueue.entityType, entityType));
+    
+    if (conditions.length > 0) {
+      return await db.select().from(airtableSyncQueue)
+        .where(sql.join(conditions, sql` AND `))
+        .orderBy(desc(airtableSyncQueue.createdAt));
+    }
+    
+    return await db.select().from(airtableSyncQueue)
+      .orderBy(desc(airtableSyncQueue.createdAt));
+  }
+
+  async createAirtableSyncQueueItem(item: InsertAirtableSyncQueue): Promise<AirtableSyncQueue> {
+    const [newItem] = await db.insert(airtableSyncQueue).values(item).returning();
+    return newItem;
+  }
+
+  async updateAirtableSyncQueueItem(id: string, updates: Partial<AirtableSyncQueue>): Promise<AirtableSyncQueue | undefined> {
+    const [updated] = await db.update(airtableSyncQueue)
+      .set(updates)
+      .where(eq(airtableSyncQueue.id, id))
+      .returning();
+    return updated || undefined;
+  }
+
+  async deleteAirtableSyncQueueItem(id: string): Promise<void> {
+    await db.delete(airtableSyncQueue).where(eq(airtableSyncQueue.id, id));
+  }
+
+  // Metrics and Analytics (simplified implementations using raw SQL)
+  async getDailyMetrics(date: string): Promise<{
+    totalSales: number;
+    totalInvoices: number;
+    totalItems: number;
+    deliveredInvoices: number;
+    pendingInvoices: number;
+    paymentBreakdown: Array<{ method: string; total: number; count: number }>;
+  }> {
+    const dateCondition = sql`DATE(${invoices.date}) = ${date}`;
+    
+    const [salesData] = await db
+      .select({
+        totalSales: sql<number>`COALESCE(SUM(CAST(${invoices.total} AS DECIMAL)), 0)`,
+        totalInvoices: sql<number>`COUNT(*)`,
+        deliveredInvoices: sql<number>`SUM(CASE WHEN ${invoices.delivered} = true THEN 1 ELSE 0 END)`,
+        pendingInvoices: sql<number>`SUM(CASE WHEN ${invoices.delivered} = false AND ${invoices.status} != 'cancelled' THEN 1 ELSE 0 END)`
+      })
+      .from(invoices)
+      .where(dateCondition);
+
+    const [itemsData] = await db
+      .select({
+        totalItems: sql<number>`COALESCE(SUM(${invoiceItems.quantity}), 0)`
+      })
+      .from(invoiceItems)
+      .innerJoin(invoices, eq(invoiceItems.invoiceId, invoices.id))
+      .where(dateCondition);
+
+    const paymentBreakdown = await db
+      .select({
+        method: invoices.paymentMethod,
+        total: sql<number>`COALESCE(SUM(CAST(${invoices.total} AS DECIMAL)), 0)`,
+        count: sql<number>`COUNT(*)`
+      })
+      .from(invoices)
+      .where(sql`${dateCondition} AND ${invoices.paymentMethod} IS NOT NULL AND ${invoices.paymentMethod} != 'pending'`)
+      .groupBy(invoices.paymentMethod);
+
+    return {
+      totalSales: salesData?.totalSales || 0,
+      totalInvoices: salesData?.totalInvoices || 0,
+      totalItems: itemsData?.totalItems || 0,
+      deliveredInvoices: salesData?.deliveredInvoices || 0,
+      pendingInvoices: salesData?.pendingInvoices || 0,
+      paymentBreakdown: paymentBreakdown.map(pb => ({
+        method: pb.method || '',
+        total: pb.total,
+        count: pb.count
+      }))
+    };
+  }
+
+  async getMonthlyMetrics(month: string): Promise<{
+    totalSales: number;
+    totalInvoices: number;
+    averageDailySales: number;
+    bestDay: { date: string; sales: number };
+    paymentBreakdown: Array<{ method: string; total: number; count: number }>;
+  }> {
+    const monthCondition = sql`DATE_TRUNC('month', ${invoices.date}) = ${month + '-01'}`;
+    
+    const [monthlyData] = await db
+      .select({
+        totalSales: sql<number>`COALESCE(SUM(CAST(${invoices.total} AS DECIMAL)), 0)`,
+        totalInvoices: sql<number>`COUNT(*)`
+      })
+      .from(invoices)
+      .where(monthCondition);
+
+    const dailySales = await db
+      .select({
+        date: sql<string>`DATE(${invoices.date})`,
+        sales: sql<number>`COALESCE(SUM(CAST(${invoices.total} AS DECIMAL)), 0)`
+      })
+      .from(invoices)
+      .where(monthCondition)
+      .groupBy(sql`DATE(${invoices.date})`);
+
+    const bestDay = dailySales.reduce((best, day) => 
+      day.sales > best.sales ? { date: day.date, sales: day.sales } : best, 
+      { date: '', sales: 0 }
+    );
+
+    const paymentBreakdown = await db
+      .select({
+        method: invoices.paymentMethod,
+        total: sql<number>`COALESCE(SUM(CAST(${invoices.total} AS DECIMAL)), 0)`,
+        count: sql<number>`COUNT(*)`
+      })
+      .from(invoices)
+      .where(sql`${monthCondition} AND ${invoices.paymentMethod} IS NOT NULL AND ${invoices.paymentMethod} != 'pending'`)
+      .groupBy(invoices.paymentMethod);
+
+    return {
+      totalSales: monthlyData?.totalSales || 0,
+      totalInvoices: monthlyData?.totalInvoices || 0,
+      averageDailySales: dailySales.length > 0 ? (monthlyData?.totalSales || 0) / dailySales.length : 0,
+      bestDay,
+      paymentBreakdown: paymentBreakdown.map(pb => ({
+        method: pb.method || '',
+        total: pb.total,
+        count: pb.count
+      }))
+    };
+  }
+
+  async getDateRangeMetrics(from: string, to: string): Promise<{
+    totalSales: number;
+    totalInvoices: number;
+    dailyTrends: Array<{ date: string; sales: number; invoices: number }>;
+    topServices: Array<{ name: string; quantity: number; revenue: number }>;
+    paymentBreakdown: Array<{ method: string; total: number; count: number }>;
+  }> {
+    const rangeCondition = sql`DATE(${invoices.date}) BETWEEN ${from} AND ${to}`;
+    
+    const [rangeData] = await db
+      .select({
+        totalSales: sql<number>`COALESCE(SUM(CAST(${invoices.total} AS DECIMAL)), 0)`,
+        totalInvoices: sql<number>`COUNT(*)`
+      })
+      .from(invoices)
+      .where(rangeCondition);
+
+    const dailyTrends = await db
+      .select({
+        date: sql<string>`DATE(${invoices.date})`,
+        sales: sql<number>`COALESCE(SUM(CAST(${invoices.total} AS DECIMAL)), 0)`,
+        invoices: sql<number>`COUNT(*)`
+      })
+      .from(invoices)
+      .where(rangeCondition)
+      .groupBy(sql`DATE(${invoices.date})`)
+      .orderBy(sql`DATE(${invoices.date})`);
+
+    const topServices = await db
+      .select({
+        name: invoiceItems.serviceName,
+        quantity: sql<number>`SUM(${invoiceItems.quantity})`,
+        revenue: sql<number>`SUM(CAST(${invoiceItems.unitPrice} AS DECIMAL) * ${invoiceItems.quantity})`
+      })
+      .from(invoiceItems)
+      .innerJoin(invoices, eq(invoiceItems.invoiceId, invoices.id))
+      .where(rangeCondition)
+      .groupBy(invoiceItems.serviceName)
+      .orderBy(sql`SUM(CAST(${invoiceItems.unitPrice} AS DECIMAL) * ${invoiceItems.quantity}) DESC`)
+      .limit(10);
+
+    const paymentBreakdown = await db
+      .select({
+        method: invoices.paymentMethod,
+        total: sql<number>`COALESCE(SUM(CAST(${invoices.total} AS DECIMAL)), 0)`,
+        count: sql<number>`COUNT(*)`
+      })
+      .from(invoices)
+      .where(sql`${rangeCondition} AND ${invoices.paymentMethod} IS NOT NULL AND ${invoices.paymentMethod} != 'pending'`)
+      .groupBy(invoices.paymentMethod);
+
+    return {
+      totalSales: rangeData?.totalSales || 0,
+      totalInvoices: rangeData?.totalInvoices || 0,
+      dailyTrends,
+      topServices,
+      paymentBreakdown: paymentBreakdown.map(pb => ({
+        method: pb.method || '',
+        total: pb.total,
+        count: pb.count
+      }))
+    };
   }
 }
 
