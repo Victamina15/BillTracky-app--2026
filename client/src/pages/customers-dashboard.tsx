@@ -6,7 +6,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Users, UserCheck, UserX, TrendingUp, Crown, Award, Calendar, Send } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Users, UserCheck, UserX, TrendingUp, Crown, Award, Calendar, Send, Eye, DollarSign, ShoppingCart, Clock } from "lucide-react";
 
 interface CustomerOverview {
   totalCustomers: number;
@@ -33,8 +34,24 @@ interface InactiveCustomer {
   daysSinceLastOrder: number;
 }
 
+interface CustomerStats {
+  customer: {
+    id: string;
+    name: string;
+    phone: string;
+    email?: string;
+  };
+  totalSpent: string;
+  ordersCount: number;
+  avgOrderValue: string;
+  lastOrderAt: string | null;
+  orderDates: string[];
+}
+
 export default function CustomersDashboard() {
   const [inactiveDays, setInactiveDays] = useState<number>(30);
+  const [selectedCustomerId, setSelectedCustomerId] = useState<string | null>(null);
+  const [isStatsModalOpen, setIsStatsModalOpen] = useState(false);
   const { toast } = useToast();
   
   // Fetch customer overview metrics
@@ -55,6 +72,12 @@ export default function CustomersDashboard() {
   // Fetch inactive customers based on selected days
   const { data: inactiveCustomers = [], isLoading: inactiveLoading, error: inactiveError } = useQuery<InactiveCustomer[]>({
     queryKey: ["/api/customers/inactive", { days: inactiveDays }],
+  });
+
+  // Fetch customer stats when modal is opened
+  const { data: customerStats, isLoading: statsLoading, error: statsError } = useQuery<CustomerStats>({
+    queryKey: [`/api/customers/${selectedCustomerId}/stats`],
+    enabled: !!selectedCustomerId && isStatsModalOpen,
   });
 
   // Send reminders mutation
@@ -82,6 +105,16 @@ export default function CustomersDashboard() {
       });
     }
   });
+
+  const openStatsModal = (customerId: string) => {
+    setSelectedCustomerId(customerId);
+    setIsStatsModalOpen(true);
+  };
+
+  const closeStatsModal = () => {
+    setIsStatsModalOpen(false);
+    setSelectedCustomerId(null);
+  };
 
   return (
     <div className="max-w-7xl mx-auto p-6 space-y-8">
@@ -242,10 +275,21 @@ export default function CustomersDashboard() {
                         </p>
                       </div>
                     </div>
-                    <div className="text-right">
-                      <p className="font-bold text-yellow-700 dark:text-yellow-300" data-testid={`text-spender-amount-${index + 1}`}>
-                        ${customer.totalSpent}
-                      </p>
+                    <div className="flex items-center space-x-3">
+                      <div className="text-right">
+                        <p className="font-bold text-yellow-700 dark:text-yellow-300" data-testid={`text-spender-amount-${index + 1}`}>
+                          ${customer.totalSpent}
+                        </p>
+                      </div>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => openStatsModal(customer.id)}
+                        className="border-yellow-300 text-yellow-700 hover:bg-yellow-50 dark:border-yellow-500 dark:text-yellow-300 dark:hover:bg-yellow-900/20"
+                        data-testid={`button-stats-spender-${index + 1}`}
+                      >
+                        <Eye className="w-4 h-4" />
+                      </Button>
                     </div>
                   </div>
                 ))}
@@ -310,10 +354,21 @@ export default function CustomersDashboard() {
                         </p>
                       </div>
                     </div>
-                    <div className="text-right">
-                      <p className="font-bold text-indigo-700 dark:text-indigo-300" data-testid={`text-frequent-orders-${index + 1}`}>
-                        {customer.ordersCount} órdenes
-                      </p>
+                    <div className="flex items-center space-x-3">
+                      <div className="text-right">
+                        <p className="font-bold text-indigo-700 dark:text-indigo-300" data-testid={`text-frequent-orders-${index + 1}`}>
+                          {customer.ordersCount} órdenes
+                        </p>
+                      </div>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => openStatsModal(customer.id)}
+                        className="border-indigo-300 text-indigo-700 hover:bg-indigo-50 dark:border-indigo-500 dark:text-indigo-300 dark:hover:bg-indigo-900/20"
+                        data-testid={`button-stats-frequent-${index + 1}`}
+                      >
+                        <Eye className="w-4 h-4" />
+                      </Button>
                     </div>
                   </div>
                 ))}
@@ -408,9 +463,20 @@ export default function CustomersDashboard() {
                     </div>
                   </div>
                   
-                  <Badge variant="destructive" className="bg-red-500 dark:bg-red-600" data-testid={`text-inactive-days-${customer.id}`}>
-                    {customer.daysSinceLastOrder} días
-                  </Badge>
+                  <div className="flex items-center space-x-3">
+                    <Badge variant="destructive" className="bg-red-500 dark:bg-red-600" data-testid={`text-inactive-days-${customer.id}`}>
+                      {customer.daysSinceLastOrder} días
+                    </Badge>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => openStatsModal(customer.id)}
+                      className="border-red-300 text-red-700 hover:bg-red-50 dark:border-red-500 dark:text-red-300 dark:hover:bg-red-900/20"
+                      data-testid={`button-stats-inactive-${customer.id}`}
+                    >
+                      <Eye className="w-4 h-4" />
+                    </Button>
+                  </div>
                 </div>
               ))}
               
@@ -434,6 +500,142 @@ export default function CustomersDashboard() {
           )}
         </CardContent>
       </Card>
+
+      {/* Customer Stats Modal */}
+      <Dialog open={isStatsModalOpen} onOpenChange={(open) => { setIsStatsModalOpen(open); if (!open) setSelectedCustomerId(null); }}>
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center text-xl font-bold text-cyan-700 dark:text-cyan-300">
+              <Users className="w-6 h-6 mr-2" />
+              Estadísticas Detalladas del Cliente
+            </DialogTitle>
+          </DialogHeader>
+          
+          {statsLoading ? (
+            <div className="space-y-6 p-4">
+              <div className="animate-pulse space-y-4">
+                <div className="h-6 bg-gray-200 rounded w-1/2"></div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="h-20 bg-gray-200 rounded"></div>
+                  <div className="h-20 bg-gray-200 rounded"></div>
+                </div>
+                <div className="h-32 bg-gray-200 rounded"></div>
+              </div>
+            </div>
+          ) : statsError ? (
+            <div className="text-center py-8">
+              <p className="text-red-600 dark:text-red-400" data-testid="error-customer-stats">
+                Error al cargar estadísticas del cliente
+              </p>
+            </div>
+          ) : customerStats ? (
+            <div className="space-y-6 p-4">
+              {/* Customer Info */}
+              <div className="bg-gradient-to-r from-cyan-50 to-blue-50 dark:from-cyan-900/20 dark:to-blue-900/20 rounded-lg p-4 border border-cyan-200 dark:border-cyan-500/30">
+                <div className="flex items-center space-x-4">
+                  <div className="w-16 h-16 bg-gradient-to-br from-cyan-400 to-blue-400 rounded-full flex items-center justify-center text-white font-bold text-2xl">
+                    {customerStats.customer.name.charAt(0).toUpperCase()}
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-cyan-700 dark:text-cyan-300" data-testid="text-modal-customer-name">
+                      {customerStats.customer.name}
+                    </h3>
+                    <p className="text-cyan-600 dark:text-cyan-400" data-testid="text-modal-customer-phone">
+                      {customerStats.customer.phone}
+                    </p>
+                    {customerStats.customer.email && (
+                      <p className="text-sm text-cyan-500 dark:text-cyan-500" data-testid="text-modal-customer-email">
+                        {customerStats.customer.email}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Key Metrics */}
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <Card className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border-green-200 dark:border-green-500/30">
+                  <CardContent className="p-4 text-center">
+                    <DollarSign className="w-8 h-8 text-green-600 mx-auto mb-2" />
+                    <p className="text-2xl font-bold text-green-700 dark:text-green-300" data-testid="text-modal-total-spent">
+                      ${customerStats.totalSpent}
+                    </p>
+                    <p className="text-xs text-green-600 dark:text-green-400">Total Gastado</p>
+                  </CardContent>
+                </Card>
+                
+                <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-blue-200 dark:border-blue-500/30">
+                  <CardContent className="p-4 text-center">
+                    <ShoppingCart className="w-8 h-8 text-blue-600 mx-auto mb-2" />
+                    <p className="text-2xl font-bold text-blue-700 dark:text-blue-300" data-testid="text-modal-orders-count">
+                      {customerStats.ordersCount}
+                    </p>
+                    <p className="text-xs text-blue-600 dark:text-blue-400">Órdenes Totales</p>
+                  </CardContent>
+                </Card>
+                
+                <Card className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 border-purple-200 dark:border-purple-500/30">
+                  <CardContent className="p-4 text-center">
+                    <TrendingUp className="w-8 h-8 text-purple-600 mx-auto mb-2" />
+                    <p className="text-2xl font-bold text-purple-700 dark:text-purple-300" data-testid="text-modal-avg-order">
+                      ${customerStats.avgOrderValue}
+                    </p>
+                    <p className="text-xs text-purple-600 dark:text-purple-400">Promedio por Orden</p>
+                  </CardContent>
+                </Card>
+                
+                <Card className="bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20 border-orange-200 dark:border-orange-500/30">
+                  <CardContent className="p-4 text-center">
+                    <Clock className="w-8 h-8 text-orange-600 mx-auto mb-2" />
+                    <p className="text-lg font-bold text-orange-700 dark:text-orange-300" data-testid="text-modal-last-order">
+                      {customerStats.lastOrderAt 
+                        ? new Date(customerStats.lastOrderAt).toLocaleDateString()
+                        : 'Nunca'
+                      }
+                    </p>
+                    <p className="text-xs text-orange-600 dark:text-orange-400">Última Orden</p>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Order History */}
+              <Card className="bg-gradient-to-br from-gray-50 to-slate-50 dark:from-gray-900/20 dark:to-slate-900/20 border-gray-200 dark:border-gray-500/30">
+                <CardHeader>
+                  <CardTitle className="flex items-center text-gray-700 dark:text-gray-300">
+                    <Calendar className="w-5 h-5 mr-2" />
+                    Historial de Órdenes ({customerStats.orderDates.length} órdenes)
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {customerStats.orderDates.length > 0 ? (
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 max-h-40 overflow-y-auto">
+                      {customerStats.orderDates.slice(0, 20).map((date, index) => (
+                        <Badge 
+                          key={index} 
+                          variant="secondary" 
+                          className="text-xs justify-center"
+                          data-testid={`badge-order-date-${index}`}
+                        >
+                          {new Date(date).toLocaleDateString()}
+                        </Badge>
+                      ))}
+                      {customerStats.orderDates.length > 20 && (
+                        <Badge variant="outline" className="text-xs justify-center">
+                          +{customerStats.orderDates.length - 20} más
+                        </Badge>
+                      )}
+                    </div>
+                  ) : (
+                    <p className="text-center text-gray-500 dark:text-gray-400 py-4" data-testid="empty-order-history">
+                      No hay historial de órdenes disponible
+                    </p>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+          ) : null}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
