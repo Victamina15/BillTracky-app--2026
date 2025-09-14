@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { 
   BarChart3, 
   DollarSign, 
@@ -15,7 +15,13 @@ import {
   Phone,
   ArrowLeft,
   Calendar,
-  Loader2
+  Loader2,
+  Calculator,
+  Save,
+  AlertTriangle,
+  TrendingUp,
+  TrendingDown,
+  Edit
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -64,7 +70,12 @@ export default function CashClosure({ onBack }: CashClosureProps) {
   );
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
+  const [openingCash, setOpeningCash] = useState<string>('0');
+  const [countedCash, setCountedCash] = useState<string>('0');
+  const [notes, setNotes] = useState<string>('');
+  const [showCashForm, setShowCashForm] = useState(false);
   const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   // Obtener datos de facturas para la fecha seleccionada
   const { data: invoices = [], isLoading: invoicesLoading } = useQuery({
@@ -112,6 +123,61 @@ export default function CashClosure({ onBack }: CashClosureProps) {
       });
       if (!response.ok) throw new Error('Error al cargar empleados');
       return response.json();
+    },
+  });
+
+  // Obtener cierre de caja existente para la fecha seleccionada
+  const { data: existingClosure, isLoading: closureLoading, refetch: refetchClosure } = useQuery({
+    queryKey: ['/api/cash-closures/by-date', selectedDate],
+    queryFn: async () => {
+      const response = await fetch(`/api/cash-closures/by-date/${selectedDate}`, {
+        headers: {
+          'x-employee-id': localStorage.getItem('employeeId') || '',
+        },
+      });
+      if (response.status === 404) return null;
+      if (!response.ok) throw new Error('Error al cargar cierre de caja');
+      return response.json();
+    },
+    enabled: !!selectedDate,
+  });
+
+  // Mutación para crear cierre de caja
+  const createCashClosureMutation = useMutation({
+    mutationFn: async (data: { closingDate: string; openingCash: number; countedCash: number; notes?: string }) => {
+      const response = await fetch('/api/cash-closures', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-employee-id': localStorage.getItem('employeeId') || '',
+        },
+        body: JSON.stringify(data),
+      });
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Error al crear cierre de caja');
+      }
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "✅ Cierre de caja creado",
+        description: "El cierre de caja se ha registrado correctamente",
+        duration: 3000,
+      });
+      queryClient.invalidateQueries({ queryKey: ['/api/cash-closures/by-date', selectedDate] });
+      refetchClosure();
+      setShowCashForm(false);
+      setCountedCash('0');
+      setNotes('');
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "❌ Error al crear cierre",
+        description: error.message,
+        variant: "destructive",
+        duration: 5000,
+      });
     },
   });
 
@@ -167,8 +233,45 @@ export default function CashClosure({ onBack }: CashClosureProps) {
     };
   }, [invoices, paymentMethods, employees]);
 
+  // Calcular dinero del sistema (cash only from payment methods)
+  const systemCash = useMemo(() => {
+    if (!paymentMethods.length) return 0;
+    
+    // Encontrar el total de pagos en efectivo
+    const cashMethod = paymentMethods.find((m: PaymentMethod) => m.code === 'cash');
+    if (!cashMethod) return 0;
+    
+    const cashPayments = dailySummary.paymentSummary[cashMethod.name];
+    return parseFloat(openingCash) + (cashPayments?.total || 0);
+  }, [openingCash, dailySummary.paymentSummary, paymentMethods]);
+
+  // Calcular varianza
+  const variance = useMemo(() => {
+    const counted = parseFloat(countedCash) || 0;
+    return counted - systemCash;
+  }, [countedCash, systemCash]);
+
   const formatCurrency = (amount: number): string => {
     return `RD$${amount.toFixed(2)}`;
+  };
+
+  const handleCreateCashClosure = () => {
+    if (!countedCash || parseFloat(countedCash) < 0) {
+      toast({
+        title: "❌ Error de validación",
+        description: "Debe ingresar el dinero contado físicamente",
+        variant: "destructive",
+        duration: 3000,
+      });
+      return;
+    }
+
+    createCashClosureMutation.mutate({
+      closingDate: selectedDate,
+      openingCash: parseFloat(openingCash) || 0,
+      countedCash: parseFloat(countedCash),
+      notes: notes || undefined,
+    });
   };
 
   const getPaymentMethodIcon = (methodCode: string) => {
@@ -363,7 +466,7 @@ export default function CashClosure({ onBack }: CashClosureProps) {
     setShowConfirmModal(true);
   };
 
-  if (invoicesLoading || paymentMethodsLoading || employeesLoading) {
+  if (invoicesLoading || paymentMethodsLoading || employeesLoading || closureLoading) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6">
         <div className="max-w-6xl mx-auto">
@@ -577,6 +680,263 @@ export default function CashClosure({ onBack }: CashClosureProps) {
             </div>
           </div>
         </div>
+
+        {/* Existing Cash Closure Display */}
+        {existingClosure && (
+          <div className="tech-button-3d bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-800/30 border-2 border-blue-300 dark:border-blue-500/50 rounded-xl shadow-2xl backdrop-blur-sm mt-6">
+            <div className="p-6 border-b border-blue-200 dark:border-blue-600">
+              <h3 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent flex items-center gap-3">
+                <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center tech-glow">
+                  <CheckCircle className="h-5 w-5 text-white" />
+                </div>
+                Cierre de Caja Registrado
+              </h3>
+            </div>
+            <div className="p-6">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div className="tech-button-3d bg-gradient-to-br from-green-100 to-emerald-200 dark:from-green-900/30 dark:to-emerald-800/30 border-2 border-green-300 dark:border-green-500/50 rounded-lg p-4 text-center">
+                  <p className="text-sm font-bold text-green-700 dark:text-green-300 mb-2">💰 Dinero de Apertura</p>
+                  <p className="text-xl font-bold text-green-600 dark:text-green-400" data-testid="closure-opening-cash">
+                    {formatCurrency(parseFloat(existingClosure.openingCash || '0'))}
+                  </p>
+                </div>
+                <div className="tech-button-3d bg-gradient-to-br from-blue-100 to-cyan-200 dark:from-blue-900/30 dark:to-cyan-800/30 border-2 border-blue-300 dark:border-blue-500/50 rounded-lg p-4 text-center">
+                  <p className="text-sm font-bold text-blue-700 dark:text-blue-300 mb-2">🧮 Dinero Contado</p>
+                  <p className="text-xl font-bold text-blue-600 dark:text-blue-400" data-testid="closure-counted-cash">
+                    {formatCurrency(parseFloat(existingClosure.countedCash || '0'))}
+                  </p>
+                </div>
+                <div className="tech-button-3d bg-gradient-to-br from-purple-100 to-pink-200 dark:from-purple-900/30 dark:to-pink-800/30 border-2 border-purple-300 dark:border-purple-500/50 rounded-lg p-4 text-center">
+                  <p className="text-sm font-bold text-purple-700 dark:text-purple-300 mb-2">⚙️ Dinero Sistema</p>
+                  <p className="text-xl font-bold text-purple-600 dark:text-purple-400" data-testid="closure-system-cash">
+                    {formatCurrency(parseFloat(existingClosure.systemCash || '0'))}
+                  </p>
+                </div>
+                <div className={`tech-button-3d rounded-lg p-4 text-center ${
+                  parseFloat(existingClosure.variance || '0') >= 0 
+                    ? 'bg-gradient-to-br from-green-100 to-emerald-200 dark:from-green-900/30 dark:to-emerald-800/30 border-2 border-green-300 dark:border-green-500/50'
+                    : 'bg-gradient-to-br from-red-100 to-rose-200 dark:from-red-900/30 dark:to-rose-800/30 border-2 border-red-300 dark:border-red-500/50'
+                }`}>
+                  <div className="flex items-center justify-center gap-2 mb-2">
+                    {parseFloat(existingClosure.variance || '0') >= 0 ? (
+                      <TrendingUp className="h-4 w-4 text-green-600 dark:text-green-400" />
+                    ) : (
+                      <TrendingDown className="h-4 w-4 text-red-600 dark:text-red-400" />
+                    )}
+                    <p className={`text-sm font-bold ${
+                      parseFloat(existingClosure.variance || '0') >= 0 
+                        ? 'text-green-700 dark:text-green-300' 
+                        : 'text-red-700 dark:text-red-300'
+                    }`}>
+                      🔄 Varianza
+                    </p>
+                  </div>
+                  <p className={`text-xl font-bold ${
+                    parseFloat(existingClosure.variance || '0') >= 0 
+                      ? 'text-green-600 dark:text-green-400' 
+                      : 'text-red-600 dark:text-red-400'
+                  }`} data-testid="closure-variance">
+                    {formatCurrency(parseFloat(existingClosure.variance || '0'))}
+                  </p>
+                </div>
+              </div>
+              {existingClosure.notes && (
+                <div className="mt-4 tech-button-3d bg-gradient-to-br from-yellow-50 to-amber-100 dark:from-yellow-900/30 dark:to-amber-800/30 border-2 border-yellow-300 dark:border-yellow-500/50 rounded-lg p-4">
+                  <p className="text-sm font-bold text-yellow-700 dark:text-yellow-300 mb-2">📝 Observaciones</p>
+                  <p className="text-yellow-800 dark:text-yellow-200" data-testid="closure-notes">{existingClosure.notes}</p>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Cash Counting Form */}
+        {!existingClosure && (
+          <div className="tech-button-3d bg-gradient-to-br from-white to-slate-50 dark:from-slate-800 dark:to-slate-900 border-2 border-orange-300 dark:border-orange-500/50 rounded-xl shadow-2xl backdrop-blur-sm mt-6">
+            <div className="p-6 border-b border-orange-200 dark:border-orange-600">
+              <div className="flex items-center justify-between">
+                <h3 className="text-xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent flex items-center gap-3">
+                  <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-red-600 rounded-lg flex items-center justify-center tech-glow">
+                    <Calculator className="h-5 w-5 text-white" />
+                  </div>
+                  Formulario de Conteo
+                </h3>
+                <Button
+                  onClick={() => setShowCashForm(!showCashForm)}
+                  className="tech-button-3d bg-white border-2 border-orange-300 text-orange-700 dark:from-orange-500/20 dark:to-red-600/20 dark:text-white dark:border-orange-500/30 rounded-lg shadow-sm p-3 hover:bg-orange-50 hover:border-orange-400 dark:hover:from-orange-400/30 dark:hover:to-red-500/30 transition-all duration-300 cursor-pointer transform hover:scale-105 hover:-translate-y-1 dark:backdrop-blur-sm font-bold"
+                  data-testid="button-toggle-cash-form"
+                >
+                  {showCashForm ? 'Cerrar' : 'Abrir'} Formulario
+                </Button>
+              </div>
+            </div>
+            
+            {showCashForm && (
+              <div className="p-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                  <div className="tech-button-3d bg-gradient-to-br from-green-50 to-emerald-100 dark:from-green-900/30 dark:to-emerald-800/30 border-2 border-green-300 dark:border-green-500/50 rounded-lg p-6">
+                    <Label htmlFor="opening-cash" className="text-sm font-bold text-green-700 dark:text-green-300 mb-3 flex items-center gap-2">
+                      💰 Dinero de Apertura
+                      <Badge className="bg-green-200 text-green-800 dark:bg-green-800/50 dark:text-green-200">Inicial</Badge>
+                    </Label>
+                    <Input
+                      id="opening-cash"
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      value={openingCash}
+                      onChange={(e) => setOpeningCash(e.target.value)}
+                      placeholder="0.00"
+                      className="text-lg font-bold"
+                      data-testid="input-opening-cash"
+                    />
+                    <p className="text-xs text-green-600 dark:text-green-400 mt-2">Dinero inicial en caja al abrir</p>
+                  </div>
+                  
+                  <div className="tech-button-3d bg-gradient-to-br from-blue-50 to-cyan-100 dark:from-blue-900/30 dark:to-cyan-800/30 border-2 border-blue-300 dark:border-blue-500/50 rounded-lg p-6">
+                    <Label htmlFor="counted-cash" className="text-sm font-bold text-blue-700 dark:text-blue-300 mb-3 flex items-center gap-2">
+                      🧮 Dinero Contado Físico
+                      <Badge className="bg-blue-200 text-blue-800 dark:bg-blue-800/50 dark:text-blue-200">Requerido</Badge>
+                    </Label>
+                    <Input
+                      id="counted-cash"
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      value={countedCash}
+                      onChange={(e) => setCountedCash(e.target.value)}
+                      placeholder="0.00"
+                      className="text-lg font-bold"
+                      data-testid="input-counted-cash"
+                    />
+                    <p className="text-xs text-blue-600 dark:text-blue-400 mt-2">Dinero físico actual en caja</p>
+                  </div>
+                </div>
+
+                {/* Cálculos Automáticos */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                  <div className="tech-button-3d bg-gradient-to-br from-purple-50 to-pink-100 dark:from-purple-900/30 dark:to-pink-800/30 border-2 border-purple-300 dark:border-purple-500/50 rounded-lg p-4 text-center">
+                    <p className="text-sm font-bold text-purple-700 dark:text-purple-300 mb-2">⚙️ Sistema Calculado</p>
+                    <p className="text-xl font-bold text-purple-600 dark:text-purple-400" data-testid="calculated-system-cash">
+                      {formatCurrency(systemCash)}
+                    </p>
+                  </div>
+                  
+                  <div className={`tech-button-3d rounded-lg p-4 text-center ${
+                    variance >= 0 
+                      ? 'bg-gradient-to-br from-green-50 to-emerald-100 dark:from-green-900/30 dark:to-emerald-800/30 border-2 border-green-300 dark:border-green-500/50'
+                      : 'bg-gradient-to-br from-red-50 to-rose-100 dark:from-red-900/30 dark:to-rose-800/30 border-2 border-red-300 dark:border-red-500/50'
+                  }`}>
+                    <div className="flex items-center justify-center gap-2 mb-2">
+                      {variance >= 0 ? (
+                        <TrendingUp className="h-4 w-4 text-green-600 dark:text-green-400" />
+                      ) : (
+                        <TrendingDown className="h-4 w-4 text-red-600 dark:text-red-400" />
+                      )}
+                      <p className={`text-sm font-bold ${
+                        variance >= 0 
+                          ? 'text-green-700 dark:text-green-300' 
+                          : 'text-red-700 dark:text-red-300'
+                      }`}>
+                        🔄 Varianza
+                      </p>
+                    </div>
+                    <p className={`text-xl font-bold ${
+                      variance >= 0 
+                        ? 'text-green-600 dark:text-green-400' 
+                        : 'text-red-600 dark:text-red-400'
+                    }`} data-testid="calculated-variance">
+                      {formatCurrency(variance)}
+                    </p>
+                  </div>
+                  
+                  <div className={`tech-button-3d rounded-lg p-4 text-center ${
+                    Math.abs(variance) < 10 
+                      ? 'bg-gradient-to-br from-green-50 to-emerald-100 dark:from-green-900/30 dark:to-emerald-800/30 border-2 border-green-300 dark:border-green-500/50'
+                      : Math.abs(variance) < 50
+                        ? 'bg-gradient-to-br from-yellow-50 to-amber-100 dark:from-yellow-900/30 dark:to-amber-800/30 border-2 border-yellow-300 dark:border-yellow-500/50'
+                        : 'bg-gradient-to-br from-red-50 to-rose-100 dark:from-red-900/30 dark:to-rose-800/30 border-2 border-red-300 dark:border-red-500/50'
+                  }`}>
+                    <p className="text-sm font-bold mb-2">🎯 Estado</p>
+                    <p className="font-bold text-sm" data-testid="variance-status">
+                      {Math.abs(variance) < 10 ? '✅ Cuadrado' : 
+                       Math.abs(variance) < 50 ? '⚠️ Diferencia Menor' : 
+                       '❌ Diferencia Mayor'}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Notes */}
+                <div className="mb-6">
+                  <Label htmlFor="notes" className="text-sm font-bold text-gray-700 dark:text-gray-300 mb-3 flex items-center gap-2">
+                    📝 Observaciones (Opcional)
+                  </Label>
+                  <textarea
+                    id="notes"
+                    value={notes}
+                    onChange={(e) => setNotes(e.target.value)}
+                    placeholder="Ingrese cualquier observación sobre el cierre de caja..."
+                    className="w-full p-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg resize-none bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+                    rows={3}
+                    data-testid="input-notes"
+                  />
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex justify-end gap-4">
+                  <Button
+                    onClick={() => setShowCashForm(false)}
+                    variant="outline"
+                    className="tech-button-3d border-2"
+                    data-testid="button-cancel-closure"
+                  >
+                    Cancelar
+                  </Button>
+                  <Button
+                    onClick={handleCreateCashClosure}
+                    disabled={createCashClosureMutation.isPending}
+                    className="tech-button-3d bg-gradient-to-r from-green-500 via-emerald-600 to-cyan-600 hover:from-green-400 hover:via-emerald-500 hover:to-cyan-500 text-white tech-glow"
+                    data-testid="button-create-closure"
+                  >
+                    {createCashClosureMutation.isPending ? (
+                      <>
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        Guardando...
+                      </>
+                    ) : (
+                      <>
+                        <Save className="h-4 w-4 mr-2" />
+                        Crear Cierre de Caja
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {!showCashForm && (
+              <div className="p-6">
+                <div className="tech-button-3d bg-gradient-to-br from-yellow-50 to-amber-100 dark:from-yellow-900/30 dark:to-amber-800/30 border-2 border-yellow-300 dark:border-yellow-500/50 rounded-lg p-6 text-center">
+                  <AlertTriangle className="h-8 w-8 text-yellow-600 dark:text-yellow-400 mx-auto mb-3" />
+                  <p className="font-bold text-yellow-800 dark:text-yellow-200 mb-2">
+                    📅 No hay cierre registrado para esta fecha
+                  </p>
+                  <p className="text-sm text-yellow-700 dark:text-yellow-300 mb-4">
+                    Haga clic en "Abrir Formulario" para realizar el conteo físico del efectivo y crear el cierre de caja.
+                  </p>
+                  <Button
+                    onClick={() => setShowCashForm(true)}
+                    className="tech-button-3d bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-400 hover:to-red-500 text-white font-bold"
+                    data-testid="button-open-cash-form"
+                  >
+                    <Calculator className="h-4 w-4 mr-2" />
+                    Realizar Conteo
+                  </Button>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Desglose financiero con diseño tech 3D */}
         <div className="tech-button-3d bg-gradient-to-br from-white to-slate-50 dark:from-slate-800 dark:to-slate-900 border-2 border-slate-200 dark:border-slate-600 rounded-xl shadow-2xl backdrop-blur-sm mt-6">
