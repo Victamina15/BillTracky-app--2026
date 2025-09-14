@@ -24,9 +24,7 @@ export default function ServicesConfig({ onNotification }: ServicesConfigProps) 
   const [showFilters, setShowFilters] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [serviceTypes, setServiceTypes] = useState([
-    { id: "wash", name: "Solo Lavado", price: "" },
-    { id: "iron", name: "Solo Planchado", price: "" },
-    { id: "both", name: "Lavado + Planchado", price: "" }
+    { id: `service_${Date.now()}`, name: "", price: "" }
   ]);
 
   const { data: services = [], isLoading } = useQuery<Service[]>({
@@ -96,7 +94,17 @@ export default function ServicesConfig({ onNotification }: ServicesConfigProps) 
   });
 
   const handleSubmit = (data: any) => {
-    createServiceMutation.mutate(data);
+    // Construir datos del servicio con tipos personalizados
+    const serviceData = {
+      name: data.name,
+      // Usar el primer tipo para compatibilidad o valores por defecto
+      washPrice: serviceTypes[0]?.price || "0",
+      ironPrice: serviceTypes[1]?.price || "0", 
+      bothPrice: serviceTypes[2]?.price || "0",
+      // Guardar tipos personalizados para uso futuro
+      customTypes: serviceTypes.filter(type => type.name && type.price)
+    };
+    createServiceMutation.mutate(serviceData);
   };
 
   const handleEdit = (service: Service) => {
@@ -105,6 +113,25 @@ export default function ServicesConfig({ onNotification }: ServicesConfigProps) 
     form.setValue("washPrice", service.washPrice);
     form.setValue("ironPrice", service.ironPrice);
     form.setValue("bothPrice", service.bothPrice);
+    
+    // Cargar tipos de servicio desde el servicio existente
+    const existingTypes = [];
+    if (service.washPrice && parseFloat(service.washPrice) > 0) {
+      existingTypes.push({ id: `wash_${Date.now()}`, name: "Solo Lavado", price: service.washPrice });
+    }
+    if (service.ironPrice && parseFloat(service.ironPrice) > 0) {
+      existingTypes.push({ id: `iron_${Date.now()}`, name: "Solo Planchado", price: service.ironPrice });
+    }
+    if (service.bothPrice && parseFloat(service.bothPrice) > 0) {
+      existingTypes.push({ id: `both_${Date.now()}`, name: "Lavado + Planchado", price: service.bothPrice });
+    }
+    
+    // Si no hay tipos existentes, crear uno vacío
+    if (existingTypes.length === 0) {
+      existingTypes.push({ id: `service_${Date.now()}`, name: "", price: "" });
+    }
+    
+    setServiceTypes(existingTypes);
     setIsDialogOpen(true);
   };
 
@@ -112,6 +139,8 @@ export default function ServicesConfig({ onNotification }: ServicesConfigProps) 
     setIsDialogOpen(false);
     setEditingService(null);
     form.reset();
+    // Resetear tipos de servicio al estado inicial
+    setServiceTypes([{ id: `service_${Date.now()}`, name: "", price: "" }]);
   };
 
   if (isLoading) {
@@ -152,9 +181,7 @@ export default function ServicesConfig({ onNotification }: ServicesConfigProps) 
                   onClick={() => {
                     setEditingService(null);
                     setServiceTypes([
-                      { id: "wash", name: "Solo Lavado", price: "" },
-                      { id: "iron", name: "Solo Planchado", price: "" },
-                      { id: "both", name: "Lavado + Planchado", price: "" }
+                      { id: `service_${Date.now()}`, name: "", price: "" }
                     ]);
                     setIsDialogOpen(true);
                   }}
@@ -397,9 +424,8 @@ export default function ServicesConfig({ onNotification }: ServicesConfigProps) 
                         <Input
                           value={type.name}
                           onChange={(e) => updateServiceType(type.id, 'name', e.target.value)}
-                          placeholder="Ej: Solo Lavado, En Seco, Express"
+                          placeholder="Ej: Solo Lavado, En Seco, Express, Planchado"
                           className="border-2 border-green-300 focus:border-green-400"
-                          disabled={type.id === 'wash' || type.id === 'iron' || type.id === 'both'}
                         />
                       </div>
                       <div>
@@ -408,39 +434,25 @@ export default function ServicesConfig({ onNotification }: ServicesConfigProps) 
                           type="number"
                           step="0.01"
                           value={type.price}
-                          onChange={(e) => {
-                            updateServiceType(type.id, 'price', e.target.value);
-                            // Actualizar form para compatibilidad
-                            if (type.id === 'wash') form.setValue('washPrice', e.target.value);
-                            if (type.id === 'iron') form.setValue('ironPrice', e.target.value);
-                            if (type.id === 'both') form.setValue('bothPrice', e.target.value);
-                          }}
+                          onChange={(e) => updateServiceType(type.id, 'price', e.target.value)}
                           placeholder="0.00"
                           className="border-2 border-green-300 focus:border-green-400"
                         />
                       </div>
                       <div className="flex justify-end">
-                        {type.id !== 'wash' && type.id !== 'iron' && type.id !== 'both' && (
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            onClick={() => removeServiceType(type.id)}
-                            className="text-red-600 hover:text-red-700 border-red-300 hover:border-red-400"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
-                        )}
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => removeServiceType(type.id)}
+                          className="text-red-600 hover:text-red-700 border-red-300 hover:border-red-400"
+                          disabled={serviceTypes.length === 1}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
                       </div>
                     </div>
                   ))}
-                </div>
-                
-                {/* Precios ocultos para compatibilidad */}
-                <div className="hidden">
-                  <Input {...form.register("washPrice")} />
-                  <Input {...form.register("ironPrice")} />
-                  <Input {...form.register("bothPrice")} />
                 </div>
               </CardContent>
             </Card>
@@ -485,9 +497,7 @@ export default function ServicesConfig({ onNotification }: ServicesConfigProps) 
             <Button 
               onClick={() => {
                 setServiceTypes([
-                  { id: "wash", name: "Solo Lavado", price: "" },
-                  { id: "iron", name: "Solo Planchado", price: "" },
-                  { id: "both", name: "Lavado + Planchado", price: "" }
+                  { id: `service_${Date.now()}`, name: "", price: "" }
                 ]);
                 setIsDialogOpen(true);
               }}
