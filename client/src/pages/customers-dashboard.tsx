@@ -54,39 +54,44 @@ export default function CustomersDashboard() {
   const [isStatsModalOpen, setIsStatsModalOpen] = useState(false);
   const { toast } = useToast();
   
+  // Get employeeId from localStorage for authentication
+  const employeeId = localStorage.getItem('employeeId');
+  
   // Fetch customer overview metrics
   const { data: overview, isLoading: overviewLoading } = useQuery<CustomerOverview>({
     queryKey: ["/api/customers/overview"],
+    enabled: !!employeeId,
   });
 
   // Fetch top spending customers  
   const { data: topSpenders = [], isLoading: spendersLoading, error: spendersError } = useQuery<TopCustomer[]>({
     queryKey: ["/api/customers/top-spent", { limit: 3 }],
+    enabled: !!employeeId,
   });
 
   // Fetch top frequent customers
   const { data: topFrequent = [], isLoading: frequentLoading, error: frequentError } = useQuery<TopCustomer[]>({
     queryKey: ["/api/customers/top-orders", { limit: 3 }],
+    enabled: !!employeeId,
   });
 
   // Fetch inactive customers based on selected days
   const { data: inactiveCustomers = [], isLoading: inactiveLoading, error: inactiveError } = useQuery<InactiveCustomer[]>({
     queryKey: ["/api/customers/inactive", { days: inactiveDays }],
+    enabled: !!employeeId,
   });
 
   // Fetch customer stats when modal is opened
   const { data: customerStats, isLoading: statsLoading, error: statsError } = useQuery<CustomerStats>({
     queryKey: [`/api/customers/${selectedCustomerId}/stats`],
-    enabled: !!selectedCustomerId && isStatsModalOpen,
+    enabled: !!selectedCustomerId && isStatsModalOpen && !!employeeId,
   });
 
   // Send reminders mutation
   const sendRemindersMutation = useMutation({
     mutationFn: async (days: number) => {
-      return apiRequest('/api/messages/send-inactive', {
-        method: 'POST',
-        body: { days }
-      });
+      const response = await apiRequest('POST', '/api/messages/send-inactive', { days });
+      return response.json();
     },
     onSuccess: (result: any) => {
       const { summary } = result;
