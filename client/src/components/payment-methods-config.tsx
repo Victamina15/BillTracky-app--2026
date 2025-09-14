@@ -30,7 +30,6 @@ export default function PaymentMethodsConfig({ onNotification }: PaymentMethodsC
   });
 
   const form = useForm({
-    resolver: zodResolver(insertPaymentMethodSchema),
     defaultValues: {
       name: "",
       icon: "card",
@@ -89,6 +88,15 @@ export default function PaymentMethodsConfig({ onNotification }: PaymentMethodsC
 
   const handleSubmit = (data: any) => {
     console.log("Form submitted with data:", data);
+    console.log("Form errors:", form.formState.errors);
+    
+    // Validate required field
+    if (!data.name || data.name.trim() === '') {
+      console.error("Name is required");
+      onNotification("El nombre del método de pago es requerido");
+      return;
+    }
+    
     // Generate code from name (lowercase, no spaces, alphanumeric only)
     const code = data.name.toLowerCase().replace(/[^a-z0-9]/g, '_').replace(/_{2,}/g, '_').replace(/^_|_$/g, '');
     const submitData = { ...data, code };
