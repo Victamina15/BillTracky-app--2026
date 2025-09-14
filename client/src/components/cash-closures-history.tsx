@@ -121,7 +121,7 @@ export default function CashClosuresHistory({ onBack }: CashClosuresHistoryProps
         const searchLower = searchTerm.toLowerCase();
         const matchesNotes = closure.notes?.toLowerCase().includes(searchLower);
         const matchesEmployee = closure.employeeName?.toLowerCase().includes(searchLower);
-        const matchesDate = format(new Date(closure.date), "dd/MM/yyyy", { locale: es }).includes(searchLower);
+        const matchesDate = (closure as any).closingDate ? format(new Date((closure as any).closingDate), "dd/MM/yyyy", { locale: es }).includes(searchLower) : false;
         
         if (!matchesNotes && !matchesEmployee && !matchesDate) {
           return false;
@@ -144,9 +144,9 @@ export default function CashClosuresHistory({ onBack }: CashClosuresHistoryProps
     filtered.sort((a: CashClosure, b: CashClosure) => {
       switch (sortBy) {
         case "date-asc":
-          return new Date(a.date).getTime() - new Date(b.date).getTime();
+          return new Date((a as any).closingDate).getTime() - new Date((b as any).closingDate).getTime();
         case "date-desc":
-          return new Date(b.date).getTime() - new Date(a.date).getTime();
+          return new Date((b as any).closingDate).getTime() - new Date((a as any).closingDate).getTime();
         case "variance-asc":
           return parseFloat(a.variance) - parseFloat(b.variance);
         case "variance-desc":

@@ -603,16 +603,15 @@ export default function CashClosure({ onBack }: CashClosureProps) {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Payment methods - Shopify POS style */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-3">
-                <CreditCard className="h-5 w-5 text-blue-600" />
-                Métodos de Pago
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
+          {/* Métodos de Pago con diseño tech-3D */}
+          <div className="tech-button-3d bg-gradient-to-br from-white to-slate-50 dark:from-slate-800 dark:to-slate-900 border-2 border-blue-200 dark:border-blue-500/50 rounded-xl shadow-2xl backdrop-blur-sm p-6 hover:shadow-xl transition-all duration-300">
+            <div className="flex items-center gap-4 mb-6">
+              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-xl flex items-center justify-center tech-glow shadow-lg">
+                <CreditCard className="w-6 h-6 text-white" />
+              </div>
+              <h3 className="text-xl font-black bg-gradient-to-r from-blue-600 via-cyan-600 to-purple-600 bg-clip-text text-transparent">💳 Métodos de Pago</h3>
+            </div>
+            <div className="space-y-3">
                 {Object.entries(dailySummary.paymentSummary)
                   .filter(([_, data]) => data.quantity > 0)
                   .map(([methodName, data]) => {
@@ -638,48 +637,45 @@ export default function CashClosure({ onBack }: CashClosureProps) {
                       </div>
                     );
                   })}
-              </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
-          {/* Employee stats - Shopify POS style */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-3">
-                <Users className="h-5 w-5 text-blue-600" />
-                Rendimiento por Empleado
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
+          {/* Rendimiento por Empleado con diseño tech-3D */}
+          <div className="tech-button-3d bg-gradient-to-br from-white to-slate-50 dark:from-slate-800 dark:to-slate-900 border-2 border-purple-200 dark:border-purple-500/50 rounded-xl shadow-2xl backdrop-blur-sm p-6 hover:shadow-xl transition-all duration-300">
+            <div className="flex items-center gap-4 mb-6">
+              <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center tech-glow shadow-lg">
+                <Users className="w-6 h-6 text-white" />
+              </div>
+              <h3 className="text-xl font-black bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 bg-clip-text text-transparent">👥 Rendimiento por Empleado</h3>
+            </div>
+            <div className="space-y-3">
                 {Object.entries(dailySummary.employeeStats).map(([employeeName, stats]) => (
-                  <div key={employeeName} className="flex items-center justify-between p-3 border border-gray-200 dark:border-gray-700 rounded-lg">
+                  <div key={employeeName} className="tech-button-3d bg-gradient-to-r from-white to-slate-50 dark:from-slate-700/50 dark:to-slate-800/50 border border-slate-200 dark:border-slate-600/50 rounded-lg p-4 hover:border-purple-300 dark:hover:border-purple-500/50 transition-all duration-300 transform hover:scale-[1.02] hover:-translate-y-0.5">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/20 rounded-lg flex items-center justify-center">
-                        <span className="text-blue-600 dark:text-blue-400 font-semibold">
+                      <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center tech-glow shadow-lg">
+                        <span className="text-white font-black text-lg">
                           {employeeName.charAt(0).toUpperCase()}
                         </span>
                       </div>
-                      <div>
-                        <p className="font-medium text-gray-900 dark:text-white">{employeeName}</p>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">{stats.sales} ventas</p>
+                      <div className="flex-1">
+                        <p className="font-bold text-slate-800 dark:text-white text-lg">{employeeName}</p>
+                        <p className="text-sm font-semibold text-slate-600 dark:text-slate-400">{stats.sales} ventas</p>
                       </div>
-                    </div>
-                    <div className="text-right">
-                      <p className="font-semibold text-gray-900 dark:text-white" data-testid={`employee-${employeeName}-total`}>
-                        {formatCurrency(stats.total)}
-                      </p>
+                      <div className="text-right">
+                        <p className="text-xl font-black bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent" data-testid={`employee-${employeeName}-total`}>
+                          {formatCurrency(stats.total)}
+                        </p>
+                      </div>
                     </div>
                   </div>
                 ))}
                 {Object.keys(dailySummary.employeeStats).length === 0 && (
-                  <div className="p-6 text-center border border-yellow-200 dark:border-yellow-700 rounded-lg bg-yellow-50 dark:bg-yellow-900/20">
-                    <p className="text-yellow-800 dark:text-yellow-300 font-medium">No hay ventas registradas para esta fecha</p>
+                  <div className="tech-button-3d bg-gradient-to-r from-yellow-50 to-orange-50 dark:from-yellow-900/30 dark:to-orange-900/30 border-2 border-yellow-300 dark:border-yellow-500/50 rounded-lg p-6 text-center tech-glow animate-pulse">
+                    <p className="text-yellow-800 dark:text-yellow-300 font-bold text-lg">⚠️ No hay ventas registradas para esta fecha</p>
                   </div>
                 )}
-              </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </div>
 
         {/* Professional POS-Style Cash Closure Display */}
