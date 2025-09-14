@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FileText, LogOut, Home, Package, Users, Settings, CreditCard, BarChart3, Building2, MessageCircle, Menu, X, CheckCircle, Clock } from "lucide-react";
+import { FileText, LogOut, Home, Package, Users, Settings, CreditCard, BarChart3, Building2, MessageCircle, Menu, X, CheckCircle, Clock, History } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { type Employee, type Invoice } from "@shared/schema";
 import InvoiceCreation from "./invoice-creation";
@@ -8,6 +8,7 @@ import CustomersGrid from "./customers-grid";
 import ServicesConfig from "./services-config";
 import PaymentMethodsConfig from "./payment-methods-config";
 import CashClosure from "./cash-closure";
+import CashClosuresHistory from "./cash-closures-history";
 import CompanyConfig from "./company-config";
 import WhatsAppConfig from "./whatsapp-config";
 import { useQuery } from "@tanstack/react-query";
@@ -81,6 +82,8 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
         return <PaymentMethodsConfig onNotification={onNotification} />;
       case "cash-closure":
         return <CashClosure onBack={() => setActiveTab('overview')} />;
+      case "cash-closures-history":
+        return <CashClosuresHistory onBack={() => setActiveTab('overview')} />;
       case "company-config":
         return <CompanyConfig onBack={() => setActiveTab('overview')} />;
       case "whatsapp-config":
@@ -313,6 +316,19 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
             >
               <BarChart3 className="w-4 h-4 mr-3" />
               Cierre de Caja
+            </button>
+            
+            <button 
+              onClick={() => setActiveTab('cash-closures-history')} 
+              className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-300 ${
+                activeTab === 'cash-closures-history' 
+                  ? 'tech-button-3d tech-button-active text-cyan-400 dark:shadow-lg' 
+                  : 'tech-button-3d text-gray-300 hover:text-cyan-400'
+              }`}
+              data-testid="tab-cash-closures-history"
+            >
+              <History className="w-4 h-4 mr-3" />
+              Historial Cierres
             </button>
             
             <button 

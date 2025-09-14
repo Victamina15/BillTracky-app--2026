@@ -913,6 +913,46 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Cash Closures History Route (with employee names)
+  app.get("/api/cash-closures/history", requireAuthentication, async (req, res) => {
+    try {
+      const queryData = req.query;
+      const startDate = queryData.startDate as string;
+      const endDate = queryData.endDate as string;
+      
+      if (!startDate || !endDate) {
+        return res.status(400).json({ message: "startDate and endDate are required" });
+      }
+      
+      // Get closures within date range
+      const closures = await storage.getCashClosures(startDate, endDate);
+      
+      // Enhance with employee names
+      const closuresWithEmployeeNames = await Promise.all(
+        closures.map(async (closure) => {
+          let employeeName = 'N/A';
+          if (closure.employeeId) {
+            try {
+              const employee = await storage.getEmployee(closure.employeeId);
+              employeeName = employee?.name || 'N/A';
+            } catch (error) {
+              console.error(`Error fetching employee ${closure.employeeId}:`, error);
+            }
+          }
+          return {
+            ...closure,
+            employeeName
+          };
+        })
+      );
+      
+      res.json(closuresWithEmployeeNames);
+    } catch (error) {
+      console.error("Cash closures history error:", error);
+      res.status(500).json({ message: "Server error" });
+    }
+  });
+
   // Metrics Routes
   app.get("/api/metrics/daily/:date", requireAuthentication, async (req, res) => {
     try {
