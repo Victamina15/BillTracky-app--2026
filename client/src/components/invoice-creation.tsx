@@ -710,7 +710,7 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
         {/* Panel Principal */}
         <div className="lg:col-span-2 space-y-6">
           {/* Información del Cliente */}
-          <Card className="tech-button-3d bg-white border-2 border-cyan-300 text-cyan-700 dark:from-cyan-500/20 dark:to-blue-600/20 dark:text-white dark:border-cyan-500/30 rounded-xl shadow-sm hover:bg-cyan-50 hover:border-cyan-400 dark:hover:from-cyan-400/30 dark:hover:to-blue-500/30 transition-all duration-300 dark:backdrop-blur-sm">
+          <Card className="tech-button-3d bg-white dark:bg-gray-800/50 border-2 border-cyan-300 dark:border-cyan-500/30 rounded-xl shadow-sm hover:bg-cyan-50 hover:border-cyan-400 dark:hover:bg-gray-700/50 transition-all duration-300 dark:backdrop-blur-sm">
             <CardHeader>
               <CardTitle className="flex items-center justify-between">
                 <div className="flex items-center">
@@ -789,7 +789,7 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
           </Card>
 
           {/* Artículos del Pedido */}
-          <Card className="tech-button-3d bg-white border-2 border-blue-300 text-blue-700 dark:from-blue-500/20 dark:to-purple-600/20 dark:text-white dark:border-blue-500/30 rounded-xl shadow-sm hover:bg-blue-50 hover:border-blue-400 dark:hover:from-blue-400/30 dark:hover:to-purple-500/30 transition-all duration-300 dark:backdrop-blur-sm">
+          <Card className="tech-button-3d bg-white dark:bg-gray-800/50 border-2 border-blue-300 dark:border-blue-500/30 rounded-xl shadow-sm hover:bg-blue-50 hover:border-blue-400 dark:hover:bg-gray-700/50 transition-all duration-300 dark:backdrop-blur-sm">
             <CardHeader>
               <CardTitle className="flex items-center">
                 <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center mr-3 tech-glow">
@@ -953,7 +953,7 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
         {/* Panel de Resumen */}
         <div className="space-y-6">
           {/* Totales */}
-          <Card className="tech-button-3d bg-white border-2 border-purple-300 text-purple-700 dark:from-purple-500/20 dark:to-pink-600/20 dark:text-white dark:border-purple-500/30 rounded-xl shadow-sm hover:bg-purple-50 hover:border-purple-400 dark:hover:from-purple-400/30 dark:hover:to-pink-500/30 transition-all duration-300 dark:backdrop-blur-sm">
+          <Card className="tech-button-3d bg-white dark:bg-gray-800/50 border-2 border-purple-300 dark:border-purple-500/30 rounded-xl shadow-sm hover:bg-purple-50 hover:border-purple-400 dark:hover:bg-gray-700/50 transition-all duration-300 dark:backdrop-blur-sm">
             <CardHeader>
               <CardTitle className="flex items-center">
                 <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-600 rounded-lg flex items-center justify-center mr-3 tech-glow">
