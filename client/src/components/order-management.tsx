@@ -502,17 +502,17 @@ export default function OrderManagement({ onNotification }: OrderManagementProps
                         <DropdownMenuTrigger asChild>
                           <Button
                             size="sm"
-                            className="tech-button-3d bg-gradient-to-br from-slate-400 to-slate-600 hover:from-slate-500 hover:to-slate-700 text-white font-semibold px-3 py-2 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 border-2 border-slate-300"
+                            className="tech-button-3d bg-gradient-to-br from-slate-700 to-slate-900 hover:from-slate-800 hover:to-black text-white font-bold px-3 py-2 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 border-2 border-slate-600"
                             data-testid={`button-actions-${order.id}`}
                             title="Más opciones"
                           >
                             <MoreVertical className="h-4 w-4" />
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-64 tech-button-3d bg-gradient-to-br from-white to-slate-50 dark:from-slate-800 dark:to-slate-900 border-2 border-slate-200 dark:border-slate-600 shadow-xl">
+                        <DropdownMenuContent align="end" className="w-64 tech-button-3d bg-gradient-to-br from-white to-slate-50 dark:from-slate-800 dark:to-slate-900 border-2 border-slate-300 dark:border-slate-600 shadow-2xl backdrop-blur-sm">
                           <DropdownMenuItem
                             onClick={() => openWorkTicketModal(order)}
-                            className="hover:bg-gradient-to-br hover:from-purple-100 hover:to-purple-200 dark:hover:from-purple-900/30 dark:hover:to-purple-800/30 text-purple-700 dark:text-purple-300 font-medium"
+                            className="hover:bg-gradient-to-br hover:from-purple-100 hover:to-purple-200 dark:hover:from-purple-900/30 dark:hover:to-purple-800/30 text-purple-800 dark:text-purple-300 font-semibold py-3"
                             data-testid={`menu-ticket-${order.id}`}
                           >
                             <FileText className="mr-3 h-5 w-5" />
@@ -521,7 +521,7 @@ export default function OrderManagement({ onNotification }: OrderManagementProps
                           
                           <DropdownMenuItem
                             onClick={() => window.print()}
-                            className="hover:bg-gradient-to-br hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-900/30 dark:hover:to-blue-800/30 text-blue-700 dark:text-blue-300 font-medium"
+                            className="hover:bg-gradient-to-br hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-900/30 dark:hover:to-blue-800/30 text-blue-800 dark:text-blue-300 font-semibold py-3"
                             data-testid={`menu-print-${order.id}`}
                           >
                             <Printer className="mr-3 h-5 w-5" />
@@ -537,7 +537,7 @@ export default function OrderManagement({ onNotification }: OrderManagementProps
                                   setSelectedOrder(order);
                                   setShowStatusModal(true);
                                 }}
-                                className="hover:bg-gradient-to-br hover:from-orange-100 hover:to-orange-200 dark:hover:from-orange-900/30 dark:hover:to-orange-800/30 text-orange-700 dark:text-orange-300 font-medium"
+                                className="hover:bg-gradient-to-br hover:from-orange-100 hover:to-orange-200 dark:hover:from-orange-900/30 dark:hover:to-orange-800/30 text-orange-800 dark:text-orange-300 font-semibold py-3"
                                 data-testid={`menu-status-${order.id}`}
                               >
                                 <RefreshCw className="mr-3 h-5 w-5" />
@@ -550,7 +550,7 @@ export default function OrderManagement({ onNotification }: OrderManagementProps
                                     setSelectedOrder(order);
                                     setShowPaymentModal(true);
                                   }}
-                                  className="hover:bg-gradient-to-br hover:from-green-100 hover:to-green-200 dark:hover:from-green-900/30 dark:hover:to-green-800/30 text-green-700 dark:text-green-300 font-medium"
+                                  className="hover:bg-gradient-to-br hover:from-green-100 hover:to-green-200 dark:hover:from-green-900/30 dark:hover:to-green-800/30 text-green-800 dark:text-green-300 font-semibold py-3"
                                   data-testid={`menu-payment-${order.id}`}
                                 >
                                   <DollarSign className="mr-3 h-5 w-5" />
@@ -558,14 +558,14 @@ export default function OrderManagement({ onNotification }: OrderManagementProps
                                 </DropdownMenuItem>
                               )}
                               
-                              <DropdownMenuSeparator className="bg-gradient-to-r from-transparent via-red-300 to-transparent dark:via-red-600" />
+                              <DropdownMenuSeparator className="bg-gradient-to-r from-transparent via-slate-400 to-transparent dark:via-slate-500 my-2" />
                               
                               <DropdownMenuItem
                                 onClick={() => {
                                   setSelectedOrder(order);
                                   setShowCancelModal(true);
                                 }}
-                                className="hover:bg-gradient-to-br hover:from-red-100 hover:to-red-200 dark:hover:from-red-900/30 dark:hover:to-red-800/30 text-red-700 dark:text-red-300 font-medium"
+                                className="hover:bg-gradient-to-br hover:from-red-100 hover:to-red-200 dark:hover:from-red-900/30 dark:hover:to-red-800/30 text-red-800 dark:text-red-300 font-semibold py-3"
                                 data-testid={`menu-cancel-${order.id}`}
                               >
                                 <XCircle className="mr-3 h-5 w-5" />
