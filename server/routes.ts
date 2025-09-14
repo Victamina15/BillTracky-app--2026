@@ -782,6 +782,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/api/cash-closures/history", requireAuthentication, async (req, res) => {
+    try {
+      const { startDate, endDate } = req.query;
+      
+      if (!startDate || !endDate) {
+        return res.status(400).json({ message: "startDate and endDate are required" });
+      }
+
+      const closures = await storage.getCashClosures(
+        startDate as string,
+        endDate as string
+      );
+
+      // Get employee names
+      const employees = await storage.getEmployees();
+      const enrichedClosures = closures.map(closure => {
+        const employee = employees.find(emp => emp.id === closure.employeeId);
+        return {
+          ...closure,
+          employeeName: employee?.name || 'Desconocido'
+        };
+      });
+
+      res.json(enrichedClosures);
+    } catch (error) {
+      console.error('Error fetching cash closures history:', error);
+      res.status(500).json({ message: "Server error" });
+    }
+  });
+
   app.get("/api/cash-closures/:id", requireAuthentication, async (req, res) => {
     try {
       const { id } = req.params;

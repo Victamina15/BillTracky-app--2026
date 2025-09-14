@@ -73,7 +73,7 @@ export default function CashClosure({ onBack }: CashClosureProps) {
   );
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
-  const OPENING_CASH = 5000; // Fixed opening cash amount - Shopify POS style
+  const [openingCash, setOpeningCash] = useState<string>('5000');
   const [countedCash, setCountedCash] = useState<string>('0');
   const [notes, setNotes] = useState<string>('');
   const [showCashForm, setShowCashForm] = useState(false);
@@ -236,17 +236,17 @@ export default function CashClosure({ onBack }: CashClosureProps) {
     };
   }, [invoices, paymentMethods, employees]);
 
-  // Calculate system cash with fixed opening amount - Shopify POS style
+  // Calculate system cash
   const systemCash = useMemo(() => {
-    if (!paymentMethods.length) return OPENING_CASH;
+    if (!paymentMethods.length) return parseFloat(openingCash) || 0;
     
     // Find total cash payments
     const cashMethod = paymentMethods.find((m: PaymentMethod) => m.code === 'cash');
-    if (!cashMethod) return OPENING_CASH;
+    if (!cashMethod) return parseFloat(openingCash) || 0;
     
     const cashPayments = dailySummary.paymentSummary[cashMethod.name];
-    return OPENING_CASH + (cashPayments?.total || 0);
-  }, [dailySummary.paymentSummary, paymentMethods]);
+    return (parseFloat(openingCash) || 0) + (cashPayments?.total || 0);
+  }, [openingCash, dailySummary.paymentSummary, paymentMethods]);
 
   // Calcular varianza
   const variance = useMemo(() => {
@@ -271,7 +271,7 @@ export default function CashClosure({ onBack }: CashClosureProps) {
 
     createCashClosureMutation.mutate({
       closingDate: selectedDate,
-      openingCash: OPENING_CASH,
+      openingCash: parseFloat(openingCash) || 0,
       countedCash: parseFloat(countedCash),
       notes: notes || undefined,
     });
@@ -485,29 +485,27 @@ export default function CashClosure({ onBack }: CashClosureProps) {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6">
       <div className="max-w-6xl mx-auto">
-        {/* Header - Shopify POS style */}
-        <Card className="mb-6">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <Button
-                  variant="secondary"
-                  onClick={onBack}
-                  data-testid="button-back-cash-closure"
-                >
-                  <ArrowLeft className="h-4 w-4 mr-2" />
-                  Volver
-                </Button>
-                <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
-                    <BarChart3 className="w-5 h-5 text-white" />
-                  </div>
-                  <div>
-                    <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Cierre de Caja</h1>
-                    <p className="text-gray-600 dark:text-gray-400 text-sm">Reportes y cálculos diarios</p>
-                  </div>
-                </div>
+        {/* Header con diseño tech 3D mejorado */}
+        <div className="tech-button-3d bg-gradient-to-br from-white to-slate-50 dark:from-slate-800 dark:to-slate-900 border-2 border-slate-200 dark:border-slate-600 rounded-xl shadow-2xl backdrop-blur-sm p-6 mb-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <Button
+                size="sm"
+                onClick={onBack}
+                className="tech-button-3d bg-white border-2 border-slate-300 text-slate-700 dark:from-slate-500/20 dark:to-slate-600/20 dark:text-white dark:border-slate-500/30 rounded-lg shadow-sm p-3 hover:bg-slate-50 hover:border-slate-400 dark:hover:from-slate-400/30 dark:hover:to-slate-500/30 transition-all duration-300 cursor-pointer transform hover:scale-105 hover:-translate-y-1 dark:backdrop-blur-sm font-bold mr-3"
+                data-testid="button-back-cash-closure"
+              >
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Volver
+              </Button>
+              <div className="w-16 h-16 bg-gradient-to-br from-cyan-500 via-blue-600 to-purple-600 rounded-xl flex items-center justify-center tech-glow shadow-xl transform hover:scale-105 transition-all duration-300">
+                <BarChart3 className="w-8 h-8 text-white" />
               </div>
+              <div>
+                <h1 className="text-3xl font-black bg-gradient-to-r from-cyan-600 via-blue-600 to-purple-600 bg-clip-text text-transparent">Cierre de Caja</h1>
+                <p className="text-slate-600 dark:text-slate-300 font-semibold">Reportes y cálculos diarios profesionales</p>
+              </div>
+            </div>
               
               <div className="flex items-center space-x-3">
                 <div className="flex items-center space-x-2">
@@ -526,16 +524,16 @@ export default function CashClosure({ onBack }: CashClosureProps) {
                 </div>
                 
                 <Button
-                  variant="outline"
                   onClick={printCashClosure}
+                  className="tech-button-3d bg-white border-2 border-cyan-300 text-cyan-700 dark:from-cyan-500/20 dark:to-blue-600/20 dark:text-white dark:border-cyan-500/30 rounded-lg shadow-sm p-3 hover:bg-cyan-50 hover:border-cyan-400 dark:hover:from-cyan-400/30 dark:hover:to-blue-500/30 transition-all duration-300 cursor-pointer transform hover:scale-105 hover:-translate-y-1 dark:backdrop-blur-sm font-bold"
                   data-testid="button-print-closure"
                 >
                   <Printer className="w-4 h-4 mr-2" />
                   Imprimir
                 </Button>
                 <Button
-                  variant="outline"
                   onClick={exportToExcel}
+                  className="tech-button-3d bg-white border-2 border-purple-300 text-purple-700 dark:from-purple-500/20 dark:to-pink-600/20 dark:text-white dark:border-purple-500/30 rounded-lg shadow-sm p-3 hover:bg-purple-50 hover:border-purple-400 dark:hover:from-purple-400/30 dark:hover:to-pink-500/30 transition-all duration-300 cursor-pointer transform hover:scale-105 hover:-translate-y-1 dark:backdrop-blur-sm font-bold"
                   data-testid="button-export-closure"
                 >
                   <Download className="w-4 h-4 mr-2" />
@@ -543,74 +541,65 @@ export default function CashClosure({ onBack }: CashClosureProps) {
                 </Button>
               </div>
             </div>
-          </CardContent>
-        </Card>
+        </div>
 
-        {/* Statistics - Shopify POS style */}
+        {/* Estadísticas con diseño tech 3D */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Total Facturas</p>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white" data-testid="stat-total-invoices">
-                    {dailySummary.totalInvoices}
-                  </p>
-                </div>
-                <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/20 rounded-lg flex items-center justify-center">
-                  <FileText className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-                </div>
+          <div className="tech-button-3d bg-gradient-to-br from-white to-slate-50 dark:from-slate-800 dark:to-slate-900 border-2 border-cyan-200 dark:border-cyan-500/50 rounded-xl shadow-2xl backdrop-blur-sm p-6 hover:shadow-xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <p className="text-sm font-semibold text-cyan-600 dark:text-cyan-400 mb-2">📊 Total Facturas</p>
+                <p className="text-3xl font-black bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent" data-testid="stat-total-invoices">
+                  {dailySummary.totalInvoices}
+                </p>
               </div>
-            </CardContent>
-          </Card>
+              <div className="w-14 h-14 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl flex items-center justify-center tech-glow shadow-lg">
+                <FileText className="w-7 h-7 text-white" />
+              </div>
+            </div>
+          </div>
 
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Entregadas</p>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white" data-testid="stat-delivered-invoices">
-                    {dailySummary.deliveredInvoices}
-                  </p>
-                </div>
-                <div className="w-10 h-10 bg-green-100 dark:bg-green-900/20 rounded-lg flex items-center justify-center">
-                  <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400" />
-                </div>
+          <div className="tech-button-3d bg-gradient-to-br from-white to-slate-50 dark:from-slate-800 dark:to-slate-900 border-2 border-green-200 dark:border-green-500/50 rounded-xl shadow-2xl backdrop-blur-sm p-6 hover:shadow-xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <p className="text-sm font-semibold text-green-600 dark:text-green-400 mb-2">✅ Entregadas</p>
+                <p className="text-3xl font-black bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent" data-testid="stat-delivered-invoices">
+                  {dailySummary.deliveredInvoices}
+                </p>
               </div>
-            </CardContent>
-          </Card>
+              <div className="w-14 h-14 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center tech-glow shadow-lg">
+                <CheckCircle className="w-7 h-7 text-white" />
+              </div>
+            </div>
+          </div>
 
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Pendientes</p>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white" data-testid="stat-pending-invoices">
-                    {dailySummary.pendingInvoices}
-                  </p>
-                </div>
-                <div className="w-10 h-10 bg-yellow-100 dark:bg-yellow-900/20 rounded-lg flex items-center justify-center">
-                  <Clock className="w-5 h-5 text-yellow-600 dark:text-yellow-400" />
-                </div>
+          <div className="tech-button-3d bg-gradient-to-br from-white to-slate-50 dark:from-slate-800 dark:to-slate-900 border-2 border-yellow-200 dark:border-yellow-500/50 rounded-xl shadow-2xl backdrop-blur-sm p-6 hover:shadow-xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <p className="text-sm font-semibold text-yellow-600 dark:text-yellow-400 mb-2">⏰ Pendientes</p>
+                <p className="text-3xl font-black bg-gradient-to-r from-yellow-600 to-orange-600 bg-clip-text text-transparent" data-testid="stat-pending-invoices">
+                  {dailySummary.pendingInvoices}
+                </p>
               </div>
-            </CardContent>
-          </Card>
+              <div className="w-14 h-14 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-xl flex items-center justify-center tech-glow shadow-lg animate-pulse">
+                <Clock className="w-7 h-7 text-white" />
+              </div>
+            </div>
+          </div>
 
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Total Ingresos</p>
-                  <p className="text-2xl font-bold text-green-600 dark:text-green-400" data-testid="stat-total-revenue">
-                    {formatCurrency(dailySummary.totalRevenue)}
-                  </p>
-                </div>
-                <div className="w-10 h-10 bg-green-100 dark:bg-green-900/20 rounded-lg flex items-center justify-center">
-                  <DollarSign className="w-5 h-5 text-green-600 dark:text-green-400" />
-                </div>
+          <div className="tech-button-3d bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/30 dark:to-emerald-800/30 border-2 border-green-300 dark:border-green-500/50 rounded-xl shadow-2xl backdrop-blur-sm p-6 hover:shadow-xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 tech-glow">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <p className="text-sm font-semibold text-green-600 dark:text-green-400 mb-2">💰 Total Ingresos</p>
+                <p className="text-3xl font-black bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent" data-testid="stat-total-revenue">
+                  {formatCurrency(dailySummary.totalRevenue)}
+                </p>
               </div>
-            </CardContent>
-          </Card>
+              <div className="w-14 h-14 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center tech-glow shadow-lg animate-pulse">
+                <DollarSign className="w-7 h-7 text-white" />
+              </div>
+            </div>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -888,32 +877,35 @@ export default function CashClosure({ onBack }: CashClosureProps) {
                 </div>
               ) : (
                 <div className="p-8">
-                  {/* Opening Cash Summary - Shopify POS Style */}
+                  {/* Opening Cash - Editable */}
                   <div className="mb-6">
-                    <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded">
-                      <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <Lock className="h-4 w-4 text-gray-400" />
-                            <span className="text-sm text-gray-700 dark:text-gray-300">Apertura Fija</span>
-                          </div>
-                          <span className="text-sm font-medium text-gray-900 dark:text-white">
-                            {formatCurrency(OPENING_CASH)}
-                          </span>
-                        </div>
-                      </div>
-                      <div className="px-4 py-3">
+                    <div className="tech-button-3d bg-gradient-to-br from-green-50 to-emerald-100 dark:from-green-900/30 dark:to-emerald-800/30 border-2 border-green-300 dark:border-green-500/50 rounded-lg p-6">
+                      <Label htmlFor="opening-cash" className="text-sm font-bold text-green-700 dark:text-green-300 mb-3 flex items-center gap-2">
+                        💰 Dinero de Apertura
+                        <Badge className="bg-green-200 text-green-800 dark:bg-green-800/50 dark:text-green-200">Modificable</Badge>
+                      </Label>
+                      <Input
+                        id="opening-cash"
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        value={openingCash}
+                        onChange={(e) => setOpeningCash(e.target.value)}
+                        placeholder="5000.00"
+                        className="text-lg font-bold tech-button-3d"
+                        data-testid="input-opening-cash"
+                      />
+                      <p className="text-xs text-green-600 dark:text-green-400 mt-2">Dinero inicial en caja al abrir</p>
+                      <div className="mt-4 p-3 bg-white dark:bg-green-900/20 rounded border border-green-200 dark:border-green-700">
                         <div className="flex items-center justify-between text-sm">
-                          <span className="text-gray-600 dark:text-gray-400">Ventas en Efectivo</span>
-                          <span className="text-gray-900 dark:text-white font-medium">
-                            +{formatCurrency((dailySummary.paymentSummary.cash?.total || 0))}
+                          <span className="text-green-700 dark:text-green-400">+ Ventas en Efectivo:</span>
+                          <span className="font-medium text-green-800 dark:text-green-300">
+                            {formatCurrency((dailySummary.paymentSummary.cash?.total || 0))}
                           </span>
                         </div>
-                      </div>
-                      <div className="px-4 py-3 bg-gray-50 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Total Esperado</span>
-                          <span className="text-sm font-semibold text-gray-900 dark:text-white">
+                        <div className="flex items-center justify-between text-sm mt-2 pt-2 border-t border-green-200 dark:border-green-700">
+                          <span className="font-semibold text-green-800 dark:text-green-300">= Total Esperado:</span>
+                          <span className="font-bold text-green-900 dark:text-green-200">
                             {formatCurrency(systemCash)}
                           </span>
                         </div>
