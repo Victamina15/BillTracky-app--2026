@@ -22,7 +22,9 @@ import {
   CheckCircle,
   XCircle,
   Trash2,
-  MoreVertical
+  MoreVertical,
+  ChevronDown,
+  Settings
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -278,6 +280,29 @@ export default function OrderManagement({ onNotification }: OrderManagementProps
     });
   };
 
+  const handleDirectPayment = (order: OrderWithItems, paymentMethodCode: string) => {
+    const method = paymentMethods.find(pm => pm.code === paymentMethodCode);
+    if (!method) {
+      onNotification("Error: Método de pago no encontrado");
+      return;
+    }
+
+    // Si el método requiere referencia, abrir el modal completo
+    if (method.requiresReference) {
+      setSelectedOrder(order);
+      setSelectedPaymentMethod(paymentMethodCode);
+      setShowPaymentModal(true);
+      return;
+    }
+
+    // Para métodos que no requieren referencia, cobrar directamente
+    paymentMutation.mutate({
+      id: order.id,
+      paymentMethod: paymentMethodCode,
+      paymentReference: undefined
+    });
+  };
+
   const handleCancel = () => {
     if (!selectedOrder || !cancelReason.trim()) return;
     cancelMutation.mutate({ id: selectedOrder.id, reason: cancelReason });
@@ -484,21 +509,52 @@ export default function OrderManagement({ onNotification }: OrderManagementProps
                     
                     {/* Panel de acciones profesionales */}
                     <div className="flex items-center gap-3 justify-end">
-                      {/* BOTÓN DE COBRO PROMINENTE para pagos pendientes */}
+                      {/* BOTÓN DE COBRO DESPLEGABLE para pagos pendientes */}
                       {!order.paid && (
-                        <Button
-                          size="sm"
-                          onClick={() => {
-                            setSelectedOrder(order);
-                            setShowPaymentModal(true);
-                          }}
-                          className="tech-button-3d bg-white border-2 border-emerald-300 text-emerald-700 dark:from-green-500/20 dark:to-emerald-600/20 dark:text-white dark:border-emerald-500/30 rounded-lg shadow-sm p-3 hover:bg-emerald-50 hover:border-emerald-400 dark:hover:from-green-400/30 dark:hover:to-emerald-500/30 transition-all duration-300 cursor-pointer transform hover:scale-105 hover:-translate-y-1 dark:backdrop-blur-sm font-bold"
-                          data-testid={`button-collect-payment-${order.id}`}
-                          title="Cobrar pago pendiente"
-                        >
-                          <DollarSign className="h-4 w-4 mr-2" />
-                          COBRAR
-                        </Button>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              size="sm"
+                              className="tech-button-3d bg-white border-2 border-emerald-300 text-emerald-700 dark:from-green-500/20 dark:to-emerald-600/20 dark:text-white dark:border-emerald-500/30 rounded-lg shadow-sm p-3 hover:bg-emerald-50 hover:border-emerald-400 dark:hover:from-green-400/30 dark:hover:to-emerald-500/30 transition-all duration-300 cursor-pointer transform hover:scale-105 hover:-translate-y-1 dark:backdrop-blur-sm font-bold"
+                              data-testid={`button-collect-payment-${order.id}`}
+                              title="Cobrar pago - seleccionar método"
+                            >
+                              <DollarSign className="h-4 w-4 mr-2" />
+                              COBRAR
+                              <ChevronDown className="h-3 w-3 ml-1" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="center" className="w-56 tech-button-3d bg-gradient-to-br from-white to-slate-50 dark:from-slate-800 dark:to-slate-900 border-2 border-emerald-200 dark:border-emerald-500/50 shadow-2xl backdrop-blur-sm">
+                            {paymentMethods.filter((method: PaymentMethod) => method.active && method.code !== 'pending').map((method: PaymentMethod) => {
+                              const config = paymentMethodConfig[method.code as keyof typeof paymentMethodConfig] || { name: method.name, icon: CreditCard, color: 'text-gray-600' };
+                              const IconComponent = config.icon;
+                              return (
+                                <DropdownMenuItem
+                                  key={method.id}
+                                  onClick={() => handleDirectPayment(order, method.code)}
+                                  className="hover:bg-gradient-to-br hover:from-emerald-100 hover:to-emerald-200 dark:hover:from-emerald-900/30 dark:hover:to-emerald-800/30 text-emerald-800 dark:text-emerald-300 font-semibold py-3 cursor-pointer"
+                                  data-testid={`button-pay-${method.code}-${order.id}`}
+                                >
+                                  <IconComponent className={`mr-3 h-4 w-4 ${config.color}`} />
+                                  {method.name}
+                                  {method.requiresReference && <span className="ml-auto text-xs opacity-70">(con ref.)</span>}
+                                </DropdownMenuItem>
+                              );
+                            })}
+                            <DropdownMenuSeparator className="bg-gradient-to-r from-transparent via-emerald-300 to-transparent dark:via-emerald-600" />
+                            <DropdownMenuItem
+                              onClick={() => {
+                                setSelectedOrder(order);
+                                setShowPaymentModal(true);
+                              }}
+                              className="hover:bg-gradient-to-br hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-900/30 dark:hover:to-blue-800/30 text-blue-800 dark:text-blue-300 font-semibold py-3"
+                              data-testid={`button-payment-modal-${order.id}`}
+                            >
+                              <Settings className="mr-3 h-4 w-4" />
+                              Más opciones...
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                       )}
                       
                       {/* Botones de acción principales mejorados */}
