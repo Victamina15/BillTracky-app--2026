@@ -211,7 +211,9 @@ export default function OrderManagement({ onNotification }: OrderManagementProps
   const paymentMethodConfig = {
     cash: { name: 'Efectivo', icon: Banknote, color: 'text-green-600 dark:text-green-400' },
     card: { name: 'Tarjeta', icon: CreditCard, color: 'text-blue-600 dark:text-blue-400' },
+    tarjeta: { name: 'Tarjeta', icon: CreditCard, color: 'text-blue-600 dark:text-blue-400' },
     transfer: { name: 'Transferencia', icon: Landmark, color: 'text-indigo-600 dark:text-indigo-400' },
+    tansferencia: { name: 'Transferencia', icon: Landmark, color: 'text-indigo-600 dark:text-indigo-400' },
     mobile_pay: { name: 'Pago Móvil', icon: Phone, color: 'text-purple-600 dark:text-purple-400' },
     pending: { name: 'Pendiente', icon: Clock, color: 'text-yellow-600 dark:text-yellow-400' },
   };
@@ -896,12 +898,12 @@ export default function OrderManagement({ onNotification }: OrderManagementProps
                 <SelectTrigger className="tech-button-3d border-2 border-slate-300 dark:border-slate-600 rounded-lg h-12 text-lg">
                   <SelectValue placeholder="Selecciona cómo pagar" />
                 </SelectTrigger>
-                <SelectContent className="tech-button-3d bg-gradient-to-br from-white to-slate-50 dark:from-slate-800 dark:to-slate-900 border-2 border-slate-200 dark:border-slate-600">
-                  {paymentMethods.filter((pm: PaymentMethod) => pm.active).map((method: PaymentMethod) => {
+                <SelectContent className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg shadow-lg z-[60]">
+                  {paymentMethods.filter((pm: PaymentMethod) => pm.active && pm.code !== 'pending').map((method: PaymentMethod) => {
                     const config = paymentMethodConfig[method.code as keyof typeof paymentMethodConfig] || { name: method.name, icon: CreditCard, color: 'text-gray-600' };
                     const IconComponent = config.icon;
                     return (
-                      <SelectItem key={method.id} value={method.code} className="hover:bg-gradient-to-br hover:from-green-100 hover:to-green-200 dark:hover:from-green-900/30 dark:hover:to-green-800/30 py-3 text-base">
+                      <SelectItem key={method.id} value={method.code} className="hover:bg-green-50 dark:hover:bg-green-900/20 py-3 text-base cursor-pointer">
                         <div className="flex items-center gap-3">
                           <IconComponent className={`h-5 w-5 ${config.color}`} />
                           {method.name}
