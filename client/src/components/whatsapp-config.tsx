@@ -337,40 +337,40 @@ _{empresa_nombre}_`
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <Card className="mb-6 dark:bg-gray-800/50 dark:shadow-lg tech-glow border-border dark:border-cyan-500/20">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                {onBack && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={onBack}
-                    className="mr-3"
-                    data-testid="button-back-whatsapp-config"
-                  >
-                    <ArrowLeft className="h-4 w-4 mr-2" />
-                    Volver
-                  </Button>
-                )}
-                <div className="w-12 h-12 bg-green-600 rounded-xl flex items-center justify-center">
-                  <MessageCircle className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <h1 className="text-2xl font-bold text-foreground">Configuración de Mensajes</h1>
-                  <p className="text-muted-foreground">WhatsApp y notificaciones automáticas</p>
-                </div>
+        {/* Header con diseño tech-3D */}
+        <div className="tech-button-3d bg-gradient-to-br from-white to-slate-50 dark:from-slate-800 dark:to-slate-900 border-2 border-slate-200 dark:border-slate-600 rounded-xl shadow-2xl backdrop-blur-sm p-6 mb-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              {onBack && (
+                <Button
+                  onClick={onBack}
+                  className="tech-button-3d bg-white border-2 border-slate-300 text-slate-700 dark:from-slate-500/20 dark:to-slate-600/20 dark:text-white dark:border-slate-500/30 rounded-lg shadow-sm p-3 hover:bg-slate-50 hover:border-slate-400 dark:hover:from-slate-400/30 dark:hover:to-slate-500/30 transition-all duration-300 cursor-pointer transform hover:scale-105 hover:-translate-y-1 dark:backdrop-blur-sm font-bold mr-3"
+                  data-testid="button-back-whatsapp-config"
+                >
+                  <ArrowLeft className="h-4 w-4 mr-2" />
+                  Volver
+                </Button>
+              )}
+              <div className="w-16 h-16 bg-gradient-to-br from-green-500 via-emerald-600 to-teal-600 rounded-xl flex items-center justify-center tech-glow shadow-xl transform hover:scale-105 transition-all duration-300">
+                <MessageCircle className="w-8 h-8 text-white" />
               </div>
+              <div>
+                <h1 className="text-3xl font-black bg-gradient-to-r from-green-600 via-emerald-600 to-teal-600 bg-clip-text text-transparent">📱 Configuración de Mensajes</h1>
+                <p className="text-slate-600 dark:text-slate-300 font-semibold">WhatsApp y notificaciones automáticas</p>
+              </div>
+            </div>
+            <div className="flex space-x-3">
               <Button
                 onClick={guardarConfiguracion}
+                className="tech-button-3d bg-white border-2 border-green-300 text-green-700 dark:from-green-500/20 dark:to-emerald-600/20 dark:text-white dark:border-green-500/30 rounded-lg shadow-sm p-3 hover:bg-green-50 hover:border-green-400 dark:hover:from-green-400/30 dark:hover:to-emerald-500/30 transition-all duration-300 cursor-pointer transform hover:scale-105 hover:-translate-y-1 dark:backdrop-blur-sm font-bold"
                 data-testid="button-save-whatsapp-config"
               >
                 <Save className="w-4 h-4 mr-2" />
                 Guardar Cambios
               </Button>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
         {/* Loading State */}
         {isLoadingConfig ? (
@@ -391,20 +391,47 @@ _{empresa_nombre}_`
             <CardContent className="space-y-2">
               {tiposMenu.map((tipo) => {
                 const IconoTipo = tipo.icon;
+                const getGradientClass = (key: string, isActive: boolean) => {
+                  if (isActive) {
+                    switch (key) {
+                      case 'pedidoListo': return 'bg-gradient-to-r from-green-500 to-emerald-600 text-white border-2 border-green-300 shadow-lg tech-glow';
+                      case 'facturaWhatsApp': return 'bg-gradient-to-r from-blue-500 to-cyan-600 text-white border-2 border-blue-300 shadow-lg tech-glow';
+                      case 'recordatorios': return 'bg-gradient-to-r from-orange-500 to-yellow-600 text-white border-2 border-orange-300 shadow-lg tech-glow';
+                      case 'pagosPendientes': return 'bg-gradient-to-r from-red-500 to-pink-600 text-white border-2 border-red-300 shadow-lg tech-glow';
+                      default: return 'bg-gradient-to-r from-slate-500 to-slate-600 text-white';
+                    }
+                  } else {
+                    switch (key) {
+                      case 'pedidoListo': return 'bg-white border-2 border-slate-300 text-slate-700 dark:from-green-500/20 dark:to-emerald-600/20 dark:text-white dark:border-green-500/30 hover:bg-green-50 hover:border-green-300 dark:hover:from-green-400/30 dark:hover:to-emerald-500/30';
+                      case 'facturaWhatsApp': return 'bg-white border-2 border-slate-300 text-slate-700 dark:from-blue-500/20 dark:to-cyan-600/20 dark:text-white dark:border-blue-500/30 hover:bg-blue-50 hover:border-blue-300 dark:hover:from-blue-400/30 dark:hover:to-cyan-500/30';
+                      case 'recordatorios': return 'bg-white border-2 border-slate-300 text-slate-700 dark:from-orange-500/20 dark:to-yellow-600/20 dark:text-white dark:border-orange-500/30 hover:bg-orange-50 hover:border-orange-300 dark:hover:from-orange-400/30 dark:hover:to-yellow-500/30';
+                      case 'pagosPendientes': return 'bg-white border-2 border-slate-300 text-slate-700 dark:from-red-500/20 dark:to-pink-600/20 dark:text-white dark:border-red-500/30 hover:bg-red-50 hover:border-red-300 dark:hover:from-red-400/30 dark:hover:to-pink-500/30';
+                      default: return 'bg-white border-2 border-slate-300 text-slate-700 hover:bg-slate-50';
+                    }
+                  }
+                };
+                const getEmojiForType = (key: string) => {
+                  switch (key) {
+                    case 'pedidoListo': return '✅';
+                    case 'facturaWhatsApp': return '📄';
+                    case 'recordatorios': return '⏰';
+                    case 'pagosPendientes': return '💰';
+                    default: return '💬';
+                  }
+                };
                 return (
-                  <Button
+                  <button
                     key={tipo.key}
-                    variant={tipoMensaje === tipo.key ? "default" : "ghost"}
-                    className="w-full justify-start"
                     onClick={() => setTipoMensaje(tipo.key)}
+                    className={`tech-button-3d w-full px-4 py-3 rounded-lg font-bold text-sm flex items-center space-x-3 transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 justify-start ${getGradientClass(tipo.key, tipoMensaje === tipo.key)}`}
                     data-testid={`tab-message-${tipo.key}`}
                   >
-                    <IconoTipo className={`w-4 h-4 mr-2 ${tipo.color}`} />
-                    {tipo.label}
+                    <IconoTipo className="w-5 h-5" />
+                    <span className="flex-1 text-left">{getEmojiForType(tipo.key)} {tipo.label}</span>
                     {configuracion[tipo.key].activo && (
-                      <Badge className="ml-auto w-2 h-2 p-0 bg-green-500" />
+                      <div className="w-3 h-3 rounded-full bg-white animate-pulse shadow-lg" />
                     )}
-                  </Button>
+                  </button>
                 );
               })}
 
