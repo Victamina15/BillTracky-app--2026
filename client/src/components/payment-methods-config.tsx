@@ -285,42 +285,55 @@ export default function PaymentMethodsConfig({ onNotification }: PaymentMethodsC
                           <div className="grid grid-cols-5 gap-2 mt-2">
                             {iconOptions.map((option) => {
                               const IconComponent = option.icon;
+                              const isSelected = form.watch("icon") === option.id;
                               return (
                                 <button
                                   key={option.id}
                                   type="button"
-                                  onClick={() => form.setValue("icon", option.id)}
+                                  onClick={() => {
+                                    console.log("Setting icon to:", option.id);
+                                    form.setValue("icon", option.id, { shouldValidate: true, shouldDirty: true });
+                                  }}
                                   className={`tech-button-3d p-3 rounded-lg border-2 transition-all duration-300 hover:scale-105 ${
-                                    form.watch("icon") === option.id 
-                                      ? "border-purple-500 bg-purple-100 dark:bg-purple-900/30" 
+                                    isSelected
+                                      ? "border-purple-500 bg-purple-100 dark:bg-purple-900/30 shadow-lg" 
                                       : "border-purple-300 hover:border-purple-400"
                                   }`}
                                   title={option.label}
                                 >
-                                  <IconComponent className="w-4 h-4 mx-auto text-purple-600" />
+                                  <IconComponent className={`w-4 h-4 mx-auto ${isSelected ? "text-purple-700" : "text-purple-600"}`} />
                                 </button>
                               );
                             })}
                           </div>
+                          <p className="text-xs text-purple-600 mt-1">Seleccionado: {form.watch("icon")}</p>
                         </div>
                         
                         <div>
                           <Label className="text-purple-700 dark:text-purple-300 font-medium">Color</Label>
                           <div className="grid grid-cols-4 gap-2 mt-2">
-                            {colorOptions.map((color) => (
-                              <button
-                                key={color}
-                                type="button"
-                                onClick={() => form.setValue("color", color)}
-                                className={`tech-button-3d w-10 h-10 rounded-lg border-2 transition-all duration-300 hover:scale-105 ${
-                                  form.watch("color") === color 
-                                    ? "border-purple-600 shadow-lg" 
-                                    : "border-purple-300 hover:border-purple-400"
-                                }`}
-                                style={{ backgroundColor: color }}
-                              />
-                            ))}
+                            {colorOptions.map((color) => {
+                              const isSelected = form.watch("color") === color;
+                              return (
+                                <button
+                                  key={color}
+                                  type="button"
+                                  onClick={() => {
+                                    console.log("Setting color to:", color);
+                                    form.setValue("color", color, { shouldValidate: true, shouldDirty: true });
+                                  }}
+                                  className={`tech-button-3d w-10 h-10 rounded-lg border-2 transition-all duration-300 hover:scale-105 ${
+                                    isSelected
+                                      ? "border-purple-600 shadow-lg ring-2 ring-purple-300" 
+                                      : "border-purple-300 hover:border-purple-400"
+                                  }`}
+                                  style={{ backgroundColor: color }}
+                                  title={color}
+                                />
+                              );
+                            })}
                           </div>
+                          <p className="text-xs text-purple-600 mt-1">Seleccionado: {form.watch("color")}</p>
                         </div>
                       </div>
                     </CardContent>
