@@ -211,6 +211,67 @@ export const whatsappConfig = pgTable("whatsapp_config", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+// Registro histórico de cierres de caja
+export const cashClosures = pgTable("cash_closures", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  closingDate: timestamp("closing_date").notNull(), // Fecha del cierre
+  openedAt: timestamp("opened_at").defaultNow(), // Cuando se abrió la caja
+  closedAt: timestamp("closed_at"), // Cuando se cerró
+  employeeId: varchar("employee_id").references(() => employees.id).notNull(),
+  openingCash: decimal("opening_cash", { precision: 10, scale: 2 }).default("0"), // Dinero inicial
+  countedCash: decimal("counted_cash", { precision: 10, scale: 2 }), // Dinero contado físicamente
+  systemCash: decimal("system_cash", { precision: 10, scale: 2 }).notNull(), // Dinero según sistema
+  variance: decimal("variance", { precision: 10, scale: 2 }), // Diferencia (contado - sistema)
+  notes: text("notes"), // Observaciones del cierre
+  // Snapshot de totales del día
+  snapshotSubtotal: decimal("snapshot_subtotal", { precision: 10, scale: 2 }).notNull(),
+  snapshotTax: decimal("snapshot_tax", { precision: 10, scale: 2 }).notNull(),
+  snapshotTotal: decimal("snapshot_total", { precision: 10, scale: 2 }).notNull(),
+  snapshotTotalInvoices: integer("snapshot_total_invoices").notNull(),
+  snapshotDeliveredInvoices: integer("snapshot_delivered_invoices").notNull(),
+  snapshotPendingInvoices: integer("snapshot_pending_invoices").notNull(),
+  snapshotTotalItems: integer("snapshot_total_items").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Desglose por método de pago de cada cierre
+export const cashClosurePayments = pgTable("cash_closure_payments", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  cashClosureId: varchar("cash_closure_id").references(() => cashClosures.id).notNull(),
+  methodCode: text("method_code").notNull(), // Código del método de pago
+  methodName: text("method_name").notNull(), // Nombre del método
+  quantity: integer("quantity").notNull(), // Número de transacciones
+  total: decimal("total", { precision: 10, scale: 2 }).notNull(), // Total por método
+});
+
+// Configuración de integración con Airtable
+export const airtableConfig = pgTable("airtable_config", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  enabled: boolean("enabled").default(false),
+  baseId: text("base_id"), // ID de la base de Airtable
+  tableInvoices: text("table_invoices").default("Invoices"), // Nombre tabla facturas
+  tableInvoiceItems: text("table_invoice_items").default("Invoice Items"), // Nombre tabla items
+  apiToken: text("api_token"), // Token de API (almacenado en servidor)
+  lastSyncDate: timestamp("last_sync_date"), // Última sincronización exitosa
+  syncStatus: text("sync_status").default("idle"), // 'idle', 'syncing', 'error'
+  lastError: text("last_error"), // Último error de sincronización
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Cola de sincronización con Airtable
+export const airtableSyncQueue = pgTable("airtable_sync_queue", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  entityType: text("entity_type").notNull(), // 'invoice', 'invoice_item'
+  entityId: varchar("entity_id").notNull(), // ID del registro a sincronizar
+  status: text("status").default("pending"), // 'pending', 'synced', 'error'
+  retries: integer("retries").default(0),
+  maxRetries: integer("max_retries").default(3),
+  lastError: text("last_error"),
+  externalId: text("external_id"), // ID en Airtable después de sincronizar
+  lastSyncedAt: timestamp("last_synced_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 // Insert schemas
 export const insertEmployeeSchema = createInsertSchema(employees).omit({
   id: true,
@@ -285,6 +346,26 @@ export const insertWhatsappConfigSchema = createInsertSchema(whatsappConfig).omi
   updatedAt: true,
 });
 
+export const insertCashClosureSchema = createInsertSchema(cashClosures).omit({
+  id: true,
+  openedAt: true,
+  createdAt: true,
+});
+
+export const insertCashClosurePaymentSchema = createInsertSchema(cashClosurePayments).omit({
+  id: true,
+});
+
+export const insertAirtableConfigSchema = createInsertSchema(airtableConfig).omit({
+  id: true,
+  updatedAt: true,
+});
+
+export const insertAirtableSyncQueueSchema = createInsertSchema(airtableSyncQueue).omit({
+  id: true,
+  createdAt: true,
+});
+
 // Types
 export type Employee = typeof employees.$inferSelect;
 export type InsertEmployee = z.infer<typeof insertEmployeeSchema>;
@@ -328,6 +409,18 @@ export type InsertCounter = z.infer<typeof insertCounterSchema>;
 export type WhatsappConfig = typeof whatsappConfig.$inferSelect;
 export type InsertWhatsappConfig = z.infer<typeof insertWhatsappConfigSchema>;
 
+export type CashClosure = typeof cashClosures.$inferSelect;
+export type InsertCashClosure = z.infer<typeof insertCashClosureSchema>;
+
+export type CashClosurePayment = typeof cashClosurePayments.$inferSelect;
+export type InsertCashClosurePayment = z.infer<typeof insertCashClosurePaymentSchema>;
+
+export type AirtableConfig = typeof airtableConfig.$inferSelect;
+export type InsertAirtableConfig = z.infer<typeof insertAirtableConfigSchema>;
+
+export type AirtableSyncQueue = typeof airtableSyncQueue.$inferSelect;
+export type InsertAirtableSyncQueue = z.infer<typeof insertAirtableSyncQueueSchema>;
+
 // PATCH request schemas for order management
 export const patchOrderStatusSchema = z.object({
   status: z.enum(['received', 'in_process', 'ready', 'delivered', 'cancelled']),
@@ -348,7 +441,34 @@ export const patchInvoicePaySchema = z.object({
   paymentReference: z.string().optional(),
 });
 
+// Schemas for cash closure functionality
+export const createCashClosureSchema = z.object({
+  closingDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date format YYYY-MM-DD"),
+  countedCash: z.number().min(0, "Counted cash must be non-negative"),
+  openingCash: z.number().min(0).default(0),
+  notes: z.string().optional(),
+});
+
+export const metricsQuerySchema = z.object({
+  from: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+  to: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+  month: z.string().regex(/^\d{4}-\d{2}$/).optional(),
+  range: z.enum(['7d', '30d', '90d']).optional(),
+});
+
+export const airtableConfigSchema = z.object({
+  enabled: z.boolean(),
+  baseId: z.string().min(1).optional(),
+  tableInvoices: z.string().min(1).optional(),
+  tableInvoiceItems: z.string().min(1).optional(),
+  apiToken: z.string().min(1).optional(),
+});
+
 export type PatchOrderStatus = z.infer<typeof patchOrderStatusSchema>;
 export type PatchOrderPayment = z.infer<typeof patchOrderPaymentSchema>;
 export type PatchOrderCancel = z.infer<typeof patchOrderCancelSchema>;
 export type PatchInvoicePay = z.infer<typeof patchInvoicePaySchema>;
+export type CreateCashClosure = z.infer<typeof createCashClosureSchema>;
+export type MetricsQuery = z.infer<typeof metricsQuerySchema>;
+export type AirtableConfigUpdate = z.infer<typeof airtableConfigSchema>;
