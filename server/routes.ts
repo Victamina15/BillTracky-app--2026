@@ -1,7 +1,7 @@
 import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertCustomerSchema, insertServiceSchema, insertInvoiceSchema, insertInvoiceItemSchema, insertPaymentMethodSchema, insertCompanySettingsSchema, insertMessageTemplateSchema, insertEmployeeSchema, patchOrderStatusSchema, patchOrderPaymentSchema, patchOrderCancelSchema, patchInvoicePaySchema, insertWhatsappConfigSchema, createCashClosureSchema, insertCashClosurePaymentSchema, metricsQuerySchema, cashClosuresQuerySchema, insertAirtableConfigSchema } from "@shared/schema";
+import { insertCustomerSchema, insertServiceSchema, insertInvoiceSchema, insertInvoiceItemSchema, insertPaymentMethodSchema, insertCompanySettingsSchema, insertMessageTemplateSchema, insertEmployeeSchema, patchOrderStatusSchema, patchOrderPaymentSchema, patchOrderCancelSchema, patchInvoicePaySchema, insertWhatsappConfigSchema, createCashClosureSchema, insertCashClosurePaymentSchema, metricsQuerySchema, cashClosuresQuerySchema, insertAirtableConfigSchema, insertAirtableSyncQueueSchema } from "@shared/schema";
 import { z } from "zod";
 import type { WhatsappConfig } from "@shared/schema";
 
@@ -215,6 +215,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
         const item = await storage.createInvoiceItem(validatedItem);
         invoiceItems.push(item);
+      }
+
+      // Auto-queue for Airtable sync if enabled
+      try {
+        const airtableConfig = await storage.getAirtableConfig();
+        if (airtableConfig && airtableConfig.enabled) {
+          // Queue the invoice for sync
+          await storage.createAirtableSyncQueueItem({
+            entityType: 'invoice',
+            entityId: invoice.id,
+            status: 'pending'
+          });
+          console.log(`[Airtable] Invoice ${invoice.number} queued for sync`);
+
+          // Queue each invoice item for sync
+          for (const item of invoiceItems) {
+            await storage.createAirtableSyncQueueItem({
+              entityType: 'invoice_item',
+              entityId: item.id,
+              status: 'pending'
+            });
+          }
+          console.log(`[Airtable] ${invoiceItems.length} invoice items queued for sync`);
+        }
+      } catch (airtableError) {
+        // Don't fail invoice creation if Airtable queueing fails
+        console.error('[Airtable] Error queueing for sync:', airtableError);
       }
 
       // Update customer if exists
@@ -964,7 +991,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Airtable Sync Queue Routes
-  app.get("/api/airtable/sync-queue", async (req, res) => {
+  app.get("/api/airtable/sync-queue", requireAuthentication, async (req, res) => {
     try {
       const { status, entityType } = req.query;
       const items = await storage.getAirtableSyncQueueItems(
@@ -972,6 +999,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
         entityType as string | undefined
       );
       res.json(items);
+    } catch (error) {
+      res.status(500).json({ message: "Server error" });
+    }
+  });
+
+  app.post("/api/airtable/sync-queue", requireAuthentication, async (req, res) => {
+    try {
+      const queueData = insertAirtableSyncQueueSchema.parse(req.body);
+      const item = await storage.createAirtableSyncQueueItem(queueData);
+      res.status(201).json(item);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Server error" });
+    }
+  });
+
+  app.put("/api/airtable/sync-queue/:id", requireAuthentication, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const updates = req.body;
+      const item = await storage.updateAirtableSyncQueueItem(id, updates);
+      
+      if (!item) {
+        return res.status(404).json({ message: "Sync queue item not found" });
+      }
+      
+      res.json(item);
+    } catch (error) {
+      res.status(500).json({ message: "Server error" });
+    }
+  });
+
+  app.delete("/api/airtable/sync-queue/:id", requireAuthentication, async (req, res) => {
+    try {
+      const { id } = req.params;
+      await storage.deleteAirtableSyncQueueItem(id);
+      res.status(204).send();
     } catch (error) {
       res.status(500).json({ message: "Server error" });
     }

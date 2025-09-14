@@ -1,6 +1,8 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import { storage } from "./storage";
+import { AirtableSyncWorker } from "./airtable-sync-worker";
 
 const app = express();
 app.use(express.json());
@@ -56,6 +58,9 @@ app.use((req, res, next) => {
     serveStatic(app);
   }
 
+  // Initialize Airtable sync worker
+  const syncWorker = new AirtableSyncWorker(storage);
+  
   // ALWAYS serve the app on the port specified in the environment variable PORT
   // Other ports are firewalled. Default to 5000 if not specified.
   // this serves both the API and the client.
@@ -67,5 +72,25 @@ app.use((req, res, next) => {
     reusePort: true,
   }, () => {
     log(`serving on port ${port}`);
+    
+    // Start Airtable sync worker after server is ready
+    syncWorker.start();
+  });
+  
+  // Graceful shutdown handling
+  process.on('SIGTERM', () => {
+    log('Received SIGTERM, shutting down gracefully...');
+    syncWorker.stop();
+    server.close(() => {
+      log('Server closed');
+    });
+  });
+  
+  process.on('SIGINT', () => {
+    log('Received SIGINT, shutting down gracefully...');
+    syncWorker.stop();
+    server.close(() => {
+      log('Server closed');
+    });
   });
 })();
