@@ -260,7 +260,7 @@ export default function OrderManagement({ onNotification }: OrderManagementProps
   const handlePayment = () => {
     if (!selectedOrder || !selectedPaymentMethod) return;
     
-    const method = paymentMethods.find(pm => pm.id === selectedPaymentMethod);
+    const method = paymentMethods.find(pm => pm.code === selectedPaymentMethod);
     if (!method) {
       onNotification("Error: Método de pago no encontrado");
       return;
@@ -268,7 +268,7 @@ export default function OrderManagement({ onNotification }: OrderManagementProps
 
     paymentMutation.mutate({
       id: selectedOrder.id,
-      paymentMethod: method.code,
+      paymentMethod: selectedPaymentMethod,
       paymentReference: method.requiresReference ? paymentReference : undefined
     });
   };
@@ -462,7 +462,7 @@ export default function OrderManagement({ onNotification }: OrderManagementProps
                             setSelectedOrder(order);
                             setShowPaymentModal(true);
                           }}
-                          className="tech-button-3d bg-gradient-to-br from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold px-4 py-2 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 border-2 border-green-400"
+                          className="tech-button-3d bg-white border-2 border-emerald-300 text-emerald-700 dark:from-green-500/20 dark:to-emerald-600/20 dark:text-white dark:border-emerald-500/30 rounded-lg shadow-sm p-3 hover:bg-emerald-50 hover:border-emerald-400 dark:hover:from-green-400/30 dark:hover:to-emerald-500/30 transition-all duration-300 cursor-pointer transform hover:scale-105 hover:-translate-y-1 dark:backdrop-blur-sm font-bold"
                           data-testid={`button-collect-payment-${order.id}`}
                           title="Cobrar pago pendiente"
                         >
@@ -475,7 +475,7 @@ export default function OrderManagement({ onNotification }: OrderManagementProps
                       <Button
                         size="sm"
                         onClick={() => openDetailsModal(order)}
-                        className="tech-button-3d bg-gradient-to-br from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold px-3 py-2 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 border-2 border-blue-400"
+                        className="tech-button-3d bg-white border-2 border-blue-300 text-blue-700 dark:from-blue-500/20 dark:to-purple-600/20 dark:text-white dark:border-blue-500/30 rounded-lg shadow-sm p-3 hover:bg-blue-50 hover:border-blue-400 dark:hover:from-blue-400/30 dark:hover:to-purple-500/30 transition-all duration-300 cursor-pointer transform hover:scale-105 hover:-translate-y-1 dark:backdrop-blur-sm font-semibold"
                         data-testid={`button-details-${order.id}`}
                         title="Ver detalles completos"
                       >
@@ -490,7 +490,7 @@ export default function OrderManagement({ onNotification }: OrderManagementProps
                           const whatsappUrl = `https://wa.me/1${phoneNumber}?text=${encodeURIComponent(message)}`;
                           window.open(whatsappUrl, '_blank');
                         }}
-                        className="tech-button-3d bg-gradient-to-br from-green-600 to-teal-700 hover:from-green-700 hover:to-teal-800 text-white font-semibold px-3 py-2 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 border-2 border-green-500"
+                        className="tech-button-3d bg-white border-2 border-teal-300 text-teal-700 dark:from-teal-500/20 dark:to-green-600/20 dark:text-white dark:border-teal-500/30 rounded-lg shadow-sm p-3 hover:bg-teal-50 hover:border-teal-400 dark:hover:from-teal-400/30 dark:hover:to-green-500/30 transition-all duration-300 cursor-pointer transform hover:scale-105 hover:-translate-y-1 dark:backdrop-blur-sm font-semibold"
                         data-testid={`button-whatsapp-${order.id}`}
                         title="Enviar notificación por WhatsApp"
                       >
@@ -873,7 +873,7 @@ export default function OrderManagement({ onNotification }: OrderManagementProps
                     const config = paymentMethodConfig[method.code as keyof typeof paymentMethodConfig] || { name: method.name, icon: CreditCard, color: 'text-gray-600' };
                     const IconComponent = config.icon;
                     return (
-                      <SelectItem key={method.id} value={method.id} className="hover:bg-gradient-to-br hover:from-green-100 hover:to-green-200 dark:hover:from-green-900/30 dark:hover:to-green-800/30 py-3 text-base">
+                      <SelectItem key={method.id} value={method.code} className="hover:bg-gradient-to-br hover:from-green-100 hover:to-green-200 dark:hover:from-green-900/30 dark:hover:to-green-800/30 py-3 text-base">
                         <div className="flex items-center gap-3">
                           <IconComponent className={`h-5 w-5 ${config.color}`} />
                           {method.name}
