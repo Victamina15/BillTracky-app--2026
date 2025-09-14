@@ -1,5 +1,7 @@
 import { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
 import { 
   BarChart3, 
   DollarSign, 
@@ -21,7 +23,8 @@ import {
   AlertTriangle,
   TrendingUp,
   TrendingDown,
-  Edit
+  Edit,
+  Lock
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -70,7 +73,7 @@ export default function CashClosure({ onBack }: CashClosureProps) {
   );
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
-  const [openingCash, setOpeningCash] = useState<string>('0');
+  const OPENING_CASH = 5000; // Fixed opening cash amount - Shopify POS style
   const [countedCash, setCountedCash] = useState<string>('0');
   const [notes, setNotes] = useState<string>('');
   const [showCashForm, setShowCashForm] = useState(false);
@@ -233,17 +236,17 @@ export default function CashClosure({ onBack }: CashClosureProps) {
     };
   }, [invoices, paymentMethods, employees]);
 
-  // Calcular dinero del sistema (cash only from payment methods)
+  // Calculate system cash with fixed opening amount - Shopify POS style
   const systemCash = useMemo(() => {
-    if (!paymentMethods.length) return 0;
+    if (!paymentMethods.length) return OPENING_CASH;
     
-    // Encontrar el total de pagos en efectivo
+    // Find total cash payments
     const cashMethod = paymentMethods.find((m: PaymentMethod) => m.code === 'cash');
-    if (!cashMethod) return 0;
+    if (!cashMethod) return OPENING_CASH;
     
     const cashPayments = dailySummary.paymentSummary[cashMethod.name];
-    return parseFloat(openingCash) + (cashPayments?.total || 0);
-  }, [openingCash, dailySummary.paymentSummary, paymentMethods]);
+    return OPENING_CASH + (cashPayments?.total || 0);
+  }, [dailySummary.paymentSummary, paymentMethods]);
 
   // Calcular varianza
   const variance = useMemo(() => {
@@ -268,7 +271,7 @@ export default function CashClosure({ onBack }: CashClosureProps) {
 
     createCashClosureMutation.mutate({
       closingDate: selectedDate,
-      openingCash: parseFloat(openingCash) || 0,
+      openingCash: OPENING_CASH,
       countedCash: parseFloat(countedCash),
       notes: notes || undefined,
     });
@@ -482,135 +485,144 @@ export default function CashClosure({ onBack }: CashClosureProps) {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6">
       <div className="max-w-6xl mx-auto">
-        {/* Header con diseño tech 3D mejorado */}
-        <div className="tech-button-3d bg-gradient-to-br from-white to-slate-50 dark:from-slate-800 dark:to-slate-900 border-2 border-slate-200 dark:border-slate-600 rounded-xl shadow-2xl backdrop-blur-sm p-6 mb-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <Button
-                size="sm"
-                onClick={onBack}
-                className="tech-button-3d bg-white border-2 border-slate-300 text-slate-700 dark:from-slate-500/20 dark:to-slate-600/20 dark:text-white dark:border-slate-500/30 rounded-lg shadow-sm p-3 hover:bg-slate-50 hover:border-slate-400 dark:hover:from-slate-400/30 dark:hover:to-slate-500/30 transition-all duration-300 cursor-pointer transform hover:scale-105 hover:-translate-y-1 dark:backdrop-blur-sm font-bold mr-3"
-                data-testid="button-back-cash-closure"
-              >
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Volver
-              </Button>
-              <div className="w-16 h-16 bg-gradient-to-br from-cyan-500 via-blue-600 to-purple-600 rounded-xl flex items-center justify-center tech-glow shadow-xl transform hover:scale-105 transition-all duration-300">
-                <BarChart3 className="w-8 h-8 text-white" />
-              </div>
-              <div>
-                <h1 className="text-3xl font-black bg-gradient-to-r from-cyan-600 via-blue-600 to-purple-600 bg-clip-text text-transparent">Cierre de Caja</h1>
-                <p className="text-slate-600 dark:text-slate-300 font-semibold">Reportes y cálculos diarios profesionales</p>
-              </div>
-            </div>
-            
-            <div className="flex items-center space-x-3">
-              <div className="flex items-center space-x-2">
-                <Calendar className="h-4 w-4 text-gray-500 dark:text-gray-400" />
-                <Label htmlFor="fecha" className="text-sm font-medium dark:text-gray-300">
-                  Fecha:
-                </Label>
-                <Input
-                  id="fecha"
-                  type="date"
-                  value={selectedDate}
-                  onChange={(e) => setSelectedDate(e.target.value)}
-                  className="w-40"
-                  data-testid="input-date-selector"
-                />
+        {/* Header - Shopify POS style */}
+        <Card className="mb-6">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                <Button
+                  variant="secondary"
+                  onClick={onBack}
+                  data-testid="button-back-cash-closure"
+                >
+                  <ArrowLeft className="h-4 w-4 mr-2" />
+                  Volver
+                </Button>
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                    <BarChart3 className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Cierre de Caja</h1>
+                    <p className="text-gray-600 dark:text-gray-400 text-sm">Reportes y cálculos diarios</p>
+                  </div>
+                </div>
               </div>
               
-              <Button
-                onClick={printCashClosure}
-                className="tech-button-3d bg-white border-2 border-cyan-300 text-cyan-700 dark:from-cyan-500/20 dark:to-blue-600/20 dark:text-white dark:border-cyan-500/30 rounded-lg shadow-sm p-3 hover:bg-cyan-50 hover:border-cyan-400 dark:hover:from-cyan-400/30 dark:hover:to-blue-500/30 transition-all duration-300 cursor-pointer transform hover:scale-105 hover:-translate-y-1 dark:backdrop-blur-sm font-bold"
-                data-testid="button-print-closure"
-              >
-                <Printer className="w-4 h-4 mr-2" />
-                Imprimir
-              </Button>
-              <Button
-                onClick={exportToExcel}
-                className="tech-button-3d bg-white border-2 border-purple-300 text-purple-700 dark:from-purple-500/20 dark:to-pink-600/20 dark:text-white dark:border-purple-500/30 rounded-lg shadow-sm p-3 hover:bg-purple-50 hover:border-purple-400 dark:hover:from-purple-400/30 dark:hover:to-pink-500/30 transition-all duration-300 cursor-pointer transform hover:scale-105 hover:-translate-y-1 dark:backdrop-blur-sm font-bold"
-                data-testid="button-export-closure"
-              >
-                <Download className="w-4 h-4 mr-2" />
-                Exportar
-              </Button>
+              <div className="flex items-center space-x-3">
+                <div className="flex items-center space-x-2">
+                  <Calendar className="h-4 w-4 text-gray-500 dark:text-gray-400" />
+                  <Label htmlFor="fecha" className="text-sm font-medium dark:text-gray-300">
+                    Fecha:
+                  </Label>
+                  <Input
+                    id="fecha"
+                    type="date"
+                    value={selectedDate}
+                    onChange={(e) => setSelectedDate(e.target.value)}
+                    className="w-40"
+                    data-testid="input-date-selector"
+                  />
+                </div>
+                
+                <Button
+                  variant="outline"
+                  onClick={printCashClosure}
+                  data-testid="button-print-closure"
+                >
+                  <Printer className="w-4 h-4 mr-2" />
+                  Imprimir
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={exportToExcel}
+                  data-testid="button-export-closure"
+                >
+                  <Download className="w-4 h-4 mr-2" />
+                  Exportar
+                </Button>
+              </div>
             </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
 
-        {/* Estadísticas principales con diseño tech 3D */}
+        {/* Statistics - Shopify POS style */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-          <div className="tech-button-3d bg-gradient-to-br from-white to-slate-50 dark:from-slate-800 dark:to-slate-900 border-2 border-cyan-200 dark:border-cyan-500/50 rounded-xl shadow-2xl backdrop-blur-sm p-6 hover:shadow-xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-bold text-slate-600 dark:text-slate-300 mb-2">Total Facturas</p>
-                <p className="text-3xl font-black bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent" data-testid="stat-total-invoices">
-                  {dailySummary.totalInvoices}
-                </p>
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Total Facturas</p>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-white" data-testid="stat-total-invoices">
+                    {dailySummary.totalInvoices}
+                  </p>
+                </div>
+                <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/20 rounded-lg flex items-center justify-center">
+                  <FileText className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                </div>
               </div>
-              <div className="w-14 h-14 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl flex items-center justify-center tech-glow shadow-lg">
-                <FileText className="w-7 h-7 text-white" />
-              </div>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
 
-          <div className="tech-button-3d bg-gradient-to-br from-white to-slate-50 dark:from-slate-800 dark:to-slate-900 border-2 border-green-200 dark:border-green-500/50 rounded-xl shadow-2xl backdrop-blur-sm p-6 hover:shadow-xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-bold text-slate-600 dark:text-slate-300 mb-2">Entregadas</p>
-                <p className="text-3xl font-black bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent" data-testid="stat-delivered-invoices">
-                  {dailySummary.deliveredInvoices}
-                </p>
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Entregadas</p>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-white" data-testid="stat-delivered-invoices">
+                    {dailySummary.deliveredInvoices}
+                  </p>
+                </div>
+                <div className="w-10 h-10 bg-green-100 dark:bg-green-900/20 rounded-lg flex items-center justify-center">
+                  <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400" />
+                </div>
               </div>
-              <div className="w-14 h-14 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center tech-glow shadow-lg">
-                <CheckCircle className="w-7 h-7 text-white" />
-              </div>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
 
-          <div className="tech-button-3d bg-gradient-to-br from-white to-slate-50 dark:from-slate-800 dark:to-slate-900 border-2 border-yellow-200 dark:border-yellow-500/50 rounded-xl shadow-2xl backdrop-blur-sm p-6 hover:shadow-xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-bold text-slate-600 dark:text-slate-300 mb-2">Pendientes</p>
-                <p className="text-3xl font-black bg-gradient-to-r from-yellow-600 to-orange-600 bg-clip-text text-transparent" data-testid="stat-pending-invoices">
-                  {dailySummary.pendingInvoices}
-                </p>
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Pendientes</p>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-white" data-testid="stat-pending-invoices">
+                    {dailySummary.pendingInvoices}
+                  </p>
+                </div>
+                <div className="w-10 h-10 bg-yellow-100 dark:bg-yellow-900/20 rounded-lg flex items-center justify-center">
+                  <Clock className="w-5 h-5 text-yellow-600 dark:text-yellow-400" />
+                </div>
               </div>
-              <div className="w-14 h-14 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-xl flex items-center justify-center tech-glow shadow-lg animate-pulse">
-                <Clock className="w-7 h-7 text-white" />
-              </div>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
 
-          <div className="tech-button-3d bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/30 dark:to-emerald-800/30 border-2 border-green-300 dark:border-green-500/50 rounded-xl shadow-2xl backdrop-blur-sm p-6 hover:shadow-xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 tech-glow">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-bold text-green-700 dark:text-green-300 mb-2">💰 Total Ingresos</p>
-                <p className="text-3xl font-black bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent" data-testid="stat-total-revenue">
-                  {formatCurrency(dailySummary.totalRevenue)}
-                </p>
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Total Ingresos</p>
+                  <p className="text-2xl font-bold text-green-600 dark:text-green-400" data-testid="stat-total-revenue">
+                    {formatCurrency(dailySummary.totalRevenue)}
+                  </p>
+                </div>
+                <div className="w-10 h-10 bg-green-100 dark:bg-green-900/20 rounded-lg flex items-center justify-center">
+                  <DollarSign className="w-5 h-5 text-green-600 dark:text-green-400" />
+                </div>
               </div>
-              <div className="w-14 h-14 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center tech-glow shadow-lg animate-pulse">
-                <DollarSign className="w-7 h-7 text-white" />
-              </div>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Resumen por métodos de pago con diseño tech 3D */}
-          <div className="tech-button-3d bg-gradient-to-br from-white to-slate-50 dark:from-slate-800 dark:to-slate-900 border-2 border-slate-200 dark:border-slate-600 rounded-xl shadow-2xl backdrop-blur-sm">
-            <div className="p-6 border-b border-slate-200 dark:border-slate-600">
-              <h3 className="text-xl font-bold bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent flex items-center gap-3">
-                <div className="w-8 h-8 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-lg flex items-center justify-center tech-glow">
-                  <CreditCard className="h-5 w-5 text-white" />
-                </div>
+          {/* Payment methods - Shopify POS style */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-3">
+                <CreditCard className="h-5 w-5 text-blue-600" />
                 Métodos de Pago
-              </h3>
-            </div>
-            <div className="p-6">
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
               <div className="space-y-4">
                 {Object.entries(dailySummary.paymentSummary)
                   .filter(([_, data]) => data.quantity > 0)
@@ -619,360 +631,479 @@ export default function CashClosure({ onBack }: CashClosureProps) {
                     const methodCode = method?.code || 'pending';
                     
                     return (
-                      <div key={methodName} className="tech-button-3d bg-gradient-to-br from-white to-slate-50 dark:from-slate-700 dark:to-slate-800 border-2 border-slate-200 dark:border-slate-600 rounded-lg p-4 hover:shadow-lg transition-all duration-300 transform hover:scale-105 hover:-translate-y-0.5">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-4">
-                            <div className="p-2 rounded-lg bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-600 dark:to-slate-700">
-                              {getPaymentMethodIcon(methodCode)}
-                            </div>
-                            <div>
-                              <p className="font-bold text-slate-800 dark:text-slate-200">{methodName}</p>
-                              <p className="text-sm text-slate-600 dark:text-slate-400 font-semibold">{data.quantity} transacciones</p>
-                            </div>
+                      <div key={methodName} className="flex items-center justify-between p-3 border border-gray-200 dark:border-gray-700 rounded-lg">
+                        <div className="flex items-center gap-3">
+                          <div className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800">
+                            {getPaymentMethodIcon(methodCode)}
                           </div>
-                          <div className="tech-button-3d bg-gradient-to-br from-green-100 to-emerald-200 dark:from-green-900/30 dark:to-emerald-800/30 border-2 border-green-300 dark:border-green-500/50 px-4 py-2 rounded-lg font-bold text-green-800 dark:text-green-300 tech-glow" data-testid={`payment-${methodCode}-total`}>
+                          <div>
+                            <p className="font-medium text-gray-900 dark:text-white">{methodName}</p>
+                            <p className="text-sm text-gray-600 dark:text-gray-400">{data.quantity} transacciones</p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <p className="font-semibold text-gray-900 dark:text-white" data-testid={`payment-${methodCode}-total`}>
                             {formatCurrency(data.total)}
-                          </div>
+                          </p>
                         </div>
                       </div>
                     );
                   })}
               </div>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
 
-          {/* Estadísticas por empleado con diseño tech 3D */}
-          <div className="tech-button-3d bg-gradient-to-br from-white to-slate-50 dark:from-slate-800 dark:to-slate-900 border-2 border-slate-200 dark:border-slate-600 rounded-xl shadow-2xl backdrop-blur-sm">
-            <div className="p-6 border-b border-slate-200 dark:border-slate-600">
-              <h3 className="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent flex items-center gap-3">
-                <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-600 rounded-lg flex items-center justify-center tech-glow">
-                  <Users className="h-5 w-5 text-white" />
-                </div>
+          {/* Employee stats - Shopify POS style */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-3">
+                <Users className="h-5 w-5 text-blue-600" />
                 Rendimiento por Empleado
-              </h3>
-            </div>
-            <div className="p-6">
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
               <div className="space-y-4">
                 {Object.entries(dailySummary.employeeStats).map(([employeeName, stats]) => (
-                  <div key={employeeName} className="tech-button-3d bg-gradient-to-br from-white to-slate-50 dark:from-slate-700 dark:to-slate-800 border-2 border-slate-200 dark:border-slate-600 rounded-lg p-4 hover:shadow-lg transition-all duration-300 transform hover:scale-105 hover:-translate-y-0.5">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-600 rounded-lg flex items-center justify-center text-white font-bold">
+                  <div key={employeeName} className="flex items-center justify-between p-3 border border-gray-200 dark:border-gray-700 rounded-lg">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/20 rounded-lg flex items-center justify-center">
+                        <span className="text-blue-600 dark:text-blue-400 font-semibold">
                           {employeeName.charAt(0).toUpperCase()}
-                        </div>
-                        <div>
-                          <p className="font-bold text-slate-800 dark:text-slate-200">{employeeName}</p>
-                          <p className="text-sm text-slate-600 dark:text-slate-400 font-semibold">⚡ {stats.sales} ventas</p>
-                        </div>
+                        </span>
                       </div>
-                      <div className="tech-button-3d bg-gradient-to-br from-cyan-100 to-blue-200 dark:from-cyan-900/30 dark:to-blue-800/30 border-2 border-cyan-300 dark:border-cyan-500/50 px-4 py-2 rounded-lg font-bold text-cyan-800 dark:text-cyan-300 tech-glow" data-testid={`employee-${employeeName}-total`}>
+                      <div>
+                        <p className="font-medium text-gray-900 dark:text-white">{employeeName}</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">{stats.sales} ventas</p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-semibold text-gray-900 dark:text-white" data-testid={`employee-${employeeName}-total`}>
                         {formatCurrency(stats.total)}
-                      </div>
+                      </p>
                     </div>
                   </div>
                 ))}
                 {Object.keys(dailySummary.employeeStats).length === 0 && (
-                  <div className="tech-button-3d bg-gradient-to-br from-yellow-100 to-orange-200 dark:from-yellow-900/30 dark:to-orange-800/30 border-2 border-yellow-300 dark:border-yellow-500/50 rounded-lg p-6 text-center">
-                    <p className="text-yellow-800 dark:text-yellow-300 font-bold">📅 No hay ventas registradas para esta fecha</p>
+                  <div className="p-6 text-center border border-yellow-200 dark:border-yellow-700 rounded-lg bg-yellow-50 dark:bg-yellow-900/20">
+                    <p className="text-yellow-800 dark:text-yellow-300 font-medium">No hay ventas registradas para esta fecha</p>
                   </div>
                 )}
               </div>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         </div>
 
-        {/* Existing Cash Closure Display */}
+        {/* Professional POS-Style Cash Closure Display */}
         {existingClosure && (
-          <div className="tech-button-3d bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-800/30 border-2 border-blue-300 dark:border-blue-500/50 rounded-xl shadow-2xl backdrop-blur-sm mt-6">
-            <div className="p-6 border-b border-blue-200 dark:border-blue-600">
-              <h3 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent flex items-center gap-3">
-                <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center tech-glow">
-                  <CheckCircle className="h-5 w-5 text-white" />
-                </div>
-                Cierre de Caja Registrado
-              </h3>
-            </div>
-            <div className="p-6">
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <div className="tech-button-3d bg-gradient-to-br from-green-100 to-emerald-200 dark:from-green-900/30 dark:to-emerald-800/30 border-2 border-green-300 dark:border-green-500/50 rounded-lg p-4 text-center">
-                  <p className="text-sm font-bold text-green-700 dark:text-green-300 mb-2">💰 Dinero de Apertura</p>
-                  <p className="text-xl font-bold text-green-600 dark:text-green-400" data-testid="closure-opening-cash">
-                    {formatCurrency(parseFloat(existingClosure.openingCash || '0'))}
-                  </p>
-                </div>
-                <div className="tech-button-3d bg-gradient-to-br from-blue-100 to-cyan-200 dark:from-blue-900/30 dark:to-cyan-800/30 border-2 border-blue-300 dark:border-blue-500/50 rounded-lg p-4 text-center">
-                  <p className="text-sm font-bold text-blue-700 dark:text-blue-300 mb-2">🧮 Dinero Contado</p>
-                  <p className="text-xl font-bold text-blue-600 dark:text-blue-400" data-testid="closure-counted-cash">
-                    {formatCurrency(parseFloat(existingClosure.countedCash || '0'))}
-                  </p>
-                </div>
-                <div className="tech-button-3d bg-gradient-to-br from-purple-100 to-pink-200 dark:from-purple-900/30 dark:to-pink-800/30 border-2 border-purple-300 dark:border-purple-500/50 rounded-lg p-4 text-center">
-                  <p className="text-sm font-bold text-purple-700 dark:text-purple-300 mb-2">⚙️ Dinero Sistema</p>
-                  <p className="text-xl font-bold text-purple-600 dark:text-purple-400" data-testid="closure-system-cash">
-                    {formatCurrency(parseFloat(existingClosure.systemCash || '0'))}
-                  </p>
-                </div>
-                <div className={`tech-button-3d rounded-lg p-4 text-center ${
-                  parseFloat(existingClosure.variance || '0') >= 0 
-                    ? 'bg-gradient-to-br from-green-100 to-emerald-200 dark:from-green-900/30 dark:to-emerald-800/30 border-2 border-green-300 dark:border-green-500/50'
-                    : 'bg-gradient-to-br from-red-100 to-rose-200 dark:from-red-900/30 dark:to-rose-800/30 border-2 border-red-300 dark:border-red-500/50'
-                }`}>
-                  <div className="flex items-center justify-center gap-2 mb-2">
-                    {parseFloat(existingClosure.variance || '0') >= 0 ? (
-                      <TrendingUp className="h-4 w-4 text-green-600 dark:text-green-400" />
-                    ) : (
-                      <TrendingDown className="h-4 w-4 text-red-600 dark:text-red-400" />
-                    )}
-                    <p className={`text-sm font-bold ${
-                      parseFloat(existingClosure.variance || '0') >= 0 
-                        ? 'text-green-700 dark:text-green-300' 
-                        : 'text-red-700 dark:text-red-300'
-                    }`}>
-                      🔄 Varianza
-                    </p>
+          <div className="max-w-4xl mx-auto mt-8">
+            {/* Header - Shopify Style */}
+            <div className="bg-white dark:bg-gray-800 rounded-t-xl border-2 border-gray-200 dark:border-gray-700 shadow-lg">
+              <div className="px-8 py-6 border-b border-gray-200 dark:border-gray-700">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center">
+                      <CheckCircle className="h-6 w-6 text-white" />
+                    </div>
+                    <div>
+                      <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Cierre de Caja</h2>
+                      <p className="text-gray-600 dark:text-gray-400">{format(new Date(selectedDate), "dd 'de' MMMM, yyyy", { locale: es })}</p>
+                    </div>
                   </div>
-                  <p className={`text-xl font-bold ${
-                    parseFloat(existingClosure.variance || '0') >= 0 
-                      ? 'text-green-600 dark:text-green-400' 
-                      : 'text-red-600 dark:text-red-400'
-                  }`} data-testid="closure-variance">
-                    {formatCurrency(parseFloat(existingClosure.variance || '0'))}
-                  </p>
+                  <div className="text-right">
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Estado</p>
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
+                      ✅ Completado
+                    </span>
+                  </div>
                 </div>
               </div>
+
+              {/* Opening Cash - Fixed Amount Style */}
+              <div className="px-8 py-6 bg-gray-50 dark:bg-gray-800/50 border-b border-gray-200 dark:border-gray-700">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">💰 Dinero de Apertura</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Monto inicial en caja</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-2xl font-bold text-green-600 dark:text-green-400" data-testid="pos-opening-cash">
+                      {formatCurrency(5000.00)}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Payment Methods Breakdown - POS Style */}
+              <div className="px-8 py-6">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">💳 Desglose por Método de Pago</h3>
+                <div className="space-y-4">
+                  {Object.entries(dailySummary.paymentSummary).map(([method, data]) => {
+                    const isEffectivo = method.toLowerCase() === 'cash' || method.toLowerCase() === 'efectivo';
+                    return (
+                      <div 
+                        key={method} 
+                        className={`flex items-center justify-between p-4 rounded-lg border-2 ${
+                          isEffectivo 
+                            ? 'bg-green-50 border-green-200 dark:bg-green-900/20 dark:border-green-800' 
+                            : 'bg-blue-50 border-blue-200 dark:bg-blue-900/20 dark:border-blue-800'
+                        }`}
+                      >
+                        <div className="flex items-center gap-4">
+                          <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                            isEffectivo 
+                              ? 'bg-green-500 text-white' 
+                              : 'bg-blue-500 text-white'
+                          }`}>
+                            {isEffectivo ? '💵' : '💳'}
+                          </div>
+                          <div>
+                            <p className={`font-bold ${
+                              isEffectivo 
+                                ? 'text-green-800 dark:text-green-400' 
+                                : 'text-blue-800 dark:text-blue-400'
+                            }`}>
+                              {method === 'cash' ? 'Efectivo' : 
+                               method === 'tarjeta' ? 'Tarjeta' : 
+                               method === 'tansferencia' ? 'Transferencia' : 
+                               method}
+                            </p>
+                            <p className="text-sm text-gray-600 dark:text-gray-400">
+                              {data.quantity} {data.quantity === 1 ? 'transacción' : 'transacciones'}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <p className={`text-xl font-bold ${
+                            isEffectivo 
+                              ? 'text-green-700 dark:text-green-400' 
+                              : 'text-blue-700 dark:text-blue-400'
+                          }`} data-testid={`pos-payment-${method}`}>
+                            {formatCurrency(data.total)}
+                          </p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Cash Summary - Shopify Style */}
+              <div className="px-8 py-6 bg-gray-50 dark:bg-gray-800/50 border-t border-gray-200 dark:border-gray-700">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="text-center">
+                    <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">💰 Efectivo Esperado</p>
+                    <p className="text-xl font-bold text-gray-900 dark:text-white" data-testid="pos-expected-cash">
+                      {formatCurrency(parseFloat(existingClosure.systemCash || '0'))}
+                    </p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">🧮 Efectivo Contado</p>
+                    <p className="text-xl font-bold text-gray-900 dark:text-white" data-testid="pos-counted-cash">
+                      {formatCurrency(parseFloat(existingClosure.countedCash || '0'))}
+                    </p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">🔄 Diferencia</p>
+                    <p className={`text-xl font-bold ${
+                      parseFloat(existingClosure.variance || '0') >= 0 
+                        ? 'text-green-600 dark:text-green-400' 
+                        : 'text-red-600 dark:text-red-400'
+                    }`} data-testid="pos-variance">
+                      {parseFloat(existingClosure.variance || '0') >= 0 ? '+' : ''}{formatCurrency(parseFloat(existingClosure.variance || '0'))}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Total Sales - Shopify POS Style */}
+              <div className="px-8 py-6 bg-blue-600 dark:bg-blue-700 text-white">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-semibold">📊 Total de Ventas del Día</h3>
+                    <p className="text-blue-100">Todas las transacciones incluidas</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-3xl font-bold" data-testid="pos-total-sales">
+                      {formatCurrency(dailySummary.totalRevenue)}
+                    </p>
+                    <p className="text-blue-100">{dailySummary.totalInvoices} {dailySummary.totalInvoices === 1 ? 'factura' : 'facturas'}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Notes if exist */}
               {existingClosure.notes && (
-                <div className="mt-4 tech-button-3d bg-gradient-to-br from-yellow-50 to-amber-100 dark:from-yellow-900/30 dark:to-amber-800/30 border-2 border-yellow-300 dark:border-yellow-500/50 rounded-lg p-4">
-                  <p className="text-sm font-bold text-yellow-700 dark:text-yellow-300 mb-2">📝 Observaciones</p>
-                  <p className="text-yellow-800 dark:text-yellow-200" data-testid="closure-notes">{existingClosure.notes}</p>
+                <div className="px-8 py-4 bg-yellow-50 dark:bg-yellow-900/20 border-t border-yellow-200 dark:border-yellow-800">
+                  <div className="flex items-start gap-3">
+                    <div className="w-6 h-6 bg-yellow-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <span className="text-white text-xs">📝</span>
+                    </div>
+                    <div>
+                      <p className="font-semibold text-yellow-800 dark:text-yellow-300 mb-1">Observaciones</p>
+                      <p className="text-yellow-700 dark:text-yellow-200" data-testid="pos-notes">{existingClosure.notes}</p>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
           </div>
         )}
 
-        {/* Cash Counting Form */}
+        {/* Shopify POS Cash Counting Form */}
         {!existingClosure && (
-          <div className="tech-button-3d bg-gradient-to-br from-white to-slate-50 dark:from-slate-800 dark:to-slate-900 border-2 border-orange-300 dark:border-orange-500/50 rounded-xl shadow-2xl backdrop-blur-sm mt-6">
-            <div className="p-6 border-b border-orange-200 dark:border-orange-600">
-              <div className="flex items-center justify-between">
-                <h3 className="text-xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent flex items-center gap-3">
-                  <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-red-600 rounded-lg flex items-center justify-center tech-glow">
-                    <Calculator className="h-5 w-5 text-white" />
+          <div className="max-w-4xl mx-auto mt-8">
+            <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
+              <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Cierre de Caja</h2>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{format(new Date(selectedDate), "dd 'de' MMMM, yyyy", { locale: es })}</p>
                   </div>
-                  Formulario de Conteo
-                </h3>
-                <Button
-                  onClick={() => setShowCashForm(!showCashForm)}
-                  className="tech-button-3d bg-white border-2 border-orange-300 text-orange-700 dark:from-orange-500/20 dark:to-red-600/20 dark:text-white dark:border-orange-500/30 rounded-lg shadow-sm p-3 hover:bg-orange-50 hover:border-orange-400 dark:hover:from-orange-400/30 dark:hover:to-red-500/30 transition-all duration-300 cursor-pointer transform hover:scale-105 hover:-translate-y-1 dark:backdrop-blur-sm font-bold"
-                  data-testid="button-toggle-cash-form"
-                >
-                  {showCashForm ? 'Cerrar' : 'Abrir'} Formulario
-                </Button>
-              </div>
-            </div>
-            
-            {showCashForm && (
-              <div className="p-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                  <div className="tech-button-3d bg-gradient-to-br from-green-50 to-emerald-100 dark:from-green-900/30 dark:to-emerald-800/30 border-2 border-green-300 dark:border-green-500/50 rounded-lg p-6">
-                    <Label htmlFor="opening-cash" className="text-sm font-bold text-green-700 dark:text-green-300 mb-3 flex items-center gap-2">
-                      💰 Dinero de Apertura
-                      <Badge className="bg-green-200 text-green-800 dark:bg-green-800/50 dark:text-green-200">Inicial</Badge>
-                    </Label>
-                    <Input
-                      id="opening-cash"
-                      type="number"
-                      min="0"
-                      step="0.01"
-                      value={openingCash}
-                      onChange={(e) => setOpeningCash(e.target.value)}
-                      placeholder="0.00"
-                      className="text-lg font-bold"
-                      data-testid="input-opening-cash"
-                    />
-                    <p className="text-xs text-green-600 dark:text-green-400 mt-2">Dinero inicial en caja al abrir</p>
-                  </div>
-                  
-                  <div className="tech-button-3d bg-gradient-to-br from-blue-50 to-cyan-100 dark:from-blue-900/30 dark:to-cyan-800/30 border-2 border-blue-300 dark:border-blue-500/50 rounded-lg p-6">
-                    <Label htmlFor="counted-cash" className="text-sm font-bold text-blue-700 dark:text-blue-300 mb-3 flex items-center gap-2">
-                      🧮 Dinero Contado Físico
-                      <Badge className="bg-blue-200 text-blue-800 dark:bg-blue-800/50 dark:text-blue-200">Requerido</Badge>
-                    </Label>
-                    <Input
-                      id="counted-cash"
-                      type="number"
-                      min="0"
-                      step="0.01"
-                      value={countedCash}
-                      onChange={(e) => setCountedCash(e.target.value)}
-                      placeholder="0.00"
-                      className="text-lg font-bold"
-                      data-testid="input-counted-cash"
-                    />
-                    <p className="text-xs text-blue-600 dark:text-blue-400 mt-2">Dinero físico actual en caja</p>
-                  </div>
-                </div>
-
-                {/* Cálculos Automáticos */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                  <div className="tech-button-3d bg-gradient-to-br from-purple-50 to-pink-100 dark:from-purple-900/30 dark:to-pink-800/30 border-2 border-purple-300 dark:border-purple-500/50 rounded-lg p-4 text-center">
-                    <p className="text-sm font-bold text-purple-700 dark:text-purple-300 mb-2">⚙️ Sistema Calculado</p>
-                    <p className="text-xl font-bold text-purple-600 dark:text-purple-400" data-testid="calculated-system-cash">
-                      {formatCurrency(systemCash)}
-                    </p>
-                  </div>
-                  
-                  <div className={`tech-button-3d rounded-lg p-4 text-center ${
-                    variance >= 0 
-                      ? 'bg-gradient-to-br from-green-50 to-emerald-100 dark:from-green-900/30 dark:to-emerald-800/30 border-2 border-green-300 dark:border-green-500/50'
-                      : 'bg-gradient-to-br from-red-50 to-rose-100 dark:from-red-900/30 dark:to-rose-800/30 border-2 border-red-300 dark:border-red-500/50'
-                  }`}>
-                    <div className="flex items-center justify-center gap-2 mb-2">
-                      {variance >= 0 ? (
-                        <TrendingUp className="h-4 w-4 text-green-600 dark:text-green-400" />
-                      ) : (
-                        <TrendingDown className="h-4 w-4 text-red-600 dark:text-red-400" />
-                      )}
-                      <p className={`text-sm font-bold ${
-                        variance >= 0 
-                          ? 'text-green-700 dark:text-green-300' 
-                          : 'text-red-700 dark:text-red-300'
-                      }`}>
-                        🔄 Varianza
-                      </p>
-                    </div>
-                    <p className={`text-xl font-bold ${
-                      variance >= 0 
-                        ? 'text-green-600 dark:text-green-400' 
-                        : 'text-red-600 dark:text-red-400'
-                    }`} data-testid="calculated-variance">
-                      {formatCurrency(variance)}
-                    </p>
-                  </div>
-                  
-                  <div className={`tech-button-3d rounded-lg p-4 text-center ${
-                    Math.abs(variance) < 10 
-                      ? 'bg-gradient-to-br from-green-50 to-emerald-100 dark:from-green-900/30 dark:to-emerald-800/30 border-2 border-green-300 dark:border-green-500/50'
-                      : Math.abs(variance) < 50
-                        ? 'bg-gradient-to-br from-yellow-50 to-amber-100 dark:from-yellow-900/30 dark:to-amber-800/30 border-2 border-yellow-300 dark:border-yellow-500/50'
-                        : 'bg-gradient-to-br from-red-50 to-rose-100 dark:from-red-900/30 dark:to-rose-800/30 border-2 border-red-300 dark:border-red-500/50'
-                  }`}>
-                    <p className="text-sm font-bold mb-2">🎯 Estado</p>
-                    <p className="font-bold text-sm" data-testid="variance-status">
-                      {Math.abs(variance) < 10 ? '✅ Cuadrado' : 
-                       Math.abs(variance) < 50 ? '⚠️ Diferencia Menor' : 
-                       '❌ Diferencia Mayor'}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Notes */}
-                <div className="mb-6">
-                  <Label htmlFor="notes" className="text-sm font-bold text-gray-700 dark:text-gray-300 mb-3 flex items-center gap-2">
-                    📝 Observaciones (Opcional)
-                  </Label>
-                  <textarea
-                    id="notes"
-                    value={notes}
-                    onChange={(e) => setNotes(e.target.value)}
-                    placeholder="Ingrese cualquier observación sobre el cierre de caja..."
-                    className="w-full p-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg resize-none bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
-                    rows={3}
-                    data-testid="input-notes"
-                  />
-                </div>
-
-                {/* Action Buttons */}
-                <div className="flex justify-end gap-4">
                   <Button
-                    onClick={() => setShowCashForm(false)}
-                    variant="outline"
-                    className="tech-button-3d border-2"
-                    data-testid="button-cancel-closure"
+                    onClick={() => setShowCashForm(!showCashForm)}
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 text-sm rounded"
+                    data-testid="button-toggle-cash-form"
                   >
-                    Cancelar
-                  </Button>
-                  <Button
-                    onClick={handleCreateCashClosure}
-                    disabled={createCashClosureMutation.isPending}
-                    className="tech-button-3d bg-gradient-to-r from-green-500 via-emerald-600 to-cyan-600 hover:from-green-400 hover:via-emerald-500 hover:to-cyan-500 text-white tech-glow"
-                    data-testid="button-create-closure"
-                  >
-                    {createCashClosureMutation.isPending ? (
-                      <>
-                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                        Guardando...
-                      </>
-                    ) : (
-                      <>
-                        <Save className="h-4 w-4 mr-2" />
-                        Crear Cierre de Caja
-                      </>
-                    )}
+                    {showCashForm ? 'Cancelar' : 'Iniciar Conteo'}
                   </Button>
                 </div>
               </div>
-            )}
 
-            {!showCashForm && (
-              <div className="p-6">
-                <div className="tech-button-3d bg-gradient-to-br from-yellow-50 to-amber-100 dark:from-yellow-900/30 dark:to-amber-800/30 border-2 border-yellow-300 dark:border-yellow-500/50 rounded-lg p-6 text-center">
-                  <AlertTriangle className="h-8 w-8 text-yellow-600 dark:text-yellow-400 mx-auto mb-3" />
-                  <p className="font-bold text-yellow-800 dark:text-yellow-200 mb-2">
-                    📅 No hay cierre registrado para esta fecha
-                  </p>
-                  <p className="text-sm text-yellow-700 dark:text-yellow-300 mb-4">
-                    Haga clic en "Abrir Formulario" para realizar el conteo físico del efectivo y crear el cierre de caja.
+              {!showCashForm ? (
+                <div className="px-6 py-8 text-center bg-gray-50 dark:bg-gray-800">
+                  <div className="w-12 h-12 bg-gray-200 dark:bg-gray-700 rounded mx-auto mb-4 flex items-center justify-center">
+                    <Calculator className="h-6 w-6 text-gray-500 dark:text-gray-400" />
+                  </div>
+                  <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">Conteo de Efectivo</h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
+                    Registre el dinero físico en caja para completar el cierre del día
                   </p>
                   <Button
                     onClick={() => setShowCashForm(true)}
-                    className="tech-button-3d bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-400 hover:to-red-500 text-white font-bold"
-                    data-testid="button-open-cash-form"
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 text-sm rounded"
+                    data-testid="button-start-counting"
                   >
-                    <Calculator className="h-4 w-4 mr-2" />
-                    Realizar Conteo
+                    Iniciar Conteo
                   </Button>
                 </div>
-              </div>
-            )}
+              ) : (
+                <div className="p-8">
+                  {/* Opening Cash Summary - Shopify POS Style */}
+                  <div className="mb-6">
+                    <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded">
+                      <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <Lock className="h-4 w-4 text-gray-400" />
+                            <span className="text-sm text-gray-700 dark:text-gray-300">Apertura Fija</span>
+                          </div>
+                          <span className="text-sm font-medium text-gray-900 dark:text-white">
+                            {formatCurrency(OPENING_CASH)}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="px-4 py-3">
+                        <div className="flex items-center justify-between text-sm">
+                          <span className="text-gray-600 dark:text-gray-400">Ventas en Efectivo</span>
+                          <span className="text-gray-900 dark:text-white font-medium">
+                            +{formatCurrency((dailySummary.paymentSummary.cash?.total || 0))}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="px-4 py-3 bg-gray-50 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Total Esperado</span>
+                          <span className="text-sm font-semibold text-gray-900 dark:text-white">
+                            {formatCurrency(systemCash)}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Payment Methods Summary - Shopify POS Style */}
+                  <div className="mb-6">
+                    <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Resumen de Ventas</h3>
+                    <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg divide-y divide-gray-200 dark:divide-gray-700">
+                      {Object.entries(dailySummary.paymentSummary).map(([method, data]) => {
+                        return (
+                          <div key={method} className="px-4 py-3 flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                              <div className="w-6 h-6 bg-gray-100 dark:bg-gray-700 rounded flex items-center justify-center">
+                                <span className="text-xs">
+                                  {method === 'cash' || method.toLowerCase() === 'efectivo' ? '💵' : '💳'}
+                                </span>
+                              </div>
+                              <div>
+                                <p className="text-sm font-medium text-gray-900 dark:text-white">
+                                  {method === 'cash' ? 'Efectivo' : 
+                                   method === 'tarjeta' ? 'Tarjeta' : 
+                                   method === 'tansferencia' ? 'Transferencia' : 
+                                   method}
+                                </p>
+                                <p className="text-xs text-gray-500 dark:text-gray-400">
+                                  {data.quantity} transacciones
+                                </p>
+                              </div>
+                            </div>
+                            <p className="text-sm font-semibold text-gray-900 dark:text-white">
+                              {formatCurrency(data.total)}
+                            </p>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Cash Counting Input - Shopify POS Style */}
+                  <div className="mb-6">
+                    <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Conteo de Efectivo</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {/* Cash Counting Input */}
+                      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                        <label htmlFor="counted-cash" className="text-xs text-gray-500 dark:text-gray-400 mb-2 block">
+                          Dinero físico contado
+                        </label>
+                        <Input
+                          id="counted-cash"
+                          type="number"
+                          min="0"
+                          step="0.01"
+                          value={countedCash}
+                          onChange={(e) => setCountedCash(e.target.value)}
+                          placeholder="0.00"
+                          className="text-xl font-semibold text-center border-0 bg-transparent p-0 focus-visible:ring-0"
+                          data-testid="input-counted-cash"
+                        />
+                      </div>
+                      
+                      {/* Expected Cash Display */}
+                      <div className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">Efectivo esperado</p>
+                        <p className="text-xl font-semibold text-gray-900 dark:text-white">
+                          {formatCurrency(systemCash)}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Variance Display - Shopify POS Style */}
+                  <div className="mb-6 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">Diferencia</p>
+                        <p className={`text-lg font-semibold ${
+                          variance >= 0 
+                            ? 'text-green-600 dark:text-green-400' 
+                            : 'text-red-600 dark:text-red-400'
+                        }`}>
+                          {variance >= 0 ? '+' : ''}{formatCurrency(variance)}
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <span className={`inline-flex items-center px-2 py-1 rounded text-xs font-medium ${
+                          Math.abs(variance) < 10 
+                            ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400'
+                            : Math.abs(variance) < 50 
+                              ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400' 
+                              : 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400'
+                        }`}>
+                          {Math.abs(variance) < 10 ? 'OK' : 
+                           Math.abs(variance) < 50 ? 'ADVERTENCIA' : 
+                           'REVISAR'}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Notes - Shopify POS Style */}
+                  <div className="mb-6">
+                    <label htmlFor="notes" className="text-xs text-gray-500 dark:text-gray-400 mb-2 block">
+                      Observaciones (opcional)
+                    </label>
+                    <textarea
+                      id="notes"
+                      value={notes}
+                      onChange={(e) => setNotes(e.target.value)}
+                      placeholder="Agregar observaciones..."
+                      className="w-full p-3 border border-gray-200 dark:border-gray-700 rounded-lg resize-none bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-sm"
+                      rows={3}
+                      data-testid="input-notes"
+                    />
+                  </div>
+
+                  {/* Action Buttons - Shopify POS Style */}
+                  <div className="flex justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+                    <Button
+                      onClick={() => setShowCashForm(false)}
+                      variant="ghost"
+                      className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                      data-testid="button-cancel-closure"
+                    >
+                      Cancelar
+                    </Button>
+                    <Button
+                      onClick={handleCreateCashClosure}
+                      disabled={createCashClosureMutation.isPending}
+                      className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 text-sm font-medium"
+                      data-testid="button-create-closure"
+                    >
+                      {createCashClosureMutation.isPending ? (
+                        <>
+                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                          Guardando...
+                        </>
+                      ) : (
+                        'Completar Cierre'
+                      )}
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         )}
 
-        {/* Desglose financiero con diseño tech 3D */}
-        <div className="tech-button-3d bg-gradient-to-br from-white to-slate-50 dark:from-slate-800 dark:to-slate-900 border-2 border-slate-200 dark:border-slate-600 rounded-xl shadow-2xl backdrop-blur-sm mt-6">
-          <div className="p-6 border-b border-slate-200 dark:border-slate-600">
-            <h3 className="text-xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent flex items-center gap-3">
-              <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg flex items-center justify-center tech-glow">
-                <DollarSign className="h-5 w-5 text-white" />
+        {/* Financial Breakdown Section - Shopify POS style */}
+        <div className="max-w-4xl mx-auto mt-8">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/20 rounded-lg flex items-center justify-center">
+                  <DollarSign className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold text-gray-900 dark:text-white">Resumen Financiero</h2>
+                  <p className="text-gray-600 dark:text-gray-400 text-sm">Desglose completo de ingresos del día</p>
+                </div>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg text-center">
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Subtotal</p>
+                  <p className="text-xl font-bold text-gray-900 dark:text-white" data-testid="financial-subtotal">
+                    {formatCurrency(dailySummary.totalSubtotal)}
+                  </p>
+                </div>
+                <div className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg text-center">
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">ITBIS (18%)</p>
+                  <p className="text-xl font-bold text-gray-900 dark:text-white" data-testid="financial-tax">
+                    {formatCurrency(dailySummary.totalTax)}
+                  </p>
+                </div>
+                <div className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg text-center">
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Total Ingresos</p>
+                  <p className="text-2xl font-bold text-green-600 dark:text-green-400" data-testid="financial-total">
+                    {formatCurrency(dailySummary.totalRevenue)}
+                  </p>
+                </div>
               </div>
-              Desglose Financiero
-            </h3>
-          </div>
-          <div className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="tech-button-3d bg-gradient-to-br from-cyan-50 to-blue-100 dark:from-cyan-900/30 dark:to-blue-800/30 border-2 border-cyan-300 dark:border-cyan-500/50 rounded-lg p-6 text-center hover:shadow-lg transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 tech-glow">
-                <p className="text-sm font-bold text-cyan-700 dark:text-cyan-300 mb-2">📊 Subtotal</p>
-                <p className="text-xl font-bold text-cyan-600 dark:text-cyan-400" data-testid="financial-subtotal">
-                  {formatCurrency(dailySummary.totalSubtotal)}
-                </p>
-              </div>
-              <div className="tech-button-3d bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-800/30 border-2 border-blue-300 dark:border-blue-500/50 rounded-lg p-6 text-center hover:shadow-lg transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 tech-glow">
-                <p className="text-sm font-bold text-blue-700 dark:text-blue-300 mb-2">📋 ITBIS (18%)</p>
-                <p className="text-xl font-bold text-blue-600 dark:text-blue-400" data-testid="financial-tax">
-                  {formatCurrency(dailySummary.totalTax)}
-                </p>
-              </div>
-              <div className="tech-button-3d bg-gradient-to-br from-purple-50 to-pink-100 dark:from-purple-900/30 dark:to-pink-800/30 border-2 border-purple-300 dark:border-purple-500/50 rounded-lg p-6 text-center hover:shadow-lg transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 tech-glow">
-                <p className="text-sm font-bold text-purple-700 dark:text-purple-300 mb-2">💰 Total Ingresos</p>
-                <p className="text-2xl font-black bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent" data-testid="financial-total">
-                  {formatCurrency(dailySummary.totalRevenue)}
-                </p>
-              </div>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         </div>
 
-        {/* Modal de confirmación */}
+        {/* Confirmation Modal */}
         <Dialog open={showConfirmModal} onOpenChange={setShowConfirmModal}>
           <DialogContent className="max-w-md" data-testid="modal-confirmation">
             <DialogHeader>
@@ -982,13 +1113,13 @@ export default function CashClosure({ onBack }: CashClosureProps) {
               </DialogTitle>
             </DialogHeader>
             <div className="text-center py-4">
-              <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4 tech-glow">
-                <CheckCircle className="w-8 h-8 text-white" />
+              <div className="w-16 h-16 bg-green-100 dark:bg-green-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <CheckCircle className="w-8 h-8 text-green-600 dark:text-green-400" />
               </div>
               <p className="text-gray-600 dark:text-gray-300 mb-6" data-testid="modal-message">{modalMessage}</p>
               <Button
                 onClick={() => setShowConfirmModal(false)}
-                className="w-full bg-gradient-to-r from-green-500 via-emerald-600 to-cyan-600 hover:from-green-400 hover:via-emerald-500 hover:to-cyan-500 text-white tech-glow"
+                className="w-full"
                 data-testid="button-modal-accept"
               >
                 Aceptar
