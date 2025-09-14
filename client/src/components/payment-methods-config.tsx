@@ -214,132 +214,200 @@ export default function PaymentMethodsConfig({ onNotification }: PaymentMethodsC
                   Crear Método
                 </Button>
               </DialogTrigger>
-              <DialogContent className="max-w-md">
-              <DialogHeader>
-                <DialogTitle>
-                  {editingMethod ? "Editar Método de Pago" : "Nuevo Método de Pago"}
-                </DialogTitle>
-              </DialogHeader>
-              <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-                <div>
-                  <Label htmlFor="name">Nombre *</Label>
-                  <Input
-                    id="name"
-                    {...form.register("name")}
-                    placeholder="Ej: Tarjeta de Débito"
-                    data-testid="input-method-name"
-                  />
-                </div>
-                
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="icon">Ícono</Label>
-                    <div className="grid grid-cols-5 gap-2 mt-2">
-                      {iconOptions.map((option) => {
-                        const IconComponent = option.icon;
-                        return (
-                          <button
-                            key={option.id}
-                            type="button"
-                            onClick={() => form.setValue("icon", option.id)}
-                            className={`p-2 rounded border ${
-                              form.watch("icon") === option.id ? "border-secondary bg-secondary/10" : "border-border"
-                            }`}
-                            title={option.label}
-                          >
-                            <IconComponent className="w-4 h-4" />
-                          </button>
-                        );
-                      })}
+              <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+                <DialogHeader>
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 bg-gradient-to-br from-cyan-400 to-purple-500 rounded-xl flex items-center justify-center tech-glow">
+                      <CreditCard className="w-5 h-5 text-white" />
+                    </div>
+                    <div>
+                      <DialogTitle className="text-2xl font-bold text-gray-800 dark:text-white">
+                        {editingMethod ? "Editar Método de Pago" : "Crear Nuevo Método"}
+                      </DialogTitle>
+                      <p className="text-gray-600 dark:text-gray-400">Configure su método de pago personalizado</p>
                     </div>
                   </div>
-                  
-                  <div>
-                    <Label htmlFor="color">Color</Label>
-                    <div className="grid grid-cols-4 gap-2 mt-2">
-                      {colorOptions.map((color) => (
-                        <button
-                          key={color}
-                          type="button"
-                          onClick={() => form.setValue("color", color)}
-                          className={`w-8 h-8 rounded border-2 ${
-                            form.watch("color") === color ? "border-gray-800 dark:border-gray-200" : "border-gray-300 dark:border-gray-600"
-                          }`}
-                          style={{ backgroundColor: color }}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                </div>
+                </DialogHeader>
+                <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+                  {/* Información básica */}
+                  <Card className="tech-button-3d bg-gradient-to-br from-blue-50 to-cyan-50 border-2 border-blue-300 dark:border-blue-500/30 rounded-xl">
+                    <CardHeader className="pb-4">
+                      <CardTitle className="flex items-center text-blue-700 dark:text-blue-300">
+                        <CreditCard className="w-5 h-5 mr-2" />
+                        Información del Método
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-4">
+                        <div>
+                          <Label htmlFor="name" className="text-blue-700 dark:text-blue-300 font-medium">Nombre del Método *</Label>
+                          <Input
+                            id="name"
+                            {...form.register("name")}
+                            placeholder="Ej: Efectivo, Tarjeta, Transferencia, Pocket, Carnet"
+                            className="border-2 border-blue-300 focus:border-blue-400 dark:border-blue-500/30"
+                            data-testid="input-method-name"
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="description" className="text-blue-700 dark:text-blue-300 font-medium">Descripción</Label>
+                          <Input
+                            id="description"
+                            {...form.register("description")}
+                            placeholder="Descripción opcional del método"
+                            className="border-2 border-blue-300 focus:border-blue-400 dark:border-blue-500/30"
+                          />
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
 
-                <div>
-                  <Label htmlFor="description">Descripción</Label>
-                  <Input
-                    id="description"
-                    {...form.register("description")}
-                    placeholder="Descripción del método de pago"
-                  />
-                </div>
+                  {/* Apariencia visual */}
+                  <Card className="tech-button-3d bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-300 dark:border-purple-500/30 rounded-xl">
+                    <CardHeader className="pb-4">
+                      <CardTitle className="flex items-center text-purple-700 dark:text-purple-300">
+                        <Sparkles className="w-5 h-5 mr-2" />
+                        Apariencia Visual
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                          <Label className="text-purple-700 dark:text-purple-300 font-medium">Ícono</Label>
+                          <div className="grid grid-cols-5 gap-2 mt-2">
+                            {iconOptions.map((option) => {
+                              const IconComponent = option.icon;
+                              return (
+                                <button
+                                  key={option.id}
+                                  type="button"
+                                  onClick={() => form.setValue("icon", option.id)}
+                                  className={`tech-button-3d p-3 rounded-lg border-2 transition-all duration-300 hover:scale-105 ${
+                                    form.watch("icon") === option.id 
+                                      ? "border-purple-500 bg-purple-100 dark:bg-purple-900/30" 
+                                      : "border-purple-300 hover:border-purple-400"
+                                  }`}
+                                  title={option.label}
+                                >
+                                  <IconComponent className="w-4 h-4 mx-auto text-purple-600" />
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                        
+                        <div>
+                          <Label className="text-purple-700 dark:text-purple-300 font-medium">Color</Label>
+                          <div className="grid grid-cols-4 gap-2 mt-2">
+                            {colorOptions.map((color) => (
+                              <button
+                                key={color}
+                                type="button"
+                                onClick={() => form.setValue("color", color)}
+                                className={`tech-button-3d w-10 h-10 rounded-lg border-2 transition-all duration-300 hover:scale-105 ${
+                                  form.watch("color") === color 
+                                    ? "border-purple-600 shadow-lg" 
+                                    : "border-purple-300 hover:border-purple-400"
+                                }`}
+                                style={{ backgroundColor: color }}
+                              />
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
 
-                <div>
-                  <Label htmlFor="commission">Comisión (%)</Label>
-                  <Input
-                    id="commission"
-                    type="number"
-                    step="0.1"
-                    {...form.register("commission")}
-                    placeholder="0.0"
-                  />
-                </div>
+                  {/* Configuración */}
+                  <Card className="tech-button-3d bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-300 dark:border-green-500/30 rounded-xl">
+                    <CardHeader className="pb-4">
+                      <CardTitle className="flex items-center text-green-700 dark:text-green-300">
+                        <Package className="w-5 h-5 mr-2" />
+                        Configuración Avanzada
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-6">
+                        <div>
+                          <Label htmlFor="commission" className="text-green-700 dark:text-green-300 font-medium">Comisión (%)</Label>
+                          <Input
+                            id="commission"
+                            type="number"
+                            step="0.1"
+                            {...form.register("commission")}
+                            placeholder="0.0"
+                            className="border-2 border-green-300 focus:border-green-400 dark:border-green-500/30"
+                          />
+                        </div>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          <div className="tech-button-3d bg-white dark:bg-gray-800/50 border-2 border-green-200 rounded-lg p-4">
+                            <div className="flex items-center justify-between">
+                              <div>
+                                <Label htmlFor="active" className="text-green-700 dark:text-green-300 font-medium">Método Activo</Label>
+                                <p className="text-sm text-green-600 dark:text-green-400 mt-1">Disponible para usar</p>
+                              </div>
+                              <Switch
+                                id="active"
+                                checked={form.watch("active")}
+                                onCheckedChange={(checked) => form.setValue("active", checked)}
+                              />
+                            </div>
+                          </div>
+                          
+                          <div className="tech-button-3d bg-white dark:bg-gray-800/50 border-2 border-green-200 rounded-lg p-4">
+                            <div className="flex items-center justify-between">
+                              <div>
+                                <Label htmlFor="requiresReference" className="text-green-700 dark:text-green-300 font-medium">Requiere Referencia</Label>
+                                <p className="text-sm text-green-600 dark:text-green-400 mt-1">Solicitar número</p>
+                              </div>
+                              <Switch
+                                id="requiresReference"
+                                checked={form.watch("requiresReference")}
+                                onCheckedChange={(checked) => form.setValue("requiresReference", checked)}
+                              />
+                            </div>
+                          </div>
+                          
+                          <div className="tech-button-3d bg-white dark:bg-gray-800/50 border-2 border-green-200 rounded-lg p-4">
+                            <div className="flex items-center justify-between">
+                              <div>
+                                <Label htmlFor="showOnInvoice" className="text-green-700 dark:text-green-300 font-medium">Mostrar en Factura</Label>
+                                <p className="text-sm text-green-600 dark:text-green-400 mt-1">Visible al cliente</p>
+                              </div>
+                              <Switch
+                                id="showOnInvoice"
+                                checked={form.watch("showOnInvoice")}
+                                onCheckedChange={(checked) => form.setValue("showOnInvoice", checked)}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
 
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="active">Activo</Label>
-                    <Switch
-                      id="active"
-                      checked={form.watch("active")}
-                      onCheckedChange={(checked) => form.setValue("active", checked)}
-                    />
+                  {/* Botones de acción */}
+                  <div className="flex gap-3 pt-4">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={handleDialogClose}
+                      className="flex-1 tech-button-3d border-2 border-gray-300 hover:border-gray-400"
+                    >
+                      <X className="w-4 h-4 mr-2" />
+                      Cancelar
+                    </Button>
+                    <Button
+                      type="submit"
+                      disabled={createMethodMutation.isPending}
+                      className="flex-1 tech-button-3d bg-gradient-to-br from-cyan-50 to-blue-50 border-2 border-cyan-300 text-cyan-700 dark:bg-gradient-to-br dark:from-cyan-500/20 dark:to-blue-600/20 dark:text-cyan-300 dark:border-cyan-500/30 hover:from-cyan-100 hover:to-blue-100 hover:border-cyan-400 dark:hover:from-cyan-400/30 dark:hover:to-blue-500/30 transition-all duration-300 transform hover:scale-105 tech-glow"
+                    >
+                      <Save className="w-4 h-4 mr-2" />
+                      {createMethodMutation.isPending ? "Guardando..." : editingMethod ? "Actualizar Método" : "Crear Método"}
+                    </Button>
                   </div>
-                  
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="requiresReference">Requiere Referencia</Label>
-                    <Switch
-                      id="requiresReference"
-                      checked={form.watch("requiresReference")}
-                      onCheckedChange={(checked) => form.setValue("requiresReference", checked)}
-                    />
-                  </div>
-                  
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="showOnInvoice">Mostrar en Factura</Label>
-                    <Switch
-                      id="showOnInvoice"
-                      checked={form.watch("showOnInvoice")}
-                      onCheckedChange={(checked) => form.setValue("showOnInvoice", checked)}
-                    />
-                  </div>
-                </div>
-
-                <div className="flex gap-3">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={handleDialogClose}
-                    className="flex-1"
-                  >
-                    Cancelar
-                  </Button>
-                  <Button
-                    type="submit"
-                    disabled={createMethodMutation.isPending}
-                    className="flex-1"
-                  >
-                    <Save className="w-4 h-4 mr-2" />
-                    {createMethodMutation.isPending ? "Guardando..." : "Guardar"}
-                  </Button>
-                </div>
-              </form>
+                </form>
             </DialogContent>
           </Dialog>
           </div>
