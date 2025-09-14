@@ -887,7 +887,7 @@ export default function OrderManagement({ onNotification }: OrderManagementProps
             
             {/* Referencia si es necesaria */}
             {(() => {
-              const method = paymentMethods.find((pm: PaymentMethod) => pm.id === selectedPaymentMethod);
+              const method = paymentMethods.find((pm: PaymentMethod) => pm.code === selectedPaymentMethod);
               return method?.requiresReference && (
                 <div className="space-y-3">
                   <Label className="text-lg font-bold text-slate-700 dark:text-slate-300">Referencia de pago</Label>
