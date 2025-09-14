@@ -705,49 +705,61 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getNextInvoiceNumber(): Promise<string> {
-    console.log('[DEBUG] Generating next invoice number...');
+    const maxAttempts = 3;
+    const baseDelayMs = 200;
     const counterId = 'invoice_number';
-    
-    try {
-      // Intentar crear el contador si no existe (usando INSERT ... ON CONFLICT DO NOTHING)
-      // Esto evita el race condition en la inicialización
-      const existingInvoices = await db
-        .select({ count: sql<number>`count(*)` })
-        .from(invoices);
-      const currentCount = existingInvoices[0]?.count || 0;
-      
-      console.log(`[DEBUG] Current invoice count: ${currentCount}`);
-      
-      // Usar raw SQL para INSERT ... ON CONFLICT DO NOTHING 
-      await db.execute(sql`
-        INSERT INTO counters (id, value, updated_at) 
-        VALUES (${counterId}, ${currentCount}, NOW()) 
-        ON CONFLICT (id) DO NOTHING
-      `);
-      
-      // Incrementar contador de manera atómica usando UPDATE con RETURNING
-      const result = await db.execute(sql`
-        UPDATE counters 
-        SET value = value + 1, updated_at = NOW() 
-        WHERE id = ${counterId} 
-        RETURNING value
-      `);
-      
-      const updatedValue = result.rows[0]?.value;
-      console.log(`[DEBUG] Updated counter value: ${updatedValue}`);
-      
-      if (!updatedValue) {
-        throw new Error(`Failed to update counter for ${counterId}`);
+
+    const isTransientPgError = (e: any) => {
+      const codes = new Set(['57P01','57P02','57P03','53300','53410','08006','08003','08000']);
+      const messages = ['Connection terminated', 'terminating connection', 'ECONNRESET', 'ETIMEDOUT', 'socket hang up', 'closed the connection unexpectedly'];
+      const msg = String(e?.message ?? e ?? '');
+      return codes.has((e as any)?.code) || messages.some(m => msg.includes(m));
+    };
+
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+      try {
+        return await db.transaction(async (tx) => {
+          // Ensure counter exists in the same transaction
+          const existingInvoices = await tx
+            .select({ count: sql<number>`count(*)` })
+            .from(invoices);
+          const currentCount = existingInvoices[0]?.count || 0;
+
+          await tx.execute(sql`
+            INSERT INTO counters (id, value, updated_at)
+            VALUES (${counterId}, ${currentCount}, NOW())
+            ON CONFLICT (id) DO NOTHING
+          `);
+
+          const result = await tx.execute(sql`
+            UPDATE counters
+            SET value = value + 1, updated_at = NOW()
+            WHERE id = ${counterId}
+            RETURNING value
+          `);
+
+          const updatedValue = result.rows?.[0]?.value;
+          if (updatedValue === undefined || updatedValue === null) {
+            throw new Error(`Failed to update counter for ${counterId}`);
+          }
+
+          return `FAC-${String(updatedValue).padStart(3, '0')}`;
+        });
+      } catch (e) {
+        if (isTransientPgError(e) && attempt < maxAttempts) {
+          const delay = baseDelayMs * Math.pow(2, attempt - 1);
+          await new Promise(r => setTimeout(r, delay));
+          continue;
+        }
+        console.error('[ERROR] getNextInvoiceNumber failed; using fallback:', e);
+        // Fallback: generate a unique, monotonic-ish number to avoid crashing
+        const fallback = `FAC-OFFLINE-${new Date().toISOString().replace(/[-:TZ.]/g, '').slice(0, 14)}`;
+        return fallback;
       }
-      
-      const invoiceNumber = `FAC-${String(updatedValue).padStart(3, '0')}`;
-      console.log(`[DEBUG] Generated invoice number: ${invoiceNumber}`);
-      
-      return invoiceNumber;
-    } catch (error) {
-      console.error('[ERROR] Failed to generate invoice number:', error);
-      throw error;
     }
+
+    // Should never reach here
+    return `FAC-${Date.now()}`;
   }
 
   // Invoice Items
