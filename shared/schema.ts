@@ -280,6 +280,17 @@ export const insertEmployeeSchema = createInsertSchema(employees).omit({
   lastAccess: true,
 });
 
+// Patch schemas for partial updates
+export const patchEmployeeSchema = z.object({
+  name: z.string().optional(),
+  position: z.string().optional(),
+  accessCode: z.string().optional(),
+  role: z.enum(['manager', 'supervisor', 'employee']).optional(),
+  active: z.boolean().optional(),
+});
+
+export const updateEmployeeSchema = insertEmployeeSchema.partial();
+
 export const insertCustomerSchema = createInsertSchema(customers).omit({
   id: true,
   totalSpent: true,

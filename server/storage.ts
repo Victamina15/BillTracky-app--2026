@@ -2,6 +2,7 @@ import { type Employee, type InsertEmployee, type Customer, type InsertCustomer,
 import { randomUUID } from "crypto";
 import { db } from "./db";
 import { eq, desc, sql } from "drizzle-orm";
+import bcrypt from "bcrypt";
 
 export interface IStorage {
   // Employees
@@ -123,6 +124,22 @@ export class MemStorage implements IStorage {
   private airtableSyncQueue: Map<string, AirtableSyncQueue>;
   private invoiceCounter: number;
 
+  // Helper methods for access code hashing
+  private async hashAccessCode(accessCode: string): Promise<string> {
+    const saltRounds = 12;
+    return await bcrypt.hash(accessCode, saltRounds);
+  }
+
+  private async verifyAccessCode(accessCode: string, hashedCode: string): Promise<boolean> {
+    return await bcrypt.compare(accessCode, hashedCode);
+  }
+
+  // Utility function to sanitize employee objects - NEVER expose accessCode in API responses
+  private sanitizeEmployee(employee: Employee): Employee {
+    const { accessCode, ...sanitizedEmployee } = employee;
+    return sanitizedEmployee as Employee;
+  }
+
   constructor() {
     this.employees = new Map();
     this.customers = new Map();
@@ -138,15 +155,16 @@ export class MemStorage implements IStorage {
     this.airtableSyncQueue = new Map();
     this.invoiceCounter = 10;
     
-    this.seedData();
+    // Initialize data asynchronously
+    this.seedData().catch(console.error);
   }
 
-  private seedData() {
-    // Seed employees
+  private async seedData() {
+    // Seed employees with hashed access codes
     const employees = [
-      { id: randomUUID(), name: 'Juan Carlos', position: 'Gerente General', accessCode: '1234', role: 'manager', active: true, createdAt: new Date('2024-01-15'), lastAccess: new Date('2024-09-04') },
-      { id: randomUUID(), name: 'María Fernández', position: 'Operadora Principal', accessCode: '5678', role: 'employee', active: true, createdAt: new Date('2024-02-20'), lastAccess: new Date('2024-09-03') },
-      { id: randomUUID(), name: 'Pedro González', position: 'Supervisor de Turno', accessCode: '9999', role: 'supervisor', active: true, createdAt: new Date('2024-03-10'), lastAccess: new Date('2024-09-02') }
+      { id: randomUUID(), name: 'Juan Carlos', position: 'Gerente General', accessCode: await this.hashAccessCode('1234'), role: 'manager', active: true, createdAt: new Date('2024-01-15'), lastAccess: new Date('2024-09-04') },
+      { id: randomUUID(), name: 'María Fernández', position: 'Operadora Principal', accessCode: await this.hashAccessCode('5678'), role: 'employee', active: true, createdAt: new Date('2024-02-20'), lastAccess: new Date('2024-09-03') },
+      { id: randomUUID(), name: 'Pedro González', position: 'Supervisor de Turno', accessCode: await this.hashAccessCode('9999'), role: 'supervisor', active: true, createdAt: new Date('2024-03-10'), lastAccess: new Date('2024-09-02') }
     ];
     employees.forEach(emp => this.employees.set(emp.id, emp));
 
@@ -341,37 +359,60 @@ export class MemStorage implements IStorage {
 
   // Employee methods
   async getEmployee(id: string): Promise<Employee | undefined> {
-    return this.employees.get(id);
+    const employee = this.employees.get(id);
+    return employee ? this.sanitizeEmployee(employee) : undefined;
   }
 
   async getEmployeeByAccessCode(accessCode: string): Promise<Employee | undefined> {
-    return Array.from(this.employees.values()).find(emp => emp.accessCode === accessCode);
+    const employees = Array.from(this.employees.values());
+    for (const emp of employees) {
+      if (await this.verifyAccessCode(accessCode, emp.accessCode)) {
+        return this.sanitizeEmployee(emp);
+      }
+    }
+    return undefined;
   }
 
   async getEmployees(): Promise<Employee[]> {
-    return Array.from(this.employees.values()).sort((a, b) => a.name.localeCompare(b.name));
+    return Array.from(this.employees.values())
+      .map(emp => this.sanitizeEmployee(emp))
+      .sort((a, b) => a.name.localeCompare(b.name));
   }
 
   async createEmployee(employee: InsertEmployee): Promise<Employee> {
     const id = randomUUID();
+    const hashedAccessCode = await this.hashAccessCode(employee.accessCode);
     const newEmployee: Employee = { 
       ...employee, 
       id,
+      accessCode: hashedAccessCode,
       active: employee.active ?? true,
       createdAt: new Date(),
       lastAccess: null
     };
     this.employees.set(id, newEmployee);
-    return newEmployee;
+    
+    return this.sanitizeEmployee(newEmployee);
   }
 
   async updateEmployee(id: string, updates: Partial<Employee>): Promise<Employee | undefined> {
     const employee = this.employees.get(id);
     if (!employee) return undefined;
     
-    const updated = { ...employee, ...updates };
+    // If accessCode is empty, don't include it in the updates
+    let processedUpdates = { ...updates };
+    if ('accessCode' in processedUpdates) {
+      if (!processedUpdates.accessCode || processedUpdates.accessCode.trim() === '') {
+        delete processedUpdates.accessCode;
+      } else {
+        processedUpdates.accessCode = await this.hashAccessCode(processedUpdates.accessCode);
+      }
+    }
+    
+    const updated = { ...employee, ...processedUpdates };
     this.employees.set(id, updated);
-    return updated;
+    
+    return this.sanitizeEmployee(updated);
   }
 
   async deleteEmployee(id: string): Promise<void> {
@@ -949,32 +990,45 @@ export class MemStorage implements IStorage {
 
 // DatabaseStorage implementation using PostgreSQL with Drizzle ORM
 export class DatabaseStorage implements IStorage {
+  // Utility function to sanitize employee objects - NEVER expose accessCode in API responses
+  private sanitizeEmployee(employee: Employee): Employee {
+    const { accessCode, ...sanitizedEmployee } = employee;
+    return sanitizedEmployee as Employee;
+  }
+
   // Employees
   async getEmployee(id: string): Promise<Employee | undefined> {
     const [employee] = await db.select().from(employees).where(eq(employees.id, id));
-    return employee || undefined;
+    return employee ? this.sanitizeEmployee(employee) : undefined;
   }
 
   async getEmployees(): Promise<Employee[]> {
-    return await db.select().from(employees);
+    const employees = await db.select().from(employees);
+    return employees.map(emp => this.sanitizeEmployee(emp));
   }
 
   async getEmployeeByAccessCode(accessCode: string): Promise<Employee | undefined> {
     const [employee] = await db.select().from(employees).where(eq(employees.accessCode, accessCode));
-    return employee || undefined;
+    return employee ? this.sanitizeEmployee(employee) : undefined;
   }
 
   async createEmployee(employee: InsertEmployee): Promise<Employee> {
     const [newEmployee] = await db.insert(employees).values(employee).returning();
-    return newEmployee;
+    return this.sanitizeEmployee(newEmployee);
   }
 
   async updateEmployee(id: string, updates: Partial<Employee>): Promise<Employee | undefined> {
+    // If accessCode is empty, don't include it in the updates
+    const cleanedUpdates = { ...updates };
+    if ('accessCode' in cleanedUpdates && (!cleanedUpdates.accessCode || cleanedUpdates.accessCode.trim() === '')) {
+      delete cleanedUpdates.accessCode;
+    }
+    
     const [updated] = await db.update(employees)
-      .set({ ...updates, lastAccess: new Date() })
+      .set({ ...cleanedUpdates, lastAccess: new Date() })
       .where(eq(employees.id, id))
       .returning();
-    return updated || undefined;
+    return updated ? this.sanitizeEmployee(updated) : undefined;
   }
 
   async deleteEmployee(id: string): Promise<void> {

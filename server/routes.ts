@@ -1,7 +1,7 @@
 import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertCustomerSchema, insertServiceSchema, insertInvoiceSchema, insertInvoiceItemSchema, insertPaymentMethodSchema, insertCompanySettingsSchema, insertMessageTemplateSchema, insertEmployeeSchema, patchOrderStatusSchema, patchOrderPaymentSchema, patchOrderCancelSchema, patchInvoicePaySchema, insertWhatsappConfigSchema, createCashClosureSchema, insertCashClosurePaymentSchema, metricsQuerySchema, cashClosuresQuerySchema, insertAirtableConfigSchema, insertAirtableSyncQueueSchema } from "@shared/schema";
+import { insertCustomerSchema, insertServiceSchema, insertInvoiceSchema, insertInvoiceItemSchema, insertPaymentMethodSchema, insertCompanySettingsSchema, insertMessageTemplateSchema, insertEmployeeSchema, patchEmployeeSchema, updateEmployeeSchema, patchOrderStatusSchema, patchOrderPaymentSchema, patchOrderCancelSchema, patchInvoicePaySchema, insertWhatsappConfigSchema, createCashClosureSchema, insertCashClosurePaymentSchema, metricsQuerySchema, cashClosuresQuerySchema, insertAirtableConfigSchema, insertAirtableSyncQueueSchema } from "@shared/schema";
 import { z } from "zod";
 import type { WhatsappConfig } from "@shared/schema";
 
@@ -44,28 +44,40 @@ interface AuthenticatedRequest extends Request {
 
 async function requireAuthentication(req: AuthenticatedRequest, res: Response, next: NextFunction) {
   try {
-    const employeeId = req.headers['x-employee-id'] as string;
     const accessCode = req.headers['x-access-code'] as string;
     
-    if (!employeeId && !accessCode) {
-      return res.status(401).json({ message: "Authentication required" });
+    if (!accessCode) {
+      return res.status(401).json({ message: "Access code required for authentication" });
     }
     
-    let employee;
-    if (employeeId) {
-      employee = await storage.getEmployee(employeeId);
-    } else if (accessCode) {
-      employee = await storage.getEmployeeByAccessCode(accessCode);
-    }
+    const employee = await storage.getEmployeeByAccessCode(accessCode);
     
     if (!employee || !employee.active) {
-      return res.status(401).json({ message: "Invalid or inactive employee" });
+      return res.status(401).json({ message: "Invalid access code or inactive employee" });
     }
     
     req.employee = employee;
     next();
   } catch (error) {
+    console.error('[Authentication] Error:', error);
     res.status(500).json({ message: "Authentication error" });
+  }
+}
+
+// Role-based authorization middleware
+async function requireManagerRole(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+  try {
+    if (!req.employee) {
+      return res.status(401).json({ message: "Authentication required" });
+    }
+    
+    if (req.employee.role !== 'manager') {
+      return res.status(403).json({ message: "Manager role required for this operation" });
+    }
+    
+    next();
+  } catch (error) {
+    res.status(500).json({ message: "Authorization error" });
   }
 }
 
@@ -715,8 +727,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Employee management routes
-  app.get("/api/employees", async (req, res) => {
+  // Employee management routes (Manager access only)
+  app.get("/api/employees", requireAuthentication, requireManagerRole, async (req: AuthenticatedRequest, res) => {
     try {
       // Get all employees (for employee management)
       const employees = await storage.getEmployees();
@@ -726,9 +738,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/employees", async (req, res) => {
+  app.post("/api/employees", requireAuthentication, requireManagerRole, async (req: AuthenticatedRequest, res) => {
     try {
       const employeeData = insertEmployeeSchema.parse(req.body);
+      
+      // Check if access code is already in use
+      const existingEmployee = await storage.getEmployeeByAccessCode(employeeData.accessCode);
+      if (existingEmployee) {
+        return res.status(400).json({ message: "Access code already in use" });
+      }
+      
       const employee = await storage.createEmployee(employeeData);
       res.json(employee);
     } catch (error) {
@@ -739,10 +758,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.put("/api/employees/:id", async (req, res) => {
+  app.patch("/api/employees/:id", requireAuthentication, requireManagerRole, async (req: AuthenticatedRequest, res) => {
     try {
       const { id } = req.params;
-      const updates = req.body;
+      const updates = patchEmployeeSchema.parse(req.body);
+      
+      // If updating access code, check if it's already in use by another employee
+      if (updates.accessCode) {
+        const existingEmployee = await storage.getEmployeeByAccessCode(updates.accessCode);
+        if (existingEmployee && existingEmployee.id !== id) {
+          return res.status(400).json({ message: "Access code already in use by another employee" });
+        }
+      }
+      
       const employee = await storage.updateEmployee(id, updates);
       
       if (!employee) {
@@ -751,13 +779,50 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.json(employee);
     } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid data", errors: error.errors });
+      }
       res.status(500).json({ message: "Server error" });
     }
   });
 
-  app.delete("/api/employees/:id", async (req, res) => {
+  app.put("/api/employees/:id", requireAuthentication, requireManagerRole, async (req: AuthenticatedRequest, res) => {
     try {
       const { id } = req.params;
+      const updates = updateEmployeeSchema.parse(req.body);
+      
+      // If updating access code, check if it's already in use by another employee
+      if (updates.accessCode) {
+        const existingEmployee = await storage.getEmployeeByAccessCode(updates.accessCode);
+        if (existingEmployee && existingEmployee.id !== id) {
+          return res.status(400).json({ message: "Access code already in use by another employee" });
+        }
+      }
+      
+      const employee = await storage.updateEmployee(id, updates);
+      
+      if (!employee) {
+        return res.status(404).json({ message: "Employee not found" });
+      }
+      
+      res.json(employee);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Server error" });
+    }
+  });
+
+  app.delete("/api/employees/:id", requireAuthentication, requireManagerRole, async (req: AuthenticatedRequest, res) => {
+    try {
+      const { id } = req.params;
+      
+      // Don't allow deletion of current user
+      if (req.employee && req.employee.id === id) {
+        return res.status(400).json({ message: "Cannot delete your own account" });
+      }
+      
       await storage.deleteEmployee(id);
       res.json({ message: "Employee deleted successfully" });
     } catch (error) {

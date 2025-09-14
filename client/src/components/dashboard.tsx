@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FileText, LogOut, Home, Package, Users, Settings, CreditCard, BarChart3, Building2, MessageCircle, Menu, X, CheckCircle, Clock, History } from "lucide-react";
+import { FileText, LogOut, Home, Package, Users, Settings, CreditCard, BarChart3, Building2, MessageCircle, Menu, X, CheckCircle, Clock, History, Crown } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { type Employee, type Invoice } from "@shared/schema";
 import InvoiceCreation from "./invoice-creation";
@@ -11,6 +11,7 @@ import CashClosure from "./cash-closure";
 import CashClosuresHistory from "./cash-closures-history";
 import CompanyConfig from "./company-config";
 import WhatsAppConfig from "./whatsapp-config";
+import EmployeesManagement from "./employees-management";
 import { useQuery } from "@tanstack/react-query";
 
 interface DashboardProps {
@@ -76,6 +77,8 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
         return <OrderManagement onNotification={onNotification} />;
       case "customers":
         return <CustomersGrid onNotification={onNotification} />;
+      case "employees":
+        return <EmployeesManagement onNotification={onNotification} />;
       case "services":
         return <ServicesConfig onNotification={onNotification} />;
       case "payment-methods":
@@ -368,6 +371,19 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
             >
               <Users className="w-4 h-4 mr-3" />
               Clientes
+            </button>
+            
+            <button 
+              onClick={() => setActiveTab('employees')} 
+              className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-300 ${
+                activeTab === 'employees' 
+                  ? 'tech-button-3d tech-button-active text-cyan-400 dark:shadow-lg' 
+                  : 'tech-button-3d text-gray-300 hover:text-cyan-400'
+              }`}
+              data-testid="tab-employees"
+            >
+              <Crown className="w-4 h-4 mr-3" />
+              Empleados
             </button>
             
             <button 
