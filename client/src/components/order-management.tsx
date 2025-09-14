@@ -502,7 +502,7 @@ export default function OrderManagement({ onNotification }: OrderManagementProps
                         <DropdownMenuTrigger asChild>
                           <Button
                             size="sm"
-                            className="tech-button-3d bg-gradient-to-br from-slate-700 to-slate-900 hover:from-slate-800 hover:to-black text-white font-bold px-3 py-2 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 border-2 border-slate-600"
+                            className="tech-button-3d bg-white border-2 border-slate-300 text-slate-700 dark:from-slate-500/20 dark:to-slate-600/20 dark:text-white dark:border-slate-500/30 rounded-lg shadow-sm p-3 hover:bg-slate-50 hover:border-slate-400 dark:hover:from-slate-400/30 dark:hover:to-slate-500/30 transition-all duration-300 cursor-pointer transform hover:scale-105 hover:-translate-y-1 dark:backdrop-blur-sm font-bold"
                             data-testid={`button-actions-${order.id}`}
                             title="Más opciones"
                           >
@@ -908,7 +908,7 @@ export default function OrderManagement({ onNotification }: OrderManagementProps
               <Button 
                 variant="outline" 
                 onClick={() => setShowPaymentModal(false)} 
-                className="tech-button-3d flex-1 bg-gradient-to-br from-slate-100 to-slate-200 hover:from-slate-200 hover:to-slate-300 dark:from-slate-700 dark:to-slate-800 border-2 border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 font-semibold py-3 rounded-lg"
+                className="tech-button-3d flex-1 bg-white border-2 border-slate-300 text-slate-700 dark:from-slate-500/20 dark:to-slate-600/20 dark:text-white dark:border-slate-500/30 rounded-lg shadow-sm p-3 hover:bg-slate-50 hover:border-slate-400 dark:hover:from-slate-400/30 dark:hover:to-slate-500/30 transition-all duration-300 cursor-pointer transform hover:scale-105 hover:-translate-y-1 dark:backdrop-blur-sm font-bold"
                 data-testid="button-cancel-payment"
               >
                 Cancelar
@@ -916,7 +916,7 @@ export default function OrderManagement({ onNotification }: OrderManagementProps
               <Button 
                 onClick={handlePayment} 
                 disabled={!selectedPaymentMethod || paymentMutation.isPending}
-                className="tech-button-3d flex-1 bg-gradient-to-br from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold py-3 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50"
+                className="tech-button-3d flex-1 bg-white border-2 border-emerald-300 text-emerald-700 dark:from-green-500/20 dark:to-emerald-600/20 dark:text-white dark:border-emerald-500/30 rounded-lg shadow-sm p-3 hover:bg-emerald-50 hover:border-emerald-400 dark:hover:from-green-400/30 dark:hover:to-emerald-500/30 transition-all duration-300 cursor-pointer transform hover:scale-105 hover:-translate-y-1 dark:backdrop-blur-sm font-bold disabled:opacity-50"
                 data-testid="button-process-payment"
               >
                 {paymentMutation.isPending ? (
