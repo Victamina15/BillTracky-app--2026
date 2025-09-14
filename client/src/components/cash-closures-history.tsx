@@ -98,7 +98,18 @@ export default function CashClosuresHistory({ onBack }: CashClosuresHistoryProps
     isLoading: closuresLoading,
     error: closuresError
   } = useQuery<CashClosure[]>({
-    queryKey: ['/api/cash-closures/history', { startDate: dateRange.startDate, endDate: dateRange.endDate }],
+    queryKey: ['/api/cash-closures/history', dateRange.startDate, dateRange.endDate],
+    queryFn: async () => {
+      const response = await fetch(`/api/cash-closures/history?startDate=${dateRange.startDate}&endDate=${dateRange.endDate}`, {
+        headers: {
+          'x-employee-id': localStorage.getItem('employeeId') || '',
+        },
+      });
+      if (!response.ok) {
+        throw new Error('Failed to fetch cash closures history');
+      }
+      return response.json();
+    },
     enabled: true,
   });
 
