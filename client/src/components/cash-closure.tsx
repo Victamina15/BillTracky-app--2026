@@ -201,17 +201,23 @@ export default function CashClosure({ onBack }: CashClosureProps) {
     }
   };
 
+  const escapeHtml = (text: string): string => {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  };
+
   const printCashClosure = () => {
     const currentEmployee = employees.find((e: Employee) => e.id === localStorage.getItem('employeeId'));
     
     const printWindow = window.open('', '_blank');
     if (!printWindow) return;
     
-    // Crear contenido HTML completo de forma más simple
+    // Crear contenido HTML completo de forma más simple con escapado de seguridad
     const htmlContent = `
       <html>
         <head>
-          <title>Cierre de Caja - ${selectedDate}</title>
+          <title>Cierre de Caja - ${escapeHtml(selectedDate)}</title>
           <style>
             body { 
               font-family: 'Courier New', monospace; 
@@ -254,8 +260,8 @@ export default function CashClosure({ onBack }: CashClosureProps) {
           <div class="header">
             <h2>BILLTRACKY LAVANDERÍA</h2>
             <h3>CIERRE DE CAJA</h3>
-            <p>Fecha: ${new Date(selectedDate).toLocaleDateString('es-DO')}</p>
-            <p>Empleado: ${currentEmployee?.name || 'Desconocido'}</p>
+            <p>Fecha: ${escapeHtml(new Date(selectedDate).toLocaleDateString('es-DO'))}</p>
+            <p>Empleado: ${escapeHtml(currentEmployee?.name || 'Desconocido')}</p>
             <p>Hora: ${new Date().toLocaleTimeString('es-DO')}</p>
           </div>
           
@@ -271,7 +277,7 @@ export default function CashClosure({ onBack }: CashClosureProps) {
             ${Object.entries(dailySummary.paymentSummary)
               .filter(([_, data]) => data.quantity > 0)
               .map(([method, data]) => 
-                `<div class="item"><span>${method} (${data.quantity}):</span><span>${formatCurrency(data.total)}</span></div>`
+                `<div class="item"><span>${escapeHtml(method)} (${data.quantity}):</span><span>${escapeHtml(formatCurrency(data.total))}</span></div>`
               ).join('')}
           </div>
           
@@ -279,7 +285,7 @@ export default function CashClosure({ onBack }: CashClosureProps) {
             <div class="subtitle">EMPLEADOS</div>
             ${Object.entries(dailySummary.employeeStats)
               .map(([employee, data]) => 
-                `<div class="item"><span>${employee} (${data.sales}):</span><span>${formatCurrency(data.total)}</span></div>`
+                `<div class="item"><span>${escapeHtml(employee)} (${data.sales}):</span><span>${escapeHtml(formatCurrency(data.total))}</span></div>`
               ).join('')}
           </div>
           
@@ -373,26 +379,25 @@ export default function CashClosure({ onBack }: CashClosureProps) {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6">
       <div className="max-w-6xl mx-auto">
-        {/* Header */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl dark:shadow-sm border dark:border-gray-700 p-6 mb-6">
+        {/* Header con diseño tech 3D mejorado */}
+        <div className="tech-button-3d bg-gradient-to-br from-white to-slate-50 dark:from-slate-800 dark:to-slate-900 border-2 border-slate-200 dark:border-slate-600 rounded-xl shadow-2xl backdrop-blur-sm p-6 mb-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <Button
-                variant="outline"
                 size="sm"
                 onClick={onBack}
-                className="mr-3"
+                className="tech-button-3d bg-white border-2 border-slate-300 text-slate-700 dark:from-slate-500/20 dark:to-slate-600/20 dark:text-white dark:border-slate-500/30 rounded-lg shadow-sm p-3 hover:bg-slate-50 hover:border-slate-400 dark:hover:from-slate-400/30 dark:hover:to-slate-500/30 transition-all duration-300 cursor-pointer transform hover:scale-105 hover:-translate-y-1 dark:backdrop-blur-sm font-bold mr-3"
                 data-testid="button-back-cash-closure"
               >
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Volver
               </Button>
-              <div className="w-12 h-12 bg-gradient-to-br from-cyan-500 via-blue-600 to-purple-600 rounded-xl flex items-center justify-center tech-glow">
-                <BarChart3 className="w-6 h-6 text-white" />
+              <div className="w-16 h-16 bg-gradient-to-br from-cyan-500 via-blue-600 to-purple-600 rounded-xl flex items-center justify-center tech-glow shadow-xl transform hover:scale-105 transition-all duration-300">
+                <BarChart3 className="w-8 h-8 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Cierre de Caja</h1>
-                <p className="text-gray-600 dark:text-gray-300">Reportes y cálculos diarios</p>
+                <h1 className="text-3xl font-black bg-gradient-to-r from-cyan-600 via-blue-600 to-purple-600 bg-clip-text text-transparent">Cierre de Caja</h1>
+                <p className="text-slate-600 dark:text-slate-300 font-semibold">Reportes y cálculos diarios profesionales</p>
               </div>
             </div>
             
@@ -414,7 +419,7 @@ export default function CashClosure({ onBack }: CashClosureProps) {
               
               <Button
                 onClick={printCashClosure}
-                className="tech-button-3d bg-gradient-to-r from-cyan-500/20 via-blue-600/20 to-purple-600/20 hover:from-cyan-400/30 hover:via-blue-500/30 hover:to-purple-500/30 text-cyan-700 dark:text-cyan-300 border border-cyan-300 dark:border-cyan-500/30"
+                className="tech-button-3d bg-white border-2 border-cyan-300 text-cyan-700 dark:from-cyan-500/20 dark:to-blue-600/20 dark:text-white dark:border-cyan-500/30 rounded-lg shadow-sm p-3 hover:bg-cyan-50 hover:border-cyan-400 dark:hover:from-cyan-400/30 dark:hover:to-blue-500/30 transition-all duration-300 cursor-pointer transform hover:scale-105 hover:-translate-y-1 dark:backdrop-blur-sm font-bold"
                 data-testid="button-print-closure"
               >
                 <Printer className="w-4 h-4 mr-2" />
@@ -422,7 +427,7 @@ export default function CashClosure({ onBack }: CashClosureProps) {
               </Button>
               <Button
                 onClick={exportToExcel}
-                className="tech-button-3d bg-gradient-to-r from-purple-500/20 via-pink-600/20 to-cyan-600/20 hover:from-purple-400/30 hover:via-pink-500/30 hover:to-cyan-500/30 text-purple-700 dark:text-purple-300 border border-purple-300 dark:border-purple-500/30"
+                className="tech-button-3d bg-white border-2 border-purple-300 text-purple-700 dark:from-purple-500/20 dark:to-pink-600/20 dark:text-white dark:border-purple-500/30 rounded-lg shadow-sm p-3 hover:bg-purple-50 hover:border-purple-400 dark:hover:from-purple-400/30 dark:hover:to-pink-500/30 transition-all duration-300 cursor-pointer transform hover:scale-105 hover:-translate-y-1 dark:backdrop-blur-sm font-bold"
                 data-testid="button-export-closure"
               >
                 <Download className="w-4 h-4 mr-2" />
@@ -432,84 +437,78 @@ export default function CashClosure({ onBack }: CashClosureProps) {
           </div>
         </div>
 
-        {/* Estadísticas principales */}
+        {/* Estadísticas principales con diseño tech 3D */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Facturas</p>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white" data-testid="stat-total-invoices">
-                    {dailySummary.totalInvoices}
-                  </p>
-                </div>
-                <div className="w-12 h-12 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl flex items-center justify-center tech-glow">
-                  <FileText className="w-6 h-6 text-white" />
-                </div>
+          <div className="tech-button-3d bg-gradient-to-br from-white to-slate-50 dark:from-slate-800 dark:to-slate-900 border-2 border-cyan-200 dark:border-cyan-500/50 rounded-xl shadow-2xl backdrop-blur-sm p-6 hover:shadow-xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-bold text-slate-600 dark:text-slate-300 mb-2">Total Facturas</p>
+                <p className="text-3xl font-black bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent" data-testid="stat-total-invoices">
+                  {dailySummary.totalInvoices}
+                </p>
               </div>
-            </CardContent>
-          </Card>
+              <div className="w-14 h-14 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl flex items-center justify-center tech-glow shadow-lg">
+                <FileText className="w-7 h-7 text-white" />
+              </div>
+            </div>
+          </div>
 
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Entregadas</p>
-                  <p className="text-2xl font-bold text-green-600" data-testid="stat-delivered-invoices">
-                    {dailySummary.deliveredInvoices}
-                  </p>
-                </div>
-                <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center tech-glow">
-                  <CheckCircle className="w-6 h-6 text-white" />
-                </div>
+          <div className="tech-button-3d bg-gradient-to-br from-white to-slate-50 dark:from-slate-800 dark:to-slate-900 border-2 border-green-200 dark:border-green-500/50 rounded-xl shadow-2xl backdrop-blur-sm p-6 hover:shadow-xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-bold text-slate-600 dark:text-slate-300 mb-2">Entregadas</p>
+                <p className="text-3xl font-black bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent" data-testid="stat-delivered-invoices">
+                  {dailySummary.deliveredInvoices}
+                </p>
               </div>
-            </CardContent>
-          </Card>
+              <div className="w-14 h-14 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center tech-glow shadow-lg">
+                <CheckCircle className="w-7 h-7 text-white" />
+              </div>
+            </div>
+          </div>
 
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Pendientes</p>
-                  <p className="text-2xl font-bold text-yellow-600" data-testid="stat-pending-invoices">
-                    {dailySummary.pendingInvoices}
-                  </p>
-                </div>
-                <div className="w-12 h-12 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-xl flex items-center justify-center tech-glow">
-                  <Clock className="w-6 h-6 text-white" />
-                </div>
+          <div className="tech-button-3d bg-gradient-to-br from-white to-slate-50 dark:from-slate-800 dark:to-slate-900 border-2 border-yellow-200 dark:border-yellow-500/50 rounded-xl shadow-2xl backdrop-blur-sm p-6 hover:shadow-xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-bold text-slate-600 dark:text-slate-300 mb-2">Pendientes</p>
+                <p className="text-3xl font-black bg-gradient-to-r from-yellow-600 to-orange-600 bg-clip-text text-transparent" data-testid="stat-pending-invoices">
+                  {dailySummary.pendingInvoices}
+                </p>
               </div>
-            </CardContent>
-          </Card>
+              <div className="w-14 h-14 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-xl flex items-center justify-center tech-glow shadow-lg animate-pulse">
+                <Clock className="w-7 h-7 text-white" />
+              </div>
+            </div>
+          </div>
 
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Ingresos</p>
-                  <p className="text-2xl font-bold text-green-600" data-testid="stat-total-revenue">
-                    {formatCurrency(dailySummary.totalRevenue)}
-                  </p>
-                </div>
-                <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center tech-glow">
-                  <DollarSign className="w-6 h-6 text-green-600" />
-                </div>
+          <div className="tech-button-3d bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/30 dark:to-emerald-800/30 border-2 border-green-300 dark:border-green-500/50 rounded-xl shadow-2xl backdrop-blur-sm p-6 hover:shadow-xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 tech-glow">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-bold text-green-700 dark:text-green-300 mb-2">💰 Total Ingresos</p>
+                <p className="text-3xl font-black bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent" data-testid="stat-total-revenue">
+                  {formatCurrency(dailySummary.totalRevenue)}
+                </p>
               </div>
-            </CardContent>
-          </Card>
+              <div className="w-14 h-14 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center tech-glow shadow-lg animate-pulse">
+                <DollarSign className="w-7 h-7 text-white" />
+              </div>
+            </div>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Resumen por métodos de pago */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <CreditCard className="h-5 w-5" />
+          {/* Resumen por métodos de pago con diseño tech 3D */}
+          <div className="tech-button-3d bg-gradient-to-br from-white to-slate-50 dark:from-slate-800 dark:to-slate-900 border-2 border-slate-200 dark:border-slate-600 rounded-xl shadow-2xl backdrop-blur-sm">
+            <div className="p-6 border-b border-slate-200 dark:border-slate-600">
+              <h3 className="text-xl font-bold bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent flex items-center gap-3">
+                <div className="w-8 h-8 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-lg flex items-center justify-center tech-glow">
+                  <CreditCard className="h-5 w-5 text-white" />
+                </div>
                 Métodos de Pago
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
+              </h3>
+            </div>
+            <div className="p-6">
+              <div className="space-y-4">
                 {Object.entries(dailySummary.paymentSummary)
                   .filter(([_, data]) => data.quantity > 0)
                   .map(([methodName, data]) => {
@@ -517,84 +516,101 @@ export default function CashClosure({ onBack }: CashClosureProps) {
                     const methodCode = method?.code || 'pending';
                     
                     return (
-                      <div key={methodName} className="flex items-center justify-between p-3 rounded-lg border border-gray-200 dark:border-gray-700">
-                        <div className="flex items-center gap-3">
-                          {getPaymentMethodIcon(methodCode)}
-                          <div>
-                            <p className="font-medium">{methodName}</p>
-                            <p className="text-sm text-gray-600 dark:text-gray-400">{data.quantity} transacciones</p>
+                      <div key={methodName} className="tech-button-3d bg-gradient-to-br from-white to-slate-50 dark:from-slate-700 dark:to-slate-800 border-2 border-slate-200 dark:border-slate-600 rounded-lg p-4 hover:shadow-lg transition-all duration-300 transform hover:scale-105 hover:-translate-y-0.5">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-4">
+                            <div className="p-2 rounded-lg bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-600 dark:to-slate-700">
+                              {getPaymentMethodIcon(methodCode)}
+                            </div>
+                            <div>
+                              <p className="font-bold text-slate-800 dark:text-slate-200">{methodName}</p>
+                              <p className="text-sm text-slate-600 dark:text-slate-400 font-semibold">{data.quantity} transacciones</p>
+                            </div>
+                          </div>
+                          <div className="tech-button-3d bg-gradient-to-br from-green-100 to-emerald-200 dark:from-green-900/30 dark:to-emerald-800/30 border-2 border-green-300 dark:border-green-500/50 px-4 py-2 rounded-lg font-bold text-green-800 dark:text-green-300 tech-glow" data-testid={`payment-${methodCode}-total`}>
+                            {formatCurrency(data.total)}
                           </div>
                         </div>
-                        <Badge className={getPaymentMethodColor(methodCode)} data-testid={`payment-${methodCode}-total`}>
-                          {formatCurrency(data.total)}
-                        </Badge>
                       </div>
                     );
                   })}
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
-          {/* Estadísticas por empleado */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Users className="h-5 w-5" />
+          {/* Estadísticas por empleado con diseño tech 3D */}
+          <div className="tech-button-3d bg-gradient-to-br from-white to-slate-50 dark:from-slate-800 dark:to-slate-900 border-2 border-slate-200 dark:border-slate-600 rounded-xl shadow-2xl backdrop-blur-sm">
+            <div className="p-6 border-b border-slate-200 dark:border-slate-600">
+              <h3 className="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent flex items-center gap-3">
+                <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-600 rounded-lg flex items-center justify-center tech-glow">
+                  <Users className="h-5 w-5 text-white" />
+                </div>
                 Rendimiento por Empleado
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
+              </h3>
+            </div>
+            <div className="p-6">
+              <div className="space-y-4">
                 {Object.entries(dailySummary.employeeStats).map(([employeeName, stats]) => (
-                  <div key={employeeName} className="flex items-center justify-between p-3 rounded-lg border border-gray-200 dark:border-gray-700">
-                    <div>
-                      <p className="font-medium">{employeeName}</p>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">{stats.sales} ventas</p>
+                  <div key={employeeName} className="tech-button-3d bg-gradient-to-br from-white to-slate-50 dark:from-slate-700 dark:to-slate-800 border-2 border-slate-200 dark:border-slate-600 rounded-lg p-4 hover:shadow-lg transition-all duration-300 transform hover:scale-105 hover:-translate-y-0.5">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-4">
+                        <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-600 rounded-lg flex items-center justify-center text-white font-bold">
+                          {employeeName.charAt(0).toUpperCase()}
+                        </div>
+                        <div>
+                          <p className="font-bold text-slate-800 dark:text-slate-200">{employeeName}</p>
+                          <p className="text-sm text-slate-600 dark:text-slate-400 font-semibold">⚡ {stats.sales} ventas</p>
+                        </div>
+                      </div>
+                      <div className="tech-button-3d bg-gradient-to-br from-cyan-100 to-blue-200 dark:from-cyan-900/30 dark:to-blue-800/30 border-2 border-cyan-300 dark:border-cyan-500/50 px-4 py-2 rounded-lg font-bold text-cyan-800 dark:text-cyan-300 tech-glow" data-testid={`employee-${employeeName}-total`}>
+                        {formatCurrency(stats.total)}
+                      </div>
                     </div>
-                    <Badge className="bg-gradient-to-r from-cyan-500/20 via-blue-600/20 to-purple-600/20 text-cyan-700 dark:text-cyan-300 border border-cyan-300 dark:border-cyan-500/30 tech-glow" data-testid={`employee-${employeeName}-total`}>
-                      {formatCurrency(stats.total)}
-                    </Badge>
                   </div>
                 ))}
                 {Object.keys(dailySummary.employeeStats).length === 0 && (
-                  <p className="text-center text-gray-500 dark:text-gray-400 py-4">No hay ventas registradas para esta fecha</p>
+                  <div className="tech-button-3d bg-gradient-to-br from-yellow-100 to-orange-200 dark:from-yellow-900/30 dark:to-orange-800/30 border-2 border-yellow-300 dark:border-yellow-500/50 rounded-lg p-6 text-center">
+                    <p className="text-yellow-800 dark:text-yellow-300 font-bold">📅 No hay ventas registradas para esta fecha</p>
+                  </div>
                 )}
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </div>
 
-        {/* Desglose financiero */}
-        <Card className="mt-6">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <DollarSign className="h-5 w-5" />
+        {/* Desglose financiero con diseño tech 3D */}
+        <div className="tech-button-3d bg-gradient-to-br from-white to-slate-50 dark:from-slate-800 dark:to-slate-900 border-2 border-slate-200 dark:border-slate-600 rounded-xl shadow-2xl backdrop-blur-sm mt-6">
+          <div className="p-6 border-b border-slate-200 dark:border-slate-600">
+            <h3 className="text-xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent flex items-center gap-3">
+              <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg flex items-center justify-center tech-glow">
+                <DollarSign className="h-5 w-5 text-white" />
+              </div>
               Desglose Financiero
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
+            </h3>
+          </div>
+          <div className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="text-center p-4 bg-gradient-to-br from-cyan-500/10 via-blue-600/10 to-purple-600/10 border border-cyan-300/30 dark:border-cyan-500/30 rounded-lg tech-glow">
-                <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Subtotal</p>
+              <div className="tech-button-3d bg-gradient-to-br from-cyan-50 to-blue-100 dark:from-cyan-900/30 dark:to-blue-800/30 border-2 border-cyan-300 dark:border-cyan-500/50 rounded-lg p-6 text-center hover:shadow-lg transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 tech-glow">
+                <p className="text-sm font-bold text-cyan-700 dark:text-cyan-300 mb-2">📊 Subtotal</p>
                 <p className="text-xl font-bold text-cyan-600 dark:text-cyan-400" data-testid="financial-subtotal">
                   {formatCurrency(dailySummary.totalSubtotal)}
                 </p>
               </div>
-              <div className="text-center p-4 bg-gradient-to-br from-blue-500/10 via-purple-600/10 to-pink-600/10 border border-blue-300/30 dark:border-blue-500/30 rounded-lg tech-glow">
-                <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">ITBIS (18%)</p>
+              <div className="tech-button-3d bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-800/30 border-2 border-blue-300 dark:border-blue-500/50 rounded-lg p-6 text-center hover:shadow-lg transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 tech-glow">
+                <p className="text-sm font-bold text-blue-700 dark:text-blue-300 mb-2">📋 ITBIS (18%)</p>
                 <p className="text-xl font-bold text-blue-600 dark:text-blue-400" data-testid="financial-tax">
                   {formatCurrency(dailySummary.totalTax)}
                 </p>
               </div>
-              <div className="text-center p-4 bg-gradient-to-br from-purple-500/15 via-pink-600/15 to-cyan-600/15 border-2 border-purple-400/40 dark:border-purple-500/40 rounded-lg tech-glow">
-                <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Total Ingresos</p>
-                <p className="text-2xl font-bold text-purple-700 dark:text-purple-300" data-testid="financial-total">
+              <div className="tech-button-3d bg-gradient-to-br from-purple-50 to-pink-100 dark:from-purple-900/30 dark:to-pink-800/30 border-2 border-purple-300 dark:border-purple-500/50 rounded-lg p-6 text-center hover:shadow-lg transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 tech-glow">
+                <p className="text-sm font-bold text-purple-700 dark:text-purple-300 mb-2">💰 Total Ingresos</p>
+                <p className="text-2xl font-black bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent" data-testid="financial-total">
                   {formatCurrency(dailySummary.totalRevenue)}
                 </p>
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
         {/* Modal de confirmación */}
         <Dialog open={showConfirmModal} onOpenChange={setShowConfirmModal}>
