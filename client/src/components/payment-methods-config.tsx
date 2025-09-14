@@ -88,7 +88,10 @@ export default function PaymentMethodsConfig({ onNotification }: PaymentMethodsC
   });
 
   const handleSubmit = (data: any) => {
-    createMethodMutation.mutate(data);
+    // Generate code from name (lowercase, no spaces, alphanumeric only)
+    const code = data.name.toLowerCase().replace(/[^a-z0-9]/g, '_').replace(/_{2,}/g, '_').replace(/^_|_$/g, '');
+    const submitData = { ...data, code };
+    createMethodMutation.mutate(submitData);
   };
 
   const handleEdit = (method: PaymentMethod) => {
