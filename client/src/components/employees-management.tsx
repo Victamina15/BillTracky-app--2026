@@ -660,14 +660,14 @@ export default function EmployeesManagement({ onNotification }: EmployeesManagem
       <Card className="tech-glow border-2 border-slate-300/50 dark:border-cyan-500/30">
         <CardContent className="p-0">
           <div className="overflow-x-auto">
-            <table className="w-full">
+            <table className="w-full min-w-[700px]">
               <thead className="bg-gradient-to-r from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-700">
                 <tr>
                   <th className="px-6 py-4 text-left font-semibold text-slate-700 dark:text-slate-300">👤 Empleado</th>
                   <th className="px-6 py-4 text-left font-semibold text-slate-700 dark:text-slate-300">🏷️ Rol</th>
-                  <th className="px-6 py-4 text-left font-semibold text-slate-700 dark:text-slate-300">🔑 Código</th>
+                  <th className="px-6 py-4 text-left font-semibold text-slate-700 dark:text-slate-300 hidden sm:table-cell">🔑 Código</th>
                   <th className="px-6 py-4 text-left font-semibold text-slate-700 dark:text-slate-300">📊 Estado</th>
-                  <th className="px-6 py-4 text-left font-semibold text-slate-700 dark:text-slate-300">📅 Último Acceso</th>
+                  <th className="px-6 py-4 text-left font-semibold text-slate-700 dark:text-slate-300 hidden md:table-cell">📅 Último Acceso</th>
                   <th className="px-6 py-4 text-center font-semibold text-slate-700 dark:text-slate-300">⚙️ Acciones</th>
                 </tr>
               </thead>
@@ -694,7 +694,7 @@ export default function EmployeesManagement({ onNotification }: EmployeesManagem
                         {getRoleName(employee.role)}
                       </Badge>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-4 hidden sm:table-cell">
                       <div className="flex items-center space-x-2">
                         <code className="px-2 py-1 rounded text-sm font-mono bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400 border border-green-300 dark:border-green-700">
                           🔒 PROTEGIDO
@@ -712,14 +712,14 @@ export default function EmployeesManagement({ onNotification }: EmployeesManagem
                         </span>
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-sm text-muted-foreground">
+                    <td className="px-6 py-4 text-sm text-muted-foreground hidden md:table-cell">
                       {employee.lastAccess ? new Date(employee.lastAccess).toLocaleDateString('es-DO') : 'Nunca'}
                     </td>
                     <td className="px-6 py-4">
-                      <div className="flex items-center justify-center space-x-2">
+                      <div className="flex items-center justify-center space-x-1 sm:space-x-2">
                         <button
                           onClick={() => handleEdit(employee)}
-                          className="tech-button-3d p-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800 rounded-lg border-2 border-blue-400 shadow-lg transition-all duration-300 hover:scale-110"
+                          className="tech-button-3d p-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800 rounded-lg border-2 border-blue-400 shadow-lg transition-all duration-300 hover:scale-110 min-h-11 min-w-11 flex items-center justify-center"
                           title="Editar empleado"
                           data-testid={`button-edit-employee-${employee.id}`}
                         >
@@ -727,7 +727,7 @@ export default function EmployeesManagement({ onNotification }: EmployeesManagem
                         </button>
                         <button
                           onClick={() => toggleEmployeeStatus(employee)}
-                          className={`tech-button-3d p-2 rounded-lg border-2 shadow-lg transition-all duration-300 hover:scale-110 ${
+                          className={`tech-button-3d p-3 rounded-lg border-2 shadow-lg transition-all duration-300 hover:scale-110 min-h-11 min-w-11 flex items-center justify-center ${
                             employee.active 
                               ? 'bg-gradient-to-r from-red-600 to-red-700 text-white hover:from-red-700 hover:to-red-800 border-red-400' 
                               : 'bg-gradient-to-r from-green-600 to-green-700 text-white hover:from-green-700 hover:to-green-800 border-green-400'
@@ -739,7 +739,7 @@ export default function EmployeesManagement({ onNotification }: EmployeesManagem
                         </button>
                         <button
                           onClick={() => handleDeleteEmployee(employee)}
-                          className="tech-button-3d p-2 bg-gradient-to-r from-red-600 to-red-700 text-white hover:from-red-700 hover:to-red-800 rounded-lg border-2 border-red-400 shadow-lg transition-all duration-300 hover:scale-110"
+                          className="tech-button-3d p-3 bg-gradient-to-r from-red-600 to-red-700 text-white hover:from-red-700 hover:to-red-800 rounded-lg border-2 border-red-400 shadow-lg transition-all duration-300 hover:scale-110 min-h-11 min-w-11 flex items-center justify-center"
                           title="Eliminar empleado"
                           data-testid={`button-delete-employee-${employee.id}`}
                         >

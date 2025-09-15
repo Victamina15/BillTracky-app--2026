@@ -111,15 +111,15 @@ export default function OrdersTable({ onNotification }: OrdersTableProps) {
 
       {/* Orders Table */}
       <div className="overflow-x-auto">
-        <table className="w-full">
+        <table className="w-full min-w-[800px]">
           <thead>
             <tr className="border-b border-border">
               <th className="text-left py-3 px-4 font-medium text-muted-foreground">Número</th>
               <th className="text-left py-3 px-4 font-medium text-muted-foreground">Cliente</th>
-              <th className="text-left py-3 px-4 font-medium text-muted-foreground">Teléfono</th>
+              <th className="text-left py-3 px-4 font-medium text-muted-foreground hidden sm:table-cell">Teléfono</th>
               <th className="text-left py-3 px-4 font-medium text-muted-foreground">Total</th>
               <th className="text-left py-3 px-4 font-medium text-muted-foreground">Estado</th>
-              <th className="text-left py-3 px-4 font-medium text-muted-foreground">Fecha</th>
+              <th className="text-left py-3 px-4 font-medium text-muted-foreground hidden md:table-cell">Fecha</th>
               <th className="text-left py-3 px-4 font-medium text-muted-foreground">Acciones</th>
             </tr>
           </thead>
@@ -132,7 +132,7 @@ export default function OrdersTable({ onNotification }: OrdersTableProps) {
                 <td className="py-4 px-4">
                   <span className="text-card-foreground">{order.customerName}</span>
                 </td>
-                <td className="py-4 px-4">
+                <td className="py-4 px-4 hidden sm:table-cell">
                   <span className="text-muted-foreground">{order.customerPhone}</span>
                 </td>
                 <td className="py-4 px-4">
@@ -153,16 +153,16 @@ export default function OrdersTable({ onNotification }: OrdersTableProps) {
                     <option value="delivered">Entregado</option>
                   </select>
                 </td>
-                <td className="py-4 px-4">
+                <td className="py-4 px-4 hidden md:table-cell">
                   <span className="text-muted-foreground">
                     {new Date(order.date || 0).toLocaleDateString('es-ES')}
                   </span>
                 </td>
                 <td className="py-4 px-4">
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center space-x-1 sm:space-x-2">
                     <button 
                       onClick={() => onNotification(`Viendo detalles de ${order.number}`)}
-                      className="tech-button-3d p-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700 border border-blue-300 rounded-lg shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200"
+                      className="tech-button-3d p-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800 border border-blue-400 rounded-lg shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200 min-h-11 min-w-11 flex items-center justify-center"
                       title="Ver detalles"
                       data-testid={`button-view-${order.id}`}
                     >
@@ -170,7 +170,7 @@ export default function OrdersTable({ onNotification }: OrdersTableProps) {
                     </button>
                     <button 
                       onClick={() => onNotification(`Editando orden ${order.number}`)}
-                      className="tech-button-3d p-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white hover:from-orange-600 hover:to-orange-700 border border-orange-300 rounded-lg shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200"
+                      className="tech-button-3d p-3 bg-gradient-to-r from-orange-600 to-orange-700 text-white hover:from-orange-700 hover:to-orange-800 border border-orange-400 rounded-lg shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200 min-h-11 min-w-11 flex items-center justify-center"
                       title="Editar"
                       data-testid={`button-edit-${order.id}`}
                     >
@@ -178,7 +178,7 @@ export default function OrdersTable({ onNotification }: OrdersTableProps) {
                     </button>
                     <button 
                       onClick={() => onNotification(`Imprimiendo ${order.number}`)}
-                      className="tech-button-3d p-2 bg-gradient-to-r from-green-500 to-green-600 text-white hover:from-green-600 hover:to-green-700 border border-green-300 rounded-lg shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200"
+                      className="tech-button-3d p-3 bg-gradient-to-r from-green-600 to-green-700 text-white hover:from-green-700 hover:to-green-800 border border-green-400 rounded-lg shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200 min-h-11 min-w-11 flex items-center justify-center"
                       title="Imprimir"
                       data-testid={`button-print-${order.id}`}
                     >
