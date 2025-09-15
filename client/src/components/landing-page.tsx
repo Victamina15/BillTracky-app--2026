@@ -152,11 +152,11 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center space-x-3">
-              <div className="h-10 sm:h-12 w-10 sm:w-12 flex items-center justify-center hover:scale-105 transition-all duration-200 cursor-pointer">
+              <div className="h-12 sm:h-14 w-12 sm:w-14 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center hover:scale-105 hover:bg-white/20 transition-all duration-200 cursor-pointer border border-white/20">
                 <img 
                   src={logoPath} 
                   alt="BT Logo" 
-                  className="h-10 sm:h-12 w-10 sm:w-12 object-contain"
+                  className="h-9 sm:h-11 w-9 sm:w-11 object-contain"
                 />
               </div>
               <div className="hidden sm:block">
@@ -897,7 +897,7 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
             {/* Brand Column */}
             <div className="md:col-span-2">
               <div className="flex items-center space-x-3 mb-6">
-                <div className="h-12 w-12 flex items-center justify-center hover:scale-105 transition-all duration-200 cursor-pointer">
+                <div className="h-16 w-16 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center hover:scale-105 hover:bg-white/20 transition-all duration-200 cursor-pointer border border-white/20">
                   <img 
                     src={logoPath} 
                     alt="BT Logo" 
