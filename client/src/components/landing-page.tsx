@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Check, Star, Users, Building, CreditCard, Clock, Shield, HeadphonesIcon, Menu, X, ChevronRight, Zap, TrendingUp, Smartphone, MessageCircle, FileText, Award, Globe, BarChart3, Sparkles, ArrowRight, Play, Briefcase, Target, DollarSign, Rocket, CheckCircle, Phone, Mail, MapPin, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import logoPath from "@assets/generated_images/BT_black_blue_premium_style_4bd6aa89.png";
+import logoPath from "@assets/generated_images/BT_fused_single_letter_1577c2b8.png";
 import dashboardDevicesImage from "@assets/generated_images/3D_floating_tech_devices_with_BillTracky_f6288f1b.png";
 
 interface LandingPageProps {
