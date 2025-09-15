@@ -732,7 +732,7 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4">
                 <div>
                   <Label htmlFor="customerName">Nombre Completo *</Label>
                   <Input
@@ -758,7 +758,7 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
                   />
                 </div>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4">
                 <div>
                   <Label htmlFor="customerEmail">Email (Opcional)</Label>
                   <Input
@@ -802,7 +802,7 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
               {/* Interfaz directa para agregar artículos */}
               <div className="space-y-4">
                 {/* Headers de columnas */}
-                <div className="grid grid-cols-6 gap-4 text-sm font-medium text-gray-600 dark:text-gray-400 pb-2 border-b dark:border-gray-700">
+                <div className="hidden md:grid grid-cols-6 gap-4 text-sm font-medium text-gray-600 dark:text-gray-400 pb-2 border-b dark:border-gray-700">
                   <div>Artículo</div>
                   <div>Cantidad</div>
                   <div className="col-span-2">Servicio</div>
@@ -811,7 +811,7 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
                 </div>
 
                 {/* Fila para agregar nuevo artículo */}
-                <div className="grid grid-cols-6 gap-4 items-center p-3 border-2 border-slate-300 dark:border-slate-500/30 rounded-lg bg-white dark:bg-gray-800/50">
+                <div className="grid grid-cols-1 md:grid-cols-6 gap-4 items-center p-3 border-2 border-slate-300 dark:border-slate-500/30 rounded-lg bg-white dark:bg-gray-800/50">
                   {/* Dropdown de Artículo */}
                   <div>
                     <Select value={selectedService?.id || ""} onValueChange={(value) => {
@@ -904,7 +904,7 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
               {currentInvoice.items.length > 0 && (
                 <div className="space-y-2 mt-4">
                   {currentInvoice.items.map((item) => (
-                    <div key={item.id} className="grid grid-cols-6 gap-4 items-center p-3 tech3d-card">
+                    <div key={item.id} className="grid grid-cols-1 md:grid-cols-6 gap-4 items-center p-3 tech3d-card">
                       {/* Artículo */}
                       <div className="font-medium tech3d-text">
                         {item.serviceName}

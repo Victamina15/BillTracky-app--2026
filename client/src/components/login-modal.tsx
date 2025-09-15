@@ -120,9 +120,8 @@ export default function LoginModal({ isOpen, onClose, onRegisterClick, onUserLog
           <Button
             type="button"
             variant={loginType === "user" ? "default" : "ghost"}
-            size="sm"
             onClick={() => setLoginType("user")}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 h-11"
             data-testid="button-user-login-type"
           >
             <User className="w-4 h-4" />
@@ -131,9 +130,8 @@ export default function LoginModal({ isOpen, onClose, onRegisterClick, onUserLog
           <Button
             type="button"
             variant={loginType === "employee" ? "default" : "ghost"}
-            size="sm"
             onClick={() => setLoginType("employee")}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 h-11"
             data-testid="button-employee-login-type"
           >
             <Building className="w-4 h-4" />
@@ -179,7 +177,7 @@ export default function LoginModal({ isOpen, onClose, onRegisterClick, onUserLog
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground"
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground p-1 hover:bg-muted rounded min-h-8 min-w-8 flex items-center justify-center"
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>

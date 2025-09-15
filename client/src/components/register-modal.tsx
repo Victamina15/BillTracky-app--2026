@@ -99,7 +99,7 @@ export default function RegisterModal({ isOpen, onClose, onLoginClick, onSuccess
               Información Personal
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4">
               <div>
                 <Label htmlFor="firstName">Nombre *</Label>
                 <Input
@@ -151,7 +151,7 @@ export default function RegisterModal({ isOpen, onClose, onLoginClick, onSuccess
               )}
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4">
               <div>
                 <Label htmlFor="password">Contraseña *</Label>
                 <div className="relative">
@@ -167,7 +167,7 @@ export default function RegisterModal({ isOpen, onClose, onLoginClick, onSuccess
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground"
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground p-1 hover:bg-muted rounded min-h-8 min-w-8 flex items-center justify-center"
                   >
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
@@ -194,7 +194,7 @@ export default function RegisterModal({ isOpen, onClose, onLoginClick, onSuccess
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground"
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground p-1 hover:bg-muted rounded min-h-8 min-w-8 flex items-center justify-center"
                   >
                     {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
