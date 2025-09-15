@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Plus, User, Edit3, Search, Filter, Grid3X3, List, TrendingUp, Users, Star, Eye, Mail, Phone, Calendar, DollarSign, ArrowUpDown, Download, MessageSquare } from "lucide-react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { apiRequest, queryClient } from "@/lib/queryClient";
+import { apiRequest, queryClient, getQueryFn } from "@/lib/queryClient";
 import { type Customer, insertCustomerSchema } from "@shared/schema";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -34,9 +34,12 @@ export default function CustomersGrid({ onNotification }: CustomersGridProps) {
   const [selectedSegment, setSelectedSegment] = useState<CustomerSegment>('all');
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
 
-  const { data: customers = [], isLoading } = useQuery<Customer[]>({
+  const { data, isLoading, error } = useQuery<Customer[]>({
     queryKey: ["/api/customers"],
+    queryFn: getQueryFn({ on401: "returnNull" }),
   });
+  
+  const customers = data ?? [];
 
   const form = useForm({
     resolver: zodResolver(insertCustomerSchema.extend({
@@ -184,29 +187,50 @@ export default function CustomersGrid({ onNotification }: CustomersGridProps) {
     }
   };
 
+  // Show error message if there's an authentication error
+  if (error && !customers.length) {
+    return (
+      <div className="tech3d-bg min-h-screen p-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="tech3d-error-card p-8 text-center rounded-xl">
+            <Users className="h-16 w-16 text-red-400 mx-auto mb-4 animate-pulse" />
+            <h3 className="text-2xl font-bold tech-text-glow mb-4">⚠️ Error de Autenticación</h3>
+            <p className="tech3d-text-muted text-lg mb-4">No se pudieron cargar los clientes. Verifica tu acceso.</p>
+            <Button 
+              onClick={() => window.location.reload()}
+              className="tech3d-button px-6 py-3"
+            >
+              🔄 Reintentar
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (isLoading) {
     return (
-      <div className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          {[...Array(4)].map((_, i) => (
-            <Card key={i} className="tech-glow border-2 border-slate-300/50 dark:border-cyan-500/30">
+      <div className="space-y-8 tech3d-bg min-h-screen p-6">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
+          {[...Array(5)].map((_, i) => (
+            <Card key={i} className="tech3d-primary-card animate-pulse">
               <CardHeader className="pb-3">
-                <div className="w-12 h-12 bg-slate-200 dark:bg-slate-700 rounded-lg animate-pulse"></div>
+                <div className="w-16 h-16 tech-glow rounded-xl"></div>
               </CardHeader>
               <CardContent>
-                <div className="space-y-2">
-                  <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded animate-pulse"></div>
-                  <div className="h-6 bg-slate-200 dark:bg-slate-700 rounded animate-pulse"></div>
+                <div className="space-y-3">
+                  <div className="h-6 tech-glow rounded-lg"></div>
+                  <div className="h-8 tech-glow rounded-lg"></div>
                 </div>
               </CardContent>
             </Card>
           ))}
         </div>
-        <Card className="tech-glow border-2 border-slate-300/50 dark:border-cyan-500/30">
-          <CardContent className="p-8">
+        <Card className="tech3d-primary-card">
+          <CardContent className="p-12">
             <div className="text-center">
-              <div className="animate-spin w-8 h-8 border-4 border-cyan-500 border-t-transparent rounded-full mx-auto mb-4"></div>
-              <p className="text-muted-foreground dark:text-gray-300">🔍 Cargando clientes...</p>
+              <div className="animate-spin w-16 h-16 border-4 border-cyan-400 border-t-transparent rounded-full mx-auto mb-6"></div>
+              <p className="tech-text-glow text-2xl">🔍 Cargando panel de clientes...</p>
             </div>
           </CardContent>
         </Card>
@@ -215,27 +239,29 @@ export default function CustomersGrid({ onNotification }: CustomersGridProps) {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="tech3d-bg min-h-screen p-6">
+      <div className="max-w-7xl mx-auto space-y-8">
       {/* Header with Tech-3D Styling */}
-      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
-        <div className="space-y-1">
-          <h1 className="text-3xl font-bold tech-text-glow bg-gradient-to-r from-cyan-400 to-blue-600 bg-clip-text text-transparent">
-            👥 Panel de Clientes
-          </h1>
-          <p className="tech3d-text-muted">Gestiona tu base de clientes con herramientas avanzadas estilo Shopify</p>
-        </div>
-        <div className="flex items-center space-x-3">
-          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogTrigger asChild>
-              <button 
-                onClick={() => setIsDialogOpen(true)}
-                className="tech3d-button px-6 py-3 text-sm flex items-center space-x-2"
-                data-testid="button-add-customer"
-              >
-                <Plus className="w-5 h-5" />
-                <span>➕ Nuevo Cliente</span>
-              </button>
-            </DialogTrigger>
+      <div className="tech-glow border-2 border-cyan-500/30 rounded-xl p-8">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-6 lg:space-y-0">
+          <div className="space-y-3">
+            <h1 className="text-5xl font-bold tech-text-glow">
+              👥 Panel de Clientes Avanzado
+            </h1>
+            <p className="tech3d-text-muted text-xl">Gestiona tu base de clientes con herramientas avanzadas estilo Shopify</p>
+          </div>
+          <div className="flex items-center space-x-4">
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+              <DialogTrigger asChild>
+                <button 
+                  onClick={() => setIsDialogOpen(true)}
+                  className="tech3d-button px-8 py-4 text-lg flex items-center space-x-3"
+                  data-testid="button-add-customer"
+                >
+                  <Plus className="w-6 h-6" />
+                  <span>➕ Nuevo Cliente Premium</span>
+                </button>
+              </DialogTrigger>
             <DialogContent className="max-w-md">
               <DialogHeader>
                 <DialogTitle>
@@ -311,98 +337,99 @@ export default function CustomersGrid({ onNotification }: CustomersGridProps) {
         </div>
       </div>
 
-      {/* Statistics Panel */}
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
-        <Card className="tech-glow border-2 border-slate-300/50 dark:border-cyan-500/30">
-          <CardHeader className="pb-3">
-            <div className="flex items-center space-x-3">
-              <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-cyan-500 rounded-lg flex items-center justify-center">
-                <Users className="w-6 h-6 text-white" />
+        {/* Statistics Panel Tech-3D */}
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
+          <Card className="tech3d-info-card">
+            <CardHeader className="pb-4">
+              <div className="flex items-center space-x-4">
+                <div className="w-16 h-16 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-xl flex items-center justify-center animate-bounce">
+                  <Users className="w-8 h-8 text-white" />
+                </div>
+                <div>
+                  <CardTitle className="text-4xl font-bold tech-text-glow">{stats.total}</CardTitle>
+                  <CardDescription className="text-lg">👥 Total Clientes</CardDescription>
+                </div>
               </div>
-              <div>
-                <CardTitle className="text-2xl font-bold text-blue-600 dark:text-cyan-400">{stats.total}</CardTitle>
-                <CardDescription>👥 Total Clientes</CardDescription>
-              </div>
-            </div>
-          </CardHeader>
-        </Card>
+            </CardHeader>
+          </Card>
 
-        <Card className="tech-glow border-2 border-slate-300/50 dark:border-purple-500/30">
-          <CardHeader className="pb-3">
-            <div className="flex items-center space-x-3">
-              <div className="w-12 h-12 bg-gradient-to-br from-purple-400 to-pink-500 rounded-lg flex items-center justify-center">
-                <DollarSign className="w-6 h-6 text-white" />
+          <Card className="tech3d-primary-card">
+            <CardHeader className="pb-4">
+              <div className="flex items-center space-x-4">
+                <div className="w-16 h-16 bg-gradient-to-br from-purple-400 to-pink-500 rounded-xl flex items-center justify-center animate-pulse">
+                  <DollarSign className="w-8 h-8 text-white" />
+                </div>
+                <div>
+                  <CardTitle className="text-4xl font-bold tech-text-glow">RD${stats.totalSpent.toFixed(0)}</CardTitle>
+                  <CardDescription className="text-lg">💰 Ingresos Total</CardDescription>
+                </div>
               </div>
-              <div>
-                <CardTitle className="text-2xl font-bold text-purple-600 dark:text-purple-400">RD${stats.totalSpent.toFixed(0)}</CardTitle>
-                <CardDescription>💰 Ingresos Total</CardDescription>
-              </div>
-            </div>
-          </CardHeader>
-        </Card>
+            </CardHeader>
+          </Card>
 
-        <Card className="tech-glow border-2 border-slate-300/50 dark:border-green-500/30">
-          <CardHeader className="pb-3">
-            <div className="flex items-center space-x-3">
-              <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-emerald-500 rounded-lg flex items-center justify-center">
-                <TrendingUp className="w-6 h-6 text-white" />
+          <Card className="tech3d-success-card">
+            <CardHeader className="pb-4">
+              <div className="flex items-center space-x-4">
+                <div className="w-16 h-16 bg-gradient-to-br from-green-400 to-emerald-500 rounded-xl flex items-center justify-center animate-bounce">
+                  <TrendingUp className="w-8 h-8 text-white" />
+                </div>
+                <div>
+                  <CardTitle className="text-4xl font-bold tech-text-glow">RD${stats.avgSpent.toFixed(0)}</CardTitle>
+                  <CardDescription className="text-lg">📊 Promedio por Cliente</CardDescription>
+                </div>
               </div>
-              <div>
-                <CardTitle className="text-2xl font-bold text-green-600 dark:text-green-400">RD${stats.avgSpent.toFixed(0)}</CardTitle>
-                <CardDescription>📊 Promedio por Cliente</CardDescription>
-              </div>
-            </div>
-          </CardHeader>
-        </Card>
+            </CardHeader>
+          </Card>
 
-        <Card className="tech-glow border-2 border-slate-300/50 dark:border-yellow-500/30">
-          <CardHeader className="pb-3">
-            <div className="flex items-center space-x-3">
-              <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-lg flex items-center justify-center">
-                <Star className="w-6 h-6 text-white" />
+          <Card className="tech3d-warning-card">
+            <CardHeader className="pb-4">
+              <div className="flex items-center space-x-4">
+                <div className="w-16 h-16 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-xl flex items-center justify-center animate-spin">
+                  <Star className="w-8 h-8 text-white" />
+                </div>
+                <div>
+                  <CardTitle className="text-4xl font-bold tech-text-glow">{stats.vipCount}</CardTitle>
+                  <CardDescription className="text-lg">⭐ Clientes VIP</CardDescription>
+                </div>
               </div>
-              <div>
-                <CardTitle className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{stats.vipCount}</CardTitle>
-                <CardDescription>⭐ Clientes VIP</CardDescription>
-              </div>
-            </div>
-          </CardHeader>
-        </Card>
+            </CardHeader>
+          </Card>
 
-        <Card className="tech-glow border-2 border-slate-300/50 dark:border-indigo-500/30">
-          <CardHeader className="pb-3">
-            <div className="flex items-center space-x-3">
-              <div className="w-12 h-12 bg-gradient-to-br from-indigo-400 to-blue-500 rounded-lg flex items-center justify-center">
-                <Calendar className="w-6 h-6 text-white" />
+          <Card className="tech3d-secondary-card">
+            <CardHeader className="pb-4">
+              <div className="flex items-center space-x-4">
+                <div className="w-16 h-16 bg-gradient-to-br from-indigo-400 to-blue-500 rounded-xl flex items-center justify-center animate-pulse">
+                  <Calendar className="w-8 h-8 text-white" />
+                </div>
+                <div>
+                  <CardTitle className="text-4xl font-bold tech-text-glow">{stats.newThisMonth}</CardTitle>
+                  <CardDescription className="text-lg">🆕 Nuevos Este Mes</CardDescription>
+                </div>
               </div>
-              <div>
-                <CardTitle className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">{stats.newThisMonth}</CardTitle>
-                <CardDescription>🆕 Nuevos Este Mes</CardDescription>
-              </div>
-            </div>
-          </CardHeader>
-        </Card>
+            </CardHeader>
+          </Card>
+        </div>
       </div>
 
-      {/* Search and Filters */}
-      <Card className="tech-glow border-2 border-slate-300/50 dark:border-cyan-500/30">
-        <CardContent className="p-6">
-          <div className="flex flex-col lg:flex-row lg:items-center space-y-4 lg:space-y-0 lg:space-x-4">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-              <Input
-                placeholder="🔍 Buscar por nombre, teléfono o email..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 tech-glow border-2 border-slate-300/50 focus:border-cyan-500/50"
-                data-testid="input-search-customers"
-              />
-            </div>
-            <div className="flex items-center space-x-4">
-              <Select value={selectedSegment} onValueChange={(value: CustomerSegment) => setSelectedSegment(value)}>
-                <SelectTrigger className="w-48 tech-glow border-2 border-slate-300/50" data-testid="select-segment">
-                  <SelectValue placeholder="Segmento" />
-                </SelectTrigger>
+        {/* Search and Filters Tech-3D */}
+        <Card className="tech3d-primary-card">
+          <CardContent className="p-8">
+            <div className="flex flex-col lg:flex-row lg:items-center space-y-6 lg:space-y-0 lg:space-x-6">
+              <div className="relative flex-1">
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-cyan-400 w-6 h-6" />
+                <Input
+                  placeholder="🔍 Buscar por nombre, teléfono o email..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-14 py-4 text-lg tech-glow border-2 border-cyan-500/30 focus:border-cyan-400 rounded-xl"
+                  data-testid="input-search-customers"
+                />
+              </div>
+              <div className="flex items-center space-x-6">
+                <Select value={selectedSegment} onValueChange={(value: CustomerSegment) => setSelectedSegment(value)}>
+                  <SelectTrigger className="w-64 tech-glow border-2 border-cyan-500/30 py-4 text-lg rounded-xl" data-testid="select-segment">
+                    <SelectValue placeholder="Segmento" />
+                  </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">🌟 Todos los Clientes</SelectItem>
                   <SelectItem value="vip">👑 Clientes VIP</SelectItem>
@@ -411,34 +438,34 @@ export default function CustomersGrid({ onNotification }: CustomersGridProps) {
                   <SelectItem value="inactive">😴 Clientes Inactivos</SelectItem>
                 </SelectContent>
               </Select>
-              <div className="flex items-center space-x-2">
-                <button
-                  onClick={() => setViewMode('grid')}
-                  className={`p-2 rounded-lg transition-all duration-300 ${viewMode === 'grid' ? 'tech-button-3d bg-gradient-to-r from-cyan-500 to-blue-600 text-white border-2 border-cyan-300 shadow-lg tech-glow' : 'border-2 border-slate-300 text-slate-600 hover:bg-slate-100 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700'}`}
-                  data-testid="button-grid-view"
-                >
-                  <Grid3X3 className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={() => setViewMode('table')}
-                  className={`p-2 rounded-lg transition-all duration-300 ${viewMode === 'table' ? 'tech-button-3d bg-gradient-to-r from-cyan-500 to-blue-600 text-white border-2 border-cyan-300 shadow-lg tech-glow' : 'border-2 border-slate-300 text-slate-600 hover:bg-slate-100 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700'}`}
-                  data-testid="button-table-view"
-                >
-                  <List className="w-4 h-4" />
-                </button>
+                <div className="flex items-center space-x-3">
+                  <button
+                    onClick={() => setViewMode('grid')}
+                    className={`p-4 rounded-xl transition-all duration-300 ${viewMode === 'grid' ? 'tech3d-button' : 'tech3d-button-secondary'}`}
+                    data-testid="button-grid-view"
+                  >
+                    <Grid3X3 className="w-6 h-6" />
+                  </button>
+                  <button
+                    onClick={() => setViewMode('table')}
+                    className={`p-4 rounded-xl transition-all duration-300 ${viewMode === 'table' ? 'tech3d-button' : 'tech3d-button-secondary'}`}
+                    data-testid="button-table-view"
+                  >
+                    <List className="w-6 h-6" />
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
 
-      {/* Customer Display */}
-      {viewMode === 'grid' ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Customer Display Tech-3D */}
+        {viewMode === 'grid' ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredAndSortedCustomers.map((customer) => {
             const segment = getCustomerSegment(customer);
             return (
-              <Card key={customer.id} className="tech-glow border-2 border-slate-300/50 dark:border-cyan-500/20 hover:border-cyan-500/50 dark:hover:border-cyan-400/50 transition-all duration-300 hover:shadow-lg hover:scale-105" data-testid={`customer-card-${customer.id}`}>
+                <Card key={customer.id} className="tech3d-primary-card hover:tech-glow transition-all duration-500 hover:shadow-2xl hover:scale-105" data-testid={`customer-card-${customer.id}`}>
                 <CardHeader className="pb-3">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-3">
@@ -637,6 +664,7 @@ export default function CustomersGrid({ onNotification }: CustomersGridProps) {
           </CardContent>
         </Card>
       )}
+      </div>
     </div>
   );
 }

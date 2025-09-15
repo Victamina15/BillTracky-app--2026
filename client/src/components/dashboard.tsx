@@ -13,6 +13,7 @@ import CompanyConfig from "./company-config";
 import WhatsAppConfig from "./whatsapp-config";
 import EmployeesManagement from "./employees-management";
 import { useQuery } from "@tanstack/react-query";
+import logoPath from "@assets/generated_images/BT_fused_single_letter_1577c2b8.png";
 
 interface DashboardProps {
   user: Employee;
@@ -256,7 +257,7 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
             <div className="flex items-center space-x-3">
               <div className="h-12 rounded-lg overflow-hidden">
                 <img 
-                  src="/attached_assets/generated_images/BT_fused_single_letter_1577c2b8.png" 
+                  src={logoPath} 
                   alt="BT Logo" 
                   className="h-full w-auto object-contain"
                 />
