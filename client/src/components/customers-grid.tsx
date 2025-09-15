@@ -339,10 +339,10 @@ export default function CustomersGrid({ onNotification }: CustomersGridProps) {
 
         {/* Statistics Panel Tech-3D */}
         <div className="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
-          <Card className="tech3d-info-card">
+          <Card className="tech3d-info-card hover:scale-105 hover:shadow-2xl transition-all duration-300 cursor-pointer animate-pulse hover:animate-none">
             <CardHeader className="pb-4">
               <div className="flex items-center space-x-4">
-                <div className="w-16 h-16 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-xl flex items-center justify-center animate-bounce">
+                <div className="w-16 h-16 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-xl flex items-center justify-center">
                   <Users className="w-8 h-8 text-white" />
                 </div>
                 <div>
@@ -353,10 +353,10 @@ export default function CustomersGrid({ onNotification }: CustomersGridProps) {
             </CardHeader>
           </Card>
 
-          <Card className="tech3d-primary-card">
+          <Card className="tech3d-primary-card hover:scale-105 hover:shadow-2xl transition-all duration-300 cursor-pointer animate-pulse hover:animate-none">
             <CardHeader className="pb-4">
               <div className="flex items-center space-x-4">
-                <div className="w-16 h-16 bg-gradient-to-br from-purple-400 to-pink-500 rounded-xl flex items-center justify-center animate-pulse">
+                <div className="w-16 h-16 bg-gradient-to-br from-purple-400 to-pink-500 rounded-xl flex items-center justify-center">
                   <DollarSign className="w-8 h-8 text-white" />
                 </div>
                 <div>
@@ -367,10 +367,10 @@ export default function CustomersGrid({ onNotification }: CustomersGridProps) {
             </CardHeader>
           </Card>
 
-          <Card className="tech3d-success-card">
+          <Card className="tech3d-success-card hover:scale-105 hover:shadow-2xl transition-all duration-300 cursor-pointer animate-pulse hover:animate-none">
             <CardHeader className="pb-4">
               <div className="flex items-center space-x-4">
-                <div className="w-16 h-16 bg-gradient-to-br from-green-400 to-emerald-500 rounded-xl flex items-center justify-center animate-bounce">
+                <div className="w-16 h-16 bg-gradient-to-br from-green-400 to-emerald-500 rounded-xl flex items-center justify-center">
                   <TrendingUp className="w-8 h-8 text-white" />
                 </div>
                 <div>
@@ -381,10 +381,10 @@ export default function CustomersGrid({ onNotification }: CustomersGridProps) {
             </CardHeader>
           </Card>
 
-          <Card className="tech3d-warning-card">
+          <Card className="tech3d-warning-card hover:scale-105 hover:shadow-2xl transition-all duration-300 cursor-pointer animate-pulse hover:animate-none">
             <CardHeader className="pb-4">
               <div className="flex items-center space-x-4">
-                <div className="w-16 h-16 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-xl flex items-center justify-center animate-spin">
+                <div className="w-16 h-16 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-xl flex items-center justify-center">
                   <Star className="w-8 h-8 text-white" />
                 </div>
                 <div>
@@ -395,10 +395,10 @@ export default function CustomersGrid({ onNotification }: CustomersGridProps) {
             </CardHeader>
           </Card>
 
-          <Card className="tech3d-secondary-card">
+          <Card className="tech3d-secondary-card hover:scale-105 hover:shadow-2xl transition-all duration-300 cursor-pointer animate-pulse hover:animate-none">
             <CardHeader className="pb-4">
               <div className="flex items-center space-x-4">
-                <div className="w-16 h-16 bg-gradient-to-br from-indigo-400 to-blue-500 rounded-xl flex items-center justify-center animate-pulse">
+                <div className="w-16 h-16 bg-gradient-to-br from-indigo-400 to-blue-500 rounded-xl flex items-center justify-center">
                   <Calendar className="w-8 h-8 text-white" />
                 </div>
                 <div>

@@ -296,19 +296,20 @@ export default function EmployeesManagement({ onNotification }: EmployeesManagem
                 <span>➕ Nuevo Empleado</span>
               </button>
             </DialogTrigger>
-            <DialogContent className="max-w-md">
-              <DialogHeader>
-                <DialogTitle>
+            <DialogContent className="max-w-md tech3d-primary-card border-2 border-cyan-500/30">
+              <DialogHeader className="pb-6">
+                <DialogTitle className="text-2xl tech-text-glow text-center">
                   {editingEmployee ? "✏️ Editar Empleado" : "➕ Nuevo Empleado"}
                 </DialogTitle>
               </DialogHeader>
-              <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-                <div>
-                  <Label htmlFor="name">Nombre</Label>
+              <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+                <div className="space-y-2">
+                  <Label htmlFor="name" className="text-sm font-semibold tech3d-text-muted">🧑‍💼 Nombre Completo</Label>
                   <Input
                     id="name"
                     {...form.register("name")}
-                    placeholder="Nombre completo del empleado"
+                    placeholder="Ej: Juan Pérez Rodríguez"
+                    className="tech-glow border-2 border-cyan-500/30 focus:border-cyan-400 py-3"
                     data-testid="input-employee-name"
                   />
                   {form.formState.errors.name && (
@@ -317,12 +318,13 @@ export default function EmployeesManagement({ onNotification }: EmployeesManagem
                     </p>
                   )}
                 </div>
-                <div>
-                  <Label htmlFor="position">Puesto</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="position" className="text-sm font-semibold tech3d-text-muted">💼 Puesto de Trabajo</Label>
                   <Input
                     id="position"
                     {...form.register("position")}
                     placeholder="Ej: Operador, Cajero, Supervisor"
+                    className="tech-glow border-2 border-cyan-500/30 focus:border-cyan-400 py-3"
                     data-testid="input-employee-position"
                   />
                   {form.formState.errors.position && (
@@ -331,9 +333,9 @@ export default function EmployeesManagement({ onNotification }: EmployeesManagem
                     </p>
                   )}
                 </div>
-                <div>
-                  <Label htmlFor="accessCode">
-                    {editingEmployee ? "Nuevo Código de Acceso (opcional)" : "Código de Acceso"}
+                <div className="space-y-2">
+                  <Label htmlFor="accessCode" className="text-sm font-semibold tech3d-text-muted">
+                    {editingEmployee ? "🔐 Nuevo Código de Acceso (opcional)" : "🔐 Código de Acceso"}
                   </Label>
                   {editingEmployee ? (
                     <div className="space-y-2">
@@ -351,6 +353,7 @@ export default function EmployeesManagement({ onNotification }: EmployeesManagem
                           {...form.register("accessCode")}
                           placeholder="Dejar vacío para mantener actual"
                           type="number"
+                          className="tech-glow border-2 border-cyan-500/30 focus:border-cyan-400 py-3"
                           data-testid="input-employee-access-code"
                         />
                         <Button
@@ -371,6 +374,7 @@ export default function EmployeesManagement({ onNotification }: EmployeesManagem
                         {...form.register("accessCode")}
                         placeholder="1234"
                         type="number"
+                        className="tech-glow border-2 border-cyan-500/30 focus:border-cyan-400 py-3"
                         data-testid="input-employee-access-code"
                       />
                       <Button
@@ -390,13 +394,13 @@ export default function EmployeesManagement({ onNotification }: EmployeesManagem
                     </p>
                   )}
                 </div>
-                <div>
-                  <Label htmlFor="role">Rol</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="role" className="text-sm font-semibold tech3d-text-muted">👑 Rol del Empleado</Label>
                   <Select 
                     value={form.watch("role")} 
                     onValueChange={(value: EmployeeRole) => form.setValue("role", value)}
                   >
-                    <SelectTrigger className="tech-glow border-2 border-slate-300/50" data-testid="select-role">
+                    <SelectTrigger className="tech-glow border-2 border-cyan-500/30 focus:border-cyan-400 py-3" data-testid="select-role">
                       <SelectValue placeholder="Selecciona un rol" />
                     </SelectTrigger>
                     <SelectContent>
