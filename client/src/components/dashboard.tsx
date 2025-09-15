@@ -254,11 +254,11 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
         <div className="p-6 border-b border-cyan-500/20">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center dark:shadow-lg tech-glow p-1">
+              <div className="h-10 rounded-lg overflow-hidden">
                 <img 
-                  src="/attached_assets/generated_images/BT_fused_letters_logo_45758577.png" 
+                  src="/attached_assets/generated_images/BT_black_blue_premium_style_4bd6aa89.png" 
                   alt="BT Logo" 
-                  className="w-full h-full object-contain"
+                  className="h-full w-auto object-contain"
                 />
               </div>
               <div>

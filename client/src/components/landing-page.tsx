@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Check, Star, Users, Building, CreditCard, Clock, Shield, HeadphonesIcon, Menu, X, ChevronRight, Zap, TrendingUp, Smartphone, MessageCircle, FileText, Award, Globe, BarChart3, Sparkles, ArrowRight, Play, Briefcase, Target, DollarSign, Rocket, CheckCircle, Phone, Mail, MapPin, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import logoPath from "@assets/generated_images/BT_fused_letters_logo_45758577.png";
+import logoPath from "@assets/generated_images/BT_black_blue_premium_style_4bd6aa89.png";
 import dashboardDevicesImage from "@assets/generated_images/3D_floating_tech_devices_with_BillTracky_f6288f1b.png";
 
 interface LandingPageProps {
@@ -152,11 +152,11 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white rounded-xl flex items-center justify-center tech-glow p-1 transition-all duration-300 hover:scale-105">
+              <div className="h-8 sm:h-10 rounded-lg overflow-hidden transition-all duration-300 hover:scale-105">
                 <img 
                   src={logoPath} 
                   alt="BT Logo" 
-                  className="w-full h-full object-contain"
+                  className="h-full w-auto object-contain"
                 />
               </div>
               <div className="hidden sm:block">
@@ -897,11 +897,11 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
             {/* Brand Column */}
             <div className="md:col-span-2">
               <div className="flex items-center space-x-3 mb-6">
-                <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center tech-glow p-2">
+                <div className="h-12 rounded-lg overflow-hidden">
                   <img 
                     src={logoPath} 
                     alt="BT Logo" 
-                    className="w-full h-full object-contain"
+                    className="h-full w-auto object-contain"
                   />
                 </div>
                 <div>
