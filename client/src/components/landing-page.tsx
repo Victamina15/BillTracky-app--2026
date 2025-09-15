@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Check, Star, Users, Building, CreditCard, Clock, Shield, HeadphonesIcon, Menu, X, ChevronRight, Zap, TrendingUp, Smartphone, MessageCircle, FileText, Award, Globe, BarChart3, Sparkles, ArrowRight, Play, Briefcase, Target, DollarSign, Rocket, CheckCircle, Phone, Mail, MapPin, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import logoPath from "@assets/logo demo 2_1757619097947.png";
+import logoPath from "@assets/generated_images/BT_fused_letters_logo_45758577.png";
 import dashboardDevicesImage from "@assets/generated_images/3D_floating_tech_devices_with_BillTracky_f6288f1b.png";
 
 interface LandingPageProps {
@@ -152,11 +152,15 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-cyan-500 via-blue-600 to-purple-600 rounded-xl flex items-center justify-center tech-glow">
-                <img src={logoPath} alt="Billtracky Logo" className="w-6 h-6" />
+              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white rounded-xl flex items-center justify-center tech-glow p-1 transition-all duration-300 hover:scale-105">
+                <img 
+                  src={logoPath} 
+                  alt="BT Logo" 
+                  className="w-full h-full object-contain"
+                />
               </div>
-              <div>
-                <h1 className="text-xl font-black bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent tech-text-glow">BillTracky</h1>
+              <div className="hidden sm:block">
+                <h1 className="text-lg sm:text-xl font-black bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent tech-text-glow">BillTracky</h1>
                 <p className="text-xs text-white/90 font-medium">Sistema de Gestión para Lavanderías</p>
               </div>
             </div>
@@ -893,7 +897,13 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
             {/* Brand Column */}
             <div className="md:col-span-2">
               <div className="flex items-center space-x-3 mb-6">
-                <img src={logoPath} alt="Billtracky Logo" className="w-10 h-10" />
+                <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center tech-glow p-2">
+                  <img 
+                    src={logoPath} 
+                    alt="BT Logo" 
+                    className="w-full h-full object-contain"
+                  />
+                </div>
                 <div>
                   <h3 className="text-2xl font-bold text-white">Billtracky</h3>
                   <p className="text-secondary/80">Sistema de Gestión para Lavanderías</p>
