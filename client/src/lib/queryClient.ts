@@ -13,7 +13,7 @@ export async function apiRequest(
   data?: unknown | undefined,
 ): Promise<Response> {
   const headers: Record<string, string> = {
-    'x-employee-id': localStorage.getItem('employeeId') || '',
+    'x-access-code': localStorage.getItem('employeeAccessCode') || '',
   };
   
   if (data) {
@@ -39,7 +39,7 @@ export const getQueryFn: <T>(options: {
   async ({ queryKey }) => {
     const res = await fetch(queryKey.join("/") as string, {
       headers: {
-        'x-employee-id': localStorage.getItem('employeeId') || '',
+        'x-access-code': localStorage.getItem('employeeAccessCode') || '',
       },
       credentials: "include",
     });

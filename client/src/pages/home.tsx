@@ -38,9 +38,12 @@ export default function Home() {
     showNotification(`Bienvenido ${user.firstName}!`);
   };
 
-  const handleEmployeeLogin = (employee: Employee) => {
-    // Store employee ID in localStorage for authenticated requests
+  const handleEmployeeLogin = (employee: Employee, accessCode?: string) => {
+    // Store employee ID and access code in localStorage for authenticated requests
     localStorage.setItem('employeeId', employee.id);
+    if (accessCode) {
+      localStorage.setItem('employeeAccessCode', accessCode);
+    }
     setCurrentUser(employee);
     setUserType("employee");
     setShowLoginModal(false);
@@ -53,8 +56,9 @@ export default function Home() {
   };
 
   const logout = () => {
-    // Clear stored employee ID from localStorage
+    // Clear stored employee data from localStorage
     localStorage.removeItem('employeeId');
+    localStorage.removeItem('employeeAccessCode');
     setCurrentUser(null);
     setUserType(null);
     showNotification("Sesión cerrada correctamente.");

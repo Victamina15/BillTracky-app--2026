@@ -5,7 +5,7 @@ import { apiRequest } from "@/lib/queryClient";
 import NumericKeypad from "./numeric-keypad";
 
 interface LoginScreenProps {
-  onLogin: (user: Employee) => void;
+  onLogin: (user: Employee, accessCode?: string) => void;
   onNotification: (message: string) => void;
 }
 
@@ -25,7 +25,7 @@ export default function LoginScreen({ onLogin, onNotification }: LoginScreenProp
       const response = await apiRequest("POST", "/api/auth/login", { accessCode });
       const data = await response.json();
       
-      onLogin(data.employee);
+      onLogin(data.employee, accessCode);
       onNotification(`¡Bienvenido, ${data.employee.name}!`);
       setAccessCode("");
     } catch (error) {
