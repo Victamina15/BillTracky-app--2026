@@ -162,7 +162,7 @@ export default function OrdersTable({ onNotification }: OrdersTableProps) {
                   <div className="flex items-center space-x-2">
                     <button 
                       onClick={() => onNotification(`Viendo detalles de ${order.number}`)}
-                      className="p-1 text-secondary dark:text-gray-400 hover:bg-secondary/10 dark:hover:bg-gray-700 rounded transition-colors duration-200"
+                      className="p-1 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/20 rounded transition-colors duration-200"
                       title="Ver detalles"
                       data-testid={`button-view-${order.id}`}
                     >
@@ -170,7 +170,7 @@ export default function OrdersTable({ onNotification }: OrdersTableProps) {
                     </button>
                     <button 
                       onClick={() => onNotification(`Editando orden ${order.number}`)}
-                      className="p-1 text-muted-foreground dark:text-gray-400 hover:bg-muted dark:hover:bg-gray-700 rounded transition-colors duration-200"
+                      className="p-1 text-orange-600 dark:text-orange-400 hover:bg-orange-100 dark:hover:bg-orange-900/20 rounded transition-colors duration-200"
                       title="Editar"
                       data-testid={`button-edit-${order.id}`}
                     >

@@ -157,7 +157,7 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
                   src={logoPath} 
                   alt="BT Logo" 
                   className="h-full w-auto object-contain"
-                  style={{ filter: 'brightness(0) invert(1)' }}
+
                 />
               </div>
               <div className="hidden sm:block">
@@ -903,7 +903,7 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
                     src={logoPath} 
                     alt="BT Logo" 
                     className="h-full w-auto object-contain"
-                    style={{ filter: 'brightness(0) invert(1)' }}
+  
                   />
                 </div>
                 <div>

@@ -260,7 +260,6 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
                   src={logoPath} 
                   alt="BT Logo" 
                   className="h-full w-auto object-contain"
-                  style={{ filter: 'brightness(0) invert(1)' }}
                 />
               </div>
               <div>
