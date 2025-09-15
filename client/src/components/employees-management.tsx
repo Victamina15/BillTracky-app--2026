@@ -93,6 +93,29 @@ export default function EmployeesManagement({ onNotification }: EmployeesManagem
 
   const { data: employees = [], isLoading } = useQuery<Employee[]>({
     queryKey: ["/api/employees"],
+    queryFn: async () => {
+      try {
+        const response = await fetch('/api/employees', {
+          headers: {
+            'x-access-code': localStorage.getItem('employeeAccessCode') || '',
+          }
+        });
+        
+        if (response.status === 401) {
+          // No authentication or no employees exist - return empty array
+          return [];
+        }
+        
+        if (!response.ok) {
+          throw new Error(`${response.status}: ${response.statusText}`);
+        }
+        
+        return await response.json();
+      } catch (error) {
+        console.log('[Employees] Query failed, returning empty array:', error);
+        return [];
+      }
+    }
   });
 
   const form = useForm({
@@ -109,15 +132,56 @@ export default function EmployeesManagement({ onNotification }: EmployeesManagem
 
   const createEmployeeMutation = useMutation({
     mutationFn: async (data: any) => {
-      const method = editingEmployee ? "PUT" : "POST";
-      const url = editingEmployee ? `/api/employees/${editingEmployee.id}` : "/api/employees";
-      const response = await apiRequest(method, url, data);
-      return response.json();
+      if (editingEmployee) {
+        // Editing existing employee - use normal authenticated endpoint
+        const response = await apiRequest("PUT", `/api/employees/${editingEmployee.id}`, data);
+        return response.json();
+      } else {
+        // Creating new employee - try first employee endpoint first, fallback to normal
+        try {
+          // Try the special first employee endpoint (no auth required)
+          const response = await fetch('/api/employees/first', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+          });
+          
+          if (response.status === 403) {
+            // Employees already exist - use normal authenticated endpoint
+            const authResponse = await apiRequest("POST", "/api/employees", data);
+            return authResponse.json();
+          }
+          
+          if (!response.ok) {
+            const error = await response.text();
+            throw new Error(`${response.status}: ${error}`);
+          }
+          
+          return response.json();
+        } catch (error) {
+          // If first endpoint fails for other reasons, try the normal endpoint
+          console.log('[Employee Creation] First endpoint failed, trying authenticated endpoint:', error);
+          const response = await apiRequest("POST", "/api/employees", data);
+          return response.json();
+        }
+      }
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      // If creating first employee, automatically log them in
+      if (!editingEmployee && employees.length === 0) {
+        const accessCode = form.getValues('accessCode');
+        if (accessCode) {
+          localStorage.setItem('employeeAccessCode', accessCode);
+          localStorage.setItem('employeeId', data.id);
+          onNotification(`Primer empleado creado exitosamente. ¡Ya estás conectado como ${data.name}!`);
+        }
+      }
+      
       queryClient.invalidateQueries({ queryKey: ["/api/employees"] });
       const message = editingEmployee ? "Empleado actualizado exitosamente" : "Empleado creado exitosamente";
-      onNotification(message);
+      if (editingEmployee || employees.length > 0) {
+        onNotification(message);
+      }
       setIsDialogOpen(false);
       setEditingEmployee(null);
       form.reset();
@@ -630,7 +694,7 @@ export default function EmployeesManagement({ onNotification }: EmployeesManagem
                   data-testid="button-add-first-employee"
                 >
                   <Plus className="w-5 h-5 mr-2" />
-                  ➕ Agregar Primer Empleado
+                  Agregar Primer Empleado
                 </Button>
               )}
             </div>

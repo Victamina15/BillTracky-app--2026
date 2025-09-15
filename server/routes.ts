@@ -727,6 +727,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Special route to create first employee (no authentication required if no employees exist)
+  app.post("/api/employees/first", async (req, res) => {
+    try {
+      // Check if any employees exist
+      const employees = await storage.getEmployees();
+      if (employees.length > 0) {
+        return res.status(403).json({ message: "Employees already exist - use regular employee creation endpoint" });
+      }
+
+      const employeeData = insertEmployeeSchema.parse(req.body);
+      
+      // Force first employee to be a manager
+      const firstEmployeeData = {
+        ...employeeData,
+        role: 'manager' as const,
+        active: true
+      };
+      
+      const employee = await storage.createEmployee(firstEmployeeData);
+      res.json(employee);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Server error" });
+    }
+  });
+
   // Employee management routes (Manager access only)
   app.get("/api/employees", requireAuthentication, requireManagerRole, async (req: AuthenticatedRequest, res) => {
     try {

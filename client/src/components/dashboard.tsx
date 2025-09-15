@@ -255,11 +255,12 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
         <div className="p-6 border-b border-cyan-500/20">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="h-12 rounded-lg overflow-hidden">
+              <div className="h-12 rounded-lg overflow-hidden bg-white p-2 shadow-sm">
                 <img 
                   src={logoPath} 
                   alt="BT Logo" 
                   className="h-full w-auto object-contain"
+                  style={{ filter: 'brightness(0) invert(1)' }}
                 />
               </div>
               <div>

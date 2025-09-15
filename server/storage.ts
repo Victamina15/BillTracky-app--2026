@@ -1003,8 +1003,8 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getEmployees(): Promise<Employee[]> {
-    const employees = await db.select().from(employees);
-    return employees.map(emp => this.sanitizeEmployee(emp));
+    const employeeList = await db.select().from(employees);
+    return employeeList.map(emp => this.sanitizeEmployee(emp));
   }
 
   async getEmployeeByAccessCode(accessCode: string): Promise<Employee | undefined> {
