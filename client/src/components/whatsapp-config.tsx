@@ -344,7 +344,7 @@ _{empresa_nombre}_`
               {onBack && (
                 <Button
                   onClick={onBack}
-                  className="tech-button-3d bg-white border-2 border-slate-300 text-slate-700 dark:from-slate-500/20 dark:to-slate-600/20 dark:text-white dark:border-slate-500/30 rounded-lg shadow-sm p-3 hover:bg-slate-50 hover:border-slate-400 dark:hover:from-slate-400/30 dark:hover:to-slate-500/30 transition-all duration-300 cursor-pointer transform hover:scale-105 hover:-translate-y-1 dark:backdrop-blur-sm font-bold mr-3"
+                  className="tech3d-button-secondary p-3 mr-3"
                   data-testid="button-back-whatsapp-config"
                 >
                   <ArrowLeft className="h-4 w-4 mr-2" />
@@ -362,7 +362,7 @@ _{empresa_nombre}_`
             <div className="flex space-x-3">
               <Button
                 onClick={guardarConfiguracion}
-                className="tech-button-3d bg-white border-2 border-green-300 text-green-700 dark:from-green-500/20 dark:to-emerald-600/20 dark:text-white dark:border-green-500/30 rounded-lg shadow-sm p-3 hover:bg-green-50 hover:border-green-400 dark:hover:from-green-400/30 dark:hover:to-emerald-500/30 transition-all duration-300 cursor-pointer transform hover:scale-105 hover:-translate-y-1 dark:backdrop-blur-sm font-bold"
+                className="tech3d-button p-3"
                 data-testid="button-save-whatsapp-config"
               >
                 <Save className="w-4 h-4 mr-2" />
