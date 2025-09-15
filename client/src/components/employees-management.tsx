@@ -90,6 +90,9 @@ export default function EmployeesManagement({ onNotification }: EmployeesManagem
   const [filterRole, setFilterRole] = useState<'all' | EmployeeRole>('all');
   const [showRolePermissionsModal, setShowRolePermissionsModal] = useState(false);
   const [selectedRole, setSelectedRole] = useState<EmployeeRole | null>(null);
+  const [showLoginForm, setShowLoginForm] = useState(false);
+  const [needsAuth, setNeedsAuth] = useState(false);
+  const [loginCode, setLoginCode] = useState('');
 
   const { data: employees = [], isLoading } = useQuery<Employee[]>({
     queryKey: ["/api/employees"],
@@ -102,9 +105,15 @@ export default function EmployeesManagement({ onNotification }: EmployeesManagem
         });
         
         if (response.status === 401) {
-          // No authentication or no employees exist - return empty array
+          // User needs authentication - show login form
+          setNeedsAuth(true);
+          setShowLoginForm(true);
           return [];
         }
+        
+        // Successfully authenticated - hide login form  
+        setNeedsAuth(false);
+        setShowLoginForm(false);
         
         if (!response.ok) {
           throw new Error(`${response.status}: ${response.statusText}`);
@@ -219,6 +228,43 @@ export default function EmployeesManagement({ onNotification }: EmployeesManagem
     },
   });
 
+  const loginMutation = useMutation({
+    mutationFn: async (accessCode: string) => {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ accessCode })
+      });
+      
+      if (!response.ok) {
+        const error = await response.text();
+        throw new Error(error);
+      }
+      
+      return response.json();
+    },
+    onSuccess: (data) => {
+      localStorage.setItem('employeeAccessCode', loginCode);
+      localStorage.setItem('employeeId', data.employee.id);
+      setShowLoginForm(false);
+      setNeedsAuth(false);
+      setLoginCode('');
+      queryClient.invalidateQueries({ queryKey: ["/api/employees"] });
+      onNotification(`¡Bienvenido ${data.employee.name}! Has iniciado sesión correctamente.`);
+    },
+    onError: (error: any) => {
+      onNotification(`Error de login: ${error.message || 'Código de acceso incorrecto'}`);
+    },
+  });
+
+  const handleLogin = () => {
+    if (loginCode.length >= 4) {
+      loginMutation.mutate(loginCode);
+    } else {
+      onNotification('El código debe tener al menos 4 dígitos');
+    }
+  };
+
   const generateRandomCode = () => {
     return Math.floor(1000 + Math.random() * 9000).toString();
   };
@@ -329,6 +375,46 @@ export default function EmployeesManagement({ onNotification }: EmployeesManagem
 
   return (
     <div className="space-y-6">
+      {/* Login Form Modal for Authentication */}
+      {showLoginForm && (
+        <Card className="tech-glow border-2 border-yellow-400/50 bg-gradient-to-br from-yellow-50/50 to-orange-50/50 dark:from-yellow-900/20 dark:to-orange-900/20">
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2 text-yellow-700 dark:text-yellow-300">
+              <Shield className="w-5 h-5" />
+              <span>🔐 Inicia Sesión</span>
+            </CardTitle>
+            <CardDescription>
+              Ya existen empleados en el sistema. Ingresa tu código de acceso para gestionar empleados.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="loginCode" className="text-sm font-semibold">Código de Acceso</Label>
+              <div className="flex space-x-2">
+                <Input
+                  id="loginCode"
+                  type="password"
+                  value={loginCode}
+                  onChange={(e) => setLoginCode(e.target.value)}
+                  placeholder="Ingresa tu código de 4-6 dígitos"
+                  className="tech-glow border-2 border-yellow-400/30 focus:border-yellow-400"
+                  onKeyPress={(e) => e.key === 'Enter' && handleLogin()}
+                  data-testid="input-login-code"
+                />
+                <Button
+                  onClick={handleLogin}
+                  disabled={loginMutation.isPending}
+                  className="tech3d-button bg-gradient-to-r from-green-500 to-green-600 text-white px-6"
+                  data-testid="button-login-submit"
+                >
+                  {loginMutation.isPending ? 'Verificando...' : 'Entrar'}
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Header with Tech-3D Styling */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
         <div className="space-y-1">
@@ -357,7 +443,7 @@ export default function EmployeesManagement({ onNotification }: EmployeesManagem
                 data-testid="button-add-employee"
               >
                 <Plus className="w-5 h-5" />
-                <span>➕ Nuevo Empleado</span>
+                <span>Nuevo Empleado</span>
               </button>
             </DialogTrigger>
             <DialogContent className="max-w-md tech3d-primary-card border-2 border-cyan-500/30">
