@@ -222,14 +222,14 @@ export default function CustomersGrid({ onNotification }: CustomersGridProps) {
           <h1 className="text-3xl font-bold tech-text-glow bg-gradient-to-r from-cyan-400 to-blue-600 bg-clip-text text-transparent">
             👥 Panel de Clientes
           </h1>
-          <p className="text-muted-foreground">Gestiona tu base de clientes con herramientas avanzadas estilo Shopify</p>
+          <p className="tech3d-text-muted">Gestiona tu base de clientes con herramientas avanzadas estilo Shopify</p>
         </div>
         <div className="flex items-center space-x-3">
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
               <button 
                 onClick={() => setIsDialogOpen(true)}
-                className="tech-button-3d bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-3 rounded-lg font-bold text-sm flex items-center space-x-2 transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 border-2 border-green-300 shadow-lg tech-glow"
+                className="tech3d-button px-6 py-3 text-sm flex items-center space-x-2"
                 data-testid="button-add-customer"
               >
                 <Plus className="w-5 h-5" />
@@ -290,7 +290,7 @@ export default function CustomersGrid({ onNotification }: CustomersGridProps) {
                   <Button
                     type="submit"
                     disabled={createCustomerMutation.isPending}
-                    className="tech-button-3d bg-gradient-to-r from-cyan-500 to-blue-600 text-white hover:from-cyan-600 hover:to-blue-700 border-2 border-cyan-300 shadow-lg tech-glow flex-1"
+                    className="tech3d-button flex-1"
                     data-testid="button-save-customer"
                   >
                     {createCustomerMutation.isPending ? "💾 Guardando..." : "💾 Guardar"}
@@ -299,7 +299,7 @@ export default function CustomersGrid({ onNotification }: CustomersGridProps) {
                     type="button"
                     variant="outline"
                     onClick={handleDialogClose}
-                    className="tech-button-3d border-2 border-gray-300 text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
+                    className="tech3d-button-secondary"
                     data-testid="button-cancel"
                   >
                     ❌ Cancelar
@@ -589,7 +589,7 @@ export default function CustomersGrid({ onNotification }: CustomersGridProps) {
                         <td className="px-6 py-4 text-center">
                           <button 
                             onClick={() => handleEdit(customer)}
-                            className="tech-button-3d p-2 bg-gradient-to-r from-slate-400 to-slate-500 text-white hover:from-slate-500 hover:to-slate-600 rounded-lg border-2 border-slate-300 shadow-lg transition-all duration-300 hover:scale-110"
+                            className="tech3d-button-secondary p-2"
                             data-testid={`button-edit-customer-${customer.id}`}
                           >
                             <Edit3 className="w-4 h-4" />
@@ -626,7 +626,7 @@ export default function CustomersGrid({ onNotification }: CustomersGridProps) {
               {!searchTerm && selectedSegment === 'all' && (
                 <Button 
                   onClick={() => setIsDialogOpen(true)}
-                  className="tech-button-3d bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-3 rounded-lg font-bold border-2 border-green-300 shadow-lg tech-glow"
+                  className="tech3d-button px-6 py-3"
                   data-testid="button-add-first-customer"
                 >
                   <Plus className="w-5 h-5 mr-2" />

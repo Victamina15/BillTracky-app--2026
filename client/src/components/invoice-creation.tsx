@@ -838,7 +838,7 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
                       min="1"
                       value={itemQuantity}
                       onChange={(e) => setItemQuantity(Math.max(1, parseInt(e.target.value) || 1))}
-                      className="text-center"
+                      className="text-center tech3d-input tech3d-text"
                       data-testid="input-direct-quantity"
                     />
                   </div>
@@ -850,7 +850,7 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
                       onValueChange={(value: 'wash' | 'iron' | 'both') => setSelectedServiceType(value)}
                       disabled={!selectedService}
                     >
-                      <SelectTrigger data-testid="select-service-type">
+                      <SelectTrigger className="tech3d-input tech3d-text" data-testid="select-service-type">
                         <SelectValue placeholder="Seleccionar servicio" />
                       </SelectTrigger>
                       <SelectContent>
@@ -872,7 +872,7 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
                   </div>
 
                   {/* Total calculado */}
-                  <div className="text-right font-bold text-green-600 dark:text-green-400">
+                  <div className="text-right font-bold text-green-600 dark:text-green-400 tech3d-text">
                     {selectedService && (
                       formatCurrency(
                         parseFloat(
@@ -891,7 +891,7 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
                       disabled={!selectedService}
                       size="sm"
                       variant="outline"
-                      className="tech-button-3d bg-gradient-to-br from-cyan-50 to-blue-50 border-2 border-cyan-300 text-cyan-700 dark:bg-gradient-to-br dark:from-cyan-500/20 dark:to-blue-600/20 dark:text-cyan-300 dark:border-cyan-500/30 hover:from-cyan-100 hover:to-blue-100 hover:border-cyan-400 dark:hover:from-cyan-400/30 dark:hover:to-blue-500/30 transition-all duration-300 transform hover:scale-105 tech-glow disabled:opacity-50"
+                      className="tech3d-button disabled:opacity-50"
                       data-testid="button-add-direct"
                     >
                       <Plus className="w-4 h-4" />
@@ -904,20 +904,20 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
               {currentInvoice.items.length > 0 && (
                 <div className="space-y-2 mt-4">
                   {currentInvoice.items.map((item) => (
-                    <div key={item.id} className="grid grid-cols-6 gap-4 items-center p-3 border rounded-lg bg-white dark:bg-gray-800">
+                    <div key={item.id} className="grid grid-cols-6 gap-4 items-center p-3 tech3d-card">
                       {/* Artículo */}
-                      <div className="font-medium text-gray-900 dark:text-white">
+                      <div className="font-medium tech3d-text">
                         {item.serviceName}
                       </div>
 
                       {/* Cantidad */}
-                      <div className="text-center">
+                      <div className="text-center tech3d-text">
                         {item.quantity}
                       </div>
 
                       {/* Servicio con precio */}
                       <div className="col-span-2">
-                        <span className="text-gray-700 dark:text-gray-300">
+                        <span className="tech3d-text-muted">
                           {item.serviceType === 'wash' && 'Lavado'}
                           {item.serviceType === 'iron' && 'Planchado'}
                           {item.serviceType === 'both' && 'Lavado y Planchado'}
@@ -926,7 +926,7 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
                       </div>
 
                       {/* Total */}
-                      <div className="text-right font-bold text-green-600 dark:text-green-400">
+                      <div className="text-right font-bold text-green-600 dark:text-green-400 tech3d-text">
                         {formatCurrency(item.total)}
                       </div>
 
@@ -937,7 +937,7 @@ export default function InvoiceCreation({ onNotification }: InvoiceCreationProps
                           size="sm"
                           onClick={() => removeItem(item.id)}
                           data-testid={`button-remove-item-${item.id}`}
-                          className="tech-button-3d bg-white border-2 border-red-300 text-red-600 dark:from-red-500/20 dark:to-pink-600/20 dark:text-red-400 dark:border-red-500/30 hover:bg-red-50 hover:border-red-400 dark:hover:from-red-400/30 dark:hover:to-pink-500/30 transition-all duration-300 transform hover:scale-105 tech-glow"
+                          className="tech3d-button-secondary border-red-300 text-red-600 dark:text-red-400 hover:border-red-400"
                         >
                           <Trash2 className="w-4 h-4" />
                         </Button>

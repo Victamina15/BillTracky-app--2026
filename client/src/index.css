@@ -538,3 +538,237 @@
 .device-mobile {
   animation-delay: -4s;
 }
+
+/* ===== TECH-3D UTILITY CLASSES ===== */
+
+/* Tech-3D Panel - para contenedores principales */
+.tech3d-panel {
+  @apply relative;
+  background: linear-gradient(145deg, 
+    hsl(var(--background)) 0%, 
+    hsl(var(--muted)) 50%, 
+    hsl(var(--background)) 100%);
+  border: 2px solid hsl(var(--border));
+  border-radius: 1rem;
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dark .tech3d-panel {
+  background: linear-gradient(145deg, 
+    hsl(var(--card)) 0%, 
+    hsl(var(--accent)) 50%, 
+    hsl(var(--card)) 100%);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(59, 130, 246, 0.2);
+}
+
+.tech3d-panel:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+.dark .tech3d-panel:hover {
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(59, 130, 246, 0.3);
+}
+
+/* Tech-3D Button - para botones principales */
+.tech3d-button {
+  @apply relative overflow-hidden;
+  background: linear-gradient(145deg, #3b82f6, #1d4ed8, #1e40af);
+  border: 2px solid rgba(59, 130, 246, 0.3);
+  border-radius: 0.75rem;
+  box-shadow: 
+    0 4px 20px rgba(59, 130, 246, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  color: white !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-weight: 600;
+}
+
+.tech3d-button:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 
+    0 8px 25px rgba(59, 130, 246, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  border-color: rgba(59, 130, 246, 0.6);
+}
+
+.tech3d-button:active {
+  transform: translateY(1px) scale(0.98);
+  box-shadow: 
+    0 2px 10px rgba(59, 130, 246, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* Tech-3D Button Secondary - para botones secundarios */
+.tech3d-button-secondary {
+  @apply relative overflow-hidden;
+  background: linear-gradient(145deg, 
+    hsl(var(--background)) 0%, 
+    hsl(var(--muted)) 100%);
+  border: 2px solid hsl(var(--border));
+  border-radius: 0.75rem;
+  box-shadow: 
+    0 4px 20px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  color: hsl(var(--foreground)) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-weight: 500;
+}
+
+.dark .tech3d-button-secondary {
+  background: linear-gradient(145deg, 
+    hsl(var(--card)) 0%, 
+    hsl(var(--accent)) 100%);
+  box-shadow: 
+    0 4px 20px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(59, 130, 246, 0.1);
+}
+
+.tech3d-button-secondary:hover {
+  transform: translateY(-2px) scale(1.02);
+  border-color: rgba(59, 130, 246, 0.5);
+  box-shadow: 
+    0 8px 25px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.dark .tech3d-button-secondary:hover {
+  box-shadow: 
+    0 8px 25px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(59, 130, 246, 0.2);
+}
+
+/* Tech-3D Card - para tarjetas */
+.tech3d-card {
+  @apply relative;
+  background: linear-gradient(145deg, 
+    hsl(var(--card)) 0%, 
+    hsl(var(--background)) 50%, 
+    hsl(var(--card)) 100%);
+  border: 1px solid hsl(var(--border));
+  border-radius: 1rem;
+  box-shadow: 
+    0 6px 25px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  color: hsl(var(--card-foreground)) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dark .tech3d-card {
+  background: linear-gradient(145deg, 
+    hsl(var(--card)) 0%, 
+    hsl(var(--accent)) 50%, 
+    hsl(var(--card)) 100%);
+  box-shadow: 
+    0 6px 25px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(59, 130, 246, 0.1);
+}
+
+.tech3d-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 
+    0 10px 30px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+.dark .tech3d-card:hover {
+  box-shadow: 
+    0 10px 30px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(59, 130, 246, 0.2);
+}
+
+/* Tech-3D Input - para campos de entrada */
+.tech3d-input {
+  @apply relative;
+  background: linear-gradient(145deg, 
+    hsl(var(--background)) 0%, 
+    hsl(var(--input)) 100%);
+  border: 2px solid hsl(var(--border));
+  border-radius: 0.5rem;
+  box-shadow: 
+    inset 0 2px 8px rgba(0, 0, 0, 0.1),
+    0 1px 3px rgba(0, 0, 0, 0.1);
+  color: hsl(var(--foreground)) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dark .tech3d-input {
+  background: linear-gradient(145deg, 
+    hsl(var(--input)) 0%, 
+    hsl(var(--accent)) 100%);
+  box-shadow: 
+    inset 0 2px 8px rgba(0, 0, 0, 0.3),
+    0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.tech3d-input:focus {
+  border-color: rgba(59, 130, 246, 0.6);
+  box-shadow: 
+    inset 0 2px 8px rgba(0, 0, 0, 0.15),
+    0 0 0 3px rgba(59, 130, 246, 0.1),
+    0 2px 8px rgba(59, 130, 246, 0.2);
+}
+
+.dark .tech3d-input:focus {
+  box-shadow: 
+    inset 0 2px 8px rgba(0, 0, 0, 0.4),
+    0 0 0 3px rgba(59, 130, 246, 0.2),
+    0 2px 8px rgba(59, 130, 246, 0.3);
+}
+
+/* Tech-3D Text - para mejor visibilidad de texto */
+.tech3d-text {
+  color: hsl(var(--foreground)) !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.dark .tech3d-text {
+  color: hsl(var(--foreground)) !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Tech-3D Text Muted - para texto secundario */
+.tech3d-text-muted {
+  color: hsl(var(--muted-foreground)) !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.dark .tech3d-text-muted {
+  color: hsl(var(--muted-foreground)) !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Tech-3D Badge - para badges y etiquetas */
+.tech3d-badge {
+  @apply relative;
+  background: linear-gradient(145deg, 
+    rgba(59, 130, 246, 0.9), 
+    rgba(29, 78, 216, 0.9));
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  border-radius: 9999px;
+  box-shadow: 
+    0 2px 10px rgba(59, 130, 246, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  color: white !important;
+  font-weight: 600;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.75rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.tech3d-badge:hover {
+  transform: scale(1.05);
+  box-shadow: 
+    0 4px 15px rgba(59, 130, 246, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}

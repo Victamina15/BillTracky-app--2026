@@ -271,7 +271,7 @@ export default function EmployeesManagement({ onNotification }: EmployeesManagem
           <h1 className="text-3xl font-bold tech-text-glow bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent">
             👥 Gestión de Empleados
           </h1>
-          <p className="text-muted-foreground">Administra roles, permisos y accesos del personal</p>
+          <p className="tech3d-text-muted">Administra roles, permisos y accesos del personal</p>
         </div>
         <div className="flex items-center space-x-3">
           <button
@@ -279,7 +279,7 @@ export default function EmployeesManagement({ onNotification }: EmployeesManagem
               setSelectedRole('manager');
               setShowRolePermissionsModal(true);
             }}
-            className="tech-button-3d bg-gradient-to-r from-blue-500 to-cyan-600 text-white px-4 py-2 rounded-lg font-bold text-sm flex items-center space-x-2 transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 border-2 border-blue-300 shadow-lg tech-glow"
+            className="tech3d-button px-4 py-2 text-sm flex items-center space-x-2"
             data-testid="button-view-permissions"
           >
             <Settings className="w-4 h-4" />
@@ -289,7 +289,7 @@ export default function EmployeesManagement({ onNotification }: EmployeesManagem
             <DialogTrigger asChild>
               <button 
                 onClick={handleNewEmployee}
-                className="tech-button-3d bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-3 rounded-lg font-bold text-sm flex items-center space-x-2 transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 border-2 border-green-300 shadow-lg tech-glow"
+                className="tech3d-button px-6 py-3 text-sm flex items-center space-x-2"
                 data-testid="button-add-employee"
               >
                 <Plus className="w-5 h-5" />
