@@ -255,11 +255,11 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
         <div className="p-6 border-b border-cyan-500/20">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="h-12 w-12 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center hover:scale-105 hover:bg-white/20 transition-all duration-200 cursor-pointer border border-white/20">
+              <div className="h-12 w-12 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center hover:scale-105 hover:bg-white/20 transition-all duration-200 cursor-pointer border border-white/20 overflow-hidden">
                 <img 
                   src={logoPath} 
                   alt="BT Logo" 
-                  className="h-9 w-9 object-contain"
+                  className="h-10 w-10 object-cover rounded-full"
                 />
               </div>
               <div>
