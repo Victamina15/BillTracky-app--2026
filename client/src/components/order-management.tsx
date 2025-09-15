@@ -44,7 +44,7 @@ async function authenticatedRequest(url: string, method: string, data?: any) {
     method,
     headers: {
       'Content-Type': 'application/json',
-      'x-employee-id': localStorage.getItem('employeeId') || '',
+      'x-access-code': localStorage.getItem('employeeAccessCode') || '',
     },
     body: data ? JSON.stringify(data) : undefined,
     credentials: 'include',

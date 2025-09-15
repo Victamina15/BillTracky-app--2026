@@ -86,7 +86,7 @@ export default function CashClosure({ onBack }: CashClosureProps) {
     queryFn: async () => {
       const response = await fetch('/api/invoices', {
         headers: {
-          'x-employee-id': localStorage.getItem('employeeId') || '',
+          'x-access-code': localStorage.getItem('employeeAccessCode') || '',
         },
       });
       if (!response.ok) throw new Error('Error al cargar facturas');
@@ -107,7 +107,7 @@ export default function CashClosure({ onBack }: CashClosureProps) {
     queryFn: async () => {
       const response = await fetch('/api/payment-methods', {
         headers: {
-          'x-employee-id': localStorage.getItem('employeeId') || '',
+          'x-access-code': localStorage.getItem('employeeAccessCode') || '',
         },
       });
       if (!response.ok) throw new Error('Error al cargar métodos de pago');
@@ -121,7 +121,7 @@ export default function CashClosure({ onBack }: CashClosureProps) {
     queryFn: async () => {
       const response = await fetch('/api/employees', {
         headers: {
-          'x-employee-id': localStorage.getItem('employeeId') || '',
+          'x-access-code': localStorage.getItem('employeeAccessCode') || '',
         },
       });
       if (!response.ok) throw new Error('Error al cargar empleados');
@@ -135,7 +135,7 @@ export default function CashClosure({ onBack }: CashClosureProps) {
     queryFn: async () => {
       const response = await fetch(`/api/cash-closures/by-date/${selectedDate}`, {
         headers: {
-          'x-employee-id': localStorage.getItem('employeeId') || '',
+          'x-access-code': localStorage.getItem('employeeAccessCode') || '',
         },
       });
       if (response.status === 404) return null;
@@ -152,7 +152,7 @@ export default function CashClosure({ onBack }: CashClosureProps) {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-employee-id': localStorage.getItem('employeeId') || '',
+          'x-access-code': localStorage.getItem('employeeAccessCode') || '',
         },
         body: JSON.stringify(data),
       });
