@@ -719,7 +719,7 @@ export default function EmployeesManagement({ onNotification }: EmployeesManagem
                       <div className="flex items-center justify-center space-x-2">
                         <button
                           onClick={() => handleEdit(employee)}
-                          className="tech-button-3d p-2 bg-gradient-to-r from-blue-400 to-blue-500 text-white hover:from-blue-500 hover:to-blue-600 rounded-lg border-2 border-blue-300 shadow-lg transition-all duration-300 hover:scale-110"
+                          className="tech-button-3d p-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800 rounded-lg border-2 border-blue-400 shadow-lg transition-all duration-300 hover:scale-110"
                           title="Editar empleado"
                           data-testid={`button-edit-employee-${employee.id}`}
                         >
@@ -729,8 +729,8 @@ export default function EmployeesManagement({ onNotification }: EmployeesManagem
                           onClick={() => toggleEmployeeStatus(employee)}
                           className={`tech-button-3d p-2 rounded-lg border-2 shadow-lg transition-all duration-300 hover:scale-110 ${
                             employee.active 
-                              ? 'bg-gradient-to-r from-red-400 to-red-500 text-white hover:from-red-500 hover:to-red-600 border-red-300' 
-                              : 'bg-gradient-to-r from-green-400 to-green-500 text-white hover:from-green-500 hover:to-green-600 border-green-300'
+                              ? 'bg-gradient-to-r from-red-600 to-red-700 text-white hover:from-red-700 hover:to-red-800 border-red-400' 
+                              : 'bg-gradient-to-r from-green-600 to-green-700 text-white hover:from-green-700 hover:to-green-800 border-green-400'
                           }`}
                           title={employee.active ? 'Desactivar' : 'Activar'}
                           data-testid={`button-toggle-employee-${employee.id}`}
@@ -739,7 +739,7 @@ export default function EmployeesManagement({ onNotification }: EmployeesManagem
                         </button>
                         <button
                           onClick={() => handleDeleteEmployee(employee)}
-                          className="tech-button-3d p-2 bg-gradient-to-r from-red-500 to-red-600 text-white hover:from-red-600 hover:to-red-700 rounded-lg border-2 border-red-300 shadow-lg transition-all duration-300 hover:scale-110"
+                          className="tech-button-3d p-2 bg-gradient-to-r from-red-600 to-red-700 text-white hover:from-red-700 hover:to-red-800 rounded-lg border-2 border-red-400 shadow-lg transition-all duration-300 hover:scale-110"
                           title="Eliminar empleado"
                           data-testid={`button-delete-employee-${employee.id}`}
                         >
