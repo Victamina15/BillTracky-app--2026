@@ -162,7 +162,7 @@ export default function OrdersTable({ onNotification }: OrdersTableProps) {
                   <div className="flex items-center space-x-2">
                     <button 
                       onClick={() => onNotification(`Viendo detalles de ${order.number}`)}
-                      className="p-1 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/20 rounded transition-colors duration-200"
+                      className="tech-button-3d p-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700 border border-blue-300 rounded-lg shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200"
                       title="Ver detalles"
                       data-testid={`button-view-${order.id}`}
                     >
@@ -170,7 +170,7 @@ export default function OrdersTable({ onNotification }: OrdersTableProps) {
                     </button>
                     <button 
                       onClick={() => onNotification(`Editando orden ${order.number}`)}
-                      className="p-1 text-orange-600 dark:text-orange-400 hover:bg-orange-100 dark:hover:bg-orange-900/20 rounded transition-colors duration-200"
+                      className="tech-button-3d p-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white hover:from-orange-600 hover:to-orange-700 border border-orange-300 rounded-lg shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200"
                       title="Editar"
                       data-testid={`button-edit-${order.id}`}
                     >
@@ -178,7 +178,7 @@ export default function OrdersTable({ onNotification }: OrdersTableProps) {
                     </button>
                     <button 
                       onClick={() => onNotification(`Imprimiendo ${order.number}`)}
-                      className="p-1 text-green-600 dark:text-green-400 hover:bg-green-100 dark:hover:bg-green-900/20 rounded transition-colors duration-200"
+                      className="tech-button-3d p-2 bg-gradient-to-r from-green-500 to-green-600 text-white hover:from-green-600 hover:to-green-700 border border-green-300 rounded-lg shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200"
                       title="Imprimir"
                       data-testid={`button-print-${order.id}`}
                     >
