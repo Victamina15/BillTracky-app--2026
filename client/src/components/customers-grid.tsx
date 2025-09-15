@@ -337,77 +337,47 @@ export default function CustomersGrid({ onNotification }: CustomersGridProps) {
         </div>
       </div>
 
-        {/* Statistics Panel Tech-3D */}
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
-          <Card className="tech3d-info-card hover:scale-105 hover:shadow-2xl transition-all duration-300 cursor-pointer animate-pulse hover:animate-none">
-            <CardHeader className="pb-4">
-              <div className="flex items-center space-x-4">
-                <div className="w-16 h-16 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-xl flex items-center justify-center">
-                  <Users className="w-8 h-8 text-white" />
-                </div>
-                <div>
-                  <CardTitle className="text-4xl font-bold tech-text-glow">{stats.total}</CardTitle>
-                  <CardDescription className="text-lg">👥 Total Clientes</CardDescription>
-                </div>
-              </div>
-            </CardHeader>
-          </Card>
+        {/* Statistics Panel - Payment Methods Style */}
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8">
+          <div className="tech-button-3d bg-gradient-to-br from-blue-50 to-cyan-50 border-2 border-blue-300 dark:border-blue-500/30 rounded-xl p-4 text-center">
+            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-lg flex items-center justify-center mx-auto mb-2">
+              <Users className="w-4 h-4 text-white" />
+            </div>
+            <p className="text-2xl font-bold text-blue-700 dark:text-blue-300">{stats.total}</p>
+            <p className="text-sm text-blue-600 dark:text-blue-400">Total Clientes</p>
+          </div>
 
-          <Card className="tech3d-primary-card hover:scale-105 hover:shadow-2xl transition-all duration-300 cursor-pointer animate-pulse hover:animate-none">
-            <CardHeader className="pb-4">
-              <div className="flex items-center space-x-4">
-                <div className="w-16 h-16 bg-gradient-to-br from-purple-400 to-pink-500 rounded-xl flex items-center justify-center">
-                  <DollarSign className="w-8 h-8 text-white" />
-                </div>
-                <div>
-                  <CardTitle className="text-4xl font-bold tech-text-glow">RD${stats.totalSpent.toFixed(0)}</CardTitle>
-                  <CardDescription className="text-lg">💰 Ingresos Total</CardDescription>
-                </div>
-              </div>
-            </CardHeader>
-          </Card>
+          <div className="tech-button-3d bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-300 dark:border-green-500/30 rounded-xl p-4 text-center">
+            <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg flex items-center justify-center mx-auto mb-2">
+              <DollarSign className="w-4 h-4 text-white" />
+            </div>
+            <p className="text-2xl font-bold text-green-700 dark:text-green-300">RD${stats.totalSpent.toFixed(0)}</p>
+            <p className="text-sm text-green-600 dark:text-green-400">Ingresos Total</p>
+          </div>
 
-          <Card className="tech3d-success-card hover:scale-105 hover:shadow-2xl transition-all duration-300 cursor-pointer animate-pulse hover:animate-none">
-            <CardHeader className="pb-4">
-              <div className="flex items-center space-x-4">
-                <div className="w-16 h-16 bg-gradient-to-br from-green-400 to-emerald-500 rounded-xl flex items-center justify-center">
-                  <TrendingUp className="w-8 h-8 text-white" />
-                </div>
-                <div>
-                  <CardTitle className="text-4xl font-bold tech-text-glow">RD${stats.avgSpent.toFixed(0)}</CardTitle>
-                  <CardDescription className="text-lg">📊 Promedio por Cliente</CardDescription>
-                </div>
-              </div>
-            </CardHeader>
-          </Card>
+          <div className="tech-button-3d bg-gradient-to-br from-orange-50 to-amber-50 border-2 border-orange-300 dark:border-orange-500/30 rounded-xl p-4 text-center">
+            <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-amber-600 rounded-lg flex items-center justify-center mx-auto mb-2">
+              <TrendingUp className="w-4 h-4 text-white" />
+            </div>
+            <p className="text-2xl font-bold text-orange-700 dark:text-orange-300">RD${stats.avgSpent.toFixed(0)}</p>
+            <p className="text-sm text-orange-600 dark:text-orange-400">Promedio por Cliente</p>
+          </div>
 
-          <Card className="tech3d-warning-card hover:scale-105 hover:shadow-2xl transition-all duration-300 cursor-pointer animate-pulse hover:animate-none">
-            <CardHeader className="pb-4">
-              <div className="flex items-center space-x-4">
-                <div className="w-16 h-16 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-xl flex items-center justify-center">
-                  <Star className="w-8 h-8 text-white" />
-                </div>
-                <div>
-                  <CardTitle className="text-4xl font-bold tech-text-glow">{stats.vipCount}</CardTitle>
-                  <CardDescription className="text-lg">⭐ Clientes VIP</CardDescription>
-                </div>
-              </div>
-            </CardHeader>
-          </Card>
+          <div className="tech-button-3d bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-300 dark:border-purple-500/30 rounded-xl p-4 text-center">
+            <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-600 rounded-lg flex items-center justify-center mx-auto mb-2">
+              <Star className="w-4 h-4 text-white" />
+            </div>
+            <p className="text-2xl font-bold text-purple-700 dark:text-purple-300">{stats.vipCount}</p>
+            <p className="text-sm text-purple-600 dark:text-purple-400">Clientes VIP</p>
+          </div>
 
-          <Card className="tech3d-secondary-card hover:scale-105 hover:shadow-2xl transition-all duration-300 cursor-pointer animate-pulse hover:animate-none">
-            <CardHeader className="pb-4">
-              <div className="flex items-center space-x-4">
-                <div className="w-16 h-16 bg-gradient-to-br from-indigo-400 to-blue-500 rounded-xl flex items-center justify-center">
-                  <Calendar className="w-8 h-8 text-white" />
-                </div>
-                <div>
-                  <CardTitle className="text-4xl font-bold tech-text-glow">{stats.newThisMonth}</CardTitle>
-                  <CardDescription className="text-lg">🆕 Nuevos Este Mes</CardDescription>
-                </div>
-              </div>
-            </CardHeader>
-          </Card>
+          <div className="tech-button-3d bg-gradient-to-br from-red-50 to-pink-50 border-2 border-red-300 dark:border-red-500/30 rounded-xl p-4 text-center">
+            <div className="w-8 h-8 bg-gradient-to-br from-red-500 to-pink-600 rounded-lg flex items-center justify-center mx-auto mb-2">
+              <Calendar className="w-4 h-4 text-white" />
+            </div>
+            <p className="text-2xl font-bold text-red-700 dark:text-red-300">{stats.newThisMonth}</p>
+            <p className="text-sm text-red-600 dark:text-red-400">Nuevos Este Mes</p>
+          </div>
         </div>
       </div>
 

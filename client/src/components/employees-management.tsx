@@ -440,63 +440,39 @@ export default function EmployeesManagement({ onNotification }: EmployeesManagem
         </div>
       </div>
 
-      {/* Statistics Panel */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <Card className="tech-glow border-2 border-slate-300/50 dark:border-cyan-500/30">
-          <CardHeader className="pb-3">
-            <div className="flex items-center space-x-3">
-              <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-cyan-500 rounded-lg flex items-center justify-center">
-                <Users className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <CardTitle className="text-2xl font-bold text-blue-600 dark:text-cyan-400">{stats.total}</CardTitle>
-                <CardDescription>👥 Total Empleados</CardDescription>
-              </div>
-            </div>
-          </CardHeader>
-        </Card>
+      {/* Statistics Panel - Payment Methods Style */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="tech-button-3d bg-gradient-to-br from-blue-50 to-cyan-50 border-2 border-blue-300 dark:border-blue-500/30 rounded-xl p-4 text-center">
+          <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-lg flex items-center justify-center mx-auto mb-2">
+            <Users className="w-4 h-4 text-white" />
+          </div>
+          <p className="text-2xl font-bold text-blue-700 dark:text-blue-300">{stats.total}</p>
+          <p className="text-sm text-blue-600 dark:text-blue-400">Total Empleados</p>
+        </div>
 
-        <Card className="tech-glow border-2 border-slate-300/50 dark:border-green-500/30">
-          <CardHeader className="pb-3">
-            <div className="flex items-center space-x-3">
-              <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-emerald-500 rounded-lg flex items-center justify-center">
-                <UserCheck className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <CardTitle className="text-2xl font-bold text-green-600 dark:text-green-400">{stats.active}</CardTitle>
-                <CardDescription>✅ Empleados Activos</CardDescription>
-              </div>
-            </div>
-          </CardHeader>
-        </Card>
+        <div className="tech-button-3d bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-300 dark:border-green-500/30 rounded-xl p-4 text-center">
+          <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg flex items-center justify-center mx-auto mb-2">
+            <UserCheck className="w-4 h-4 text-white" />
+          </div>
+          <p className="text-2xl font-bold text-green-700 dark:text-green-300">{stats.active}</p>
+          <p className="text-sm text-green-600 dark:text-green-400">Empleados Activos</p>
+        </div>
 
-        <Card className="tech-glow border-2 border-slate-300/50 dark:border-yellow-500/30">
-          <CardHeader className="pb-3">
-            <div className="flex items-center space-x-3">
-              <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-lg flex items-center justify-center">
-                <Crown className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <CardTitle className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{stats.managers}</CardTitle>
-                <CardDescription>👑 Gerentes</CardDescription>
-              </div>
-            </div>
-          </CardHeader>
-        </Card>
+        <div className="tech-button-3d bg-gradient-to-br from-orange-50 to-amber-50 border-2 border-orange-300 dark:border-orange-500/30 rounded-xl p-4 text-center">
+          <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-amber-600 rounded-lg flex items-center justify-center mx-auto mb-2">
+            <Crown className="w-4 h-4 text-white" />
+          </div>
+          <p className="text-2xl font-bold text-orange-700 dark:text-orange-300">{stats.managers}</p>
+          <p className="text-sm text-orange-600 dark:text-orange-400">Gerentes</p>
+        </div>
 
-        <Card className="tech-glow border-2 border-slate-300/50 dark:border-purple-500/30">
-          <CardHeader className="pb-3">
-            <div className="flex items-center space-x-3">
-              <div className="w-12 h-12 bg-gradient-to-br from-purple-400 to-pink-500 rounded-lg flex items-center justify-center">
-                <Shield className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <CardTitle className="text-2xl font-bold text-purple-600 dark:text-purple-400">{stats.supervisors}</CardTitle>
-                <CardDescription>🛡️ Supervisores</CardDescription>
-              </div>
-            </div>
-          </CardHeader>
-        </Card>
+        <div className="tech-button-3d bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-300 dark:border-purple-500/30 rounded-xl p-4 text-center">
+          <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-600 rounded-lg flex items-center justify-center mx-auto mb-2">
+            <Shield className="w-4 h-4 text-white" />
+          </div>
+          <p className="text-2xl font-bold text-purple-700 dark:text-purple-300">{stats.supervisors}</p>
+          <p className="text-sm text-purple-600 dark:text-purple-400">Supervisores</p>
+        </div>
       </div>
 
       {/* Search and Filters */}
