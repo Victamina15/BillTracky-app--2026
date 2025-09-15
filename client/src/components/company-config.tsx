@@ -210,15 +210,15 @@ export default function CompanyConfig({ onBack }: CompanyConfigProps) {
         </div>
 
         {/* Navegación de Pestañas con diseño tech-3D */}
-        <div className="tech-button-3d bg-gradient-to-br from-white to-slate-50 dark:from-slate-800 dark:to-slate-900 border-2 border-slate-200 dark:border-slate-600 rounded-xl shadow-2xl backdrop-blur-sm mb-6">
+        <div className="tech3d-panel mb-6">
           <div className="border-b border-slate-200 dark:border-slate-600">
             <nav className="flex space-x-4 p-6">
               <button
                 onClick={() => setActiveTab('general')}
-                className={`tech-button-3d px-4 py-3 rounded-lg font-bold text-sm flex items-center space-x-2 transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 ${
+                className={`px-4 py-3 ${
                   activeTab === 'general'
-                    ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white border-2 border-blue-300 shadow-lg tech-glow'
-                    : 'bg-white border-2 border-slate-300 text-slate-700 dark:from-slate-500/20 dark:to-slate-600/20 dark:text-white dark:border-slate-500/30 hover:bg-blue-50 hover:border-blue-300 dark:hover:from-blue-400/30 dark:hover:to-indigo-500/30'
+                    ? 'tech3d-button'
+                    : 'tech3d-button-secondary'
                 }`}
                 data-testid="tab-general-config"
               >
@@ -227,10 +227,10 @@ export default function CompanyConfig({ onBack }: CompanyConfigProps) {
               </button>
               <button
                 onClick={() => setActiveTab('contacto')}
-                className={`tech-button-3d px-4 py-3 rounded-lg font-bold text-sm flex items-center space-x-2 transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 ${
+                className={`px-4 py-3 ${
                   activeTab === 'contacto'
-                    ? 'bg-gradient-to-r from-green-500 to-emerald-600 text-white border-2 border-green-300 shadow-lg tech-glow'
-                    : 'bg-white border-2 border-slate-300 text-slate-700 dark:from-slate-500/20 dark:to-slate-600/20 dark:text-white dark:border-slate-500/30 hover:bg-green-50 hover:border-green-300 dark:hover:from-green-400/30 dark:hover:to-emerald-500/30'
+                    ? 'tech3d-button'
+                    : 'tech3d-button-secondary'
                 }`}
                 data-testid="tab-contact-config"
               >
@@ -239,10 +239,10 @@ export default function CompanyConfig({ onBack }: CompanyConfigProps) {
               </button>
               <button
                 onClick={() => setActiveTab('horarios')}
-                className={`tech-button-3d px-4 py-3 rounded-lg font-bold text-sm flex items-center space-x-2 transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 ${
+                className={`px-4 py-3 ${
                   activeTab === 'horarios'
-                    ? 'bg-gradient-to-r from-purple-500 to-pink-600 text-white border-2 border-purple-300 shadow-lg tech-glow'
-                    : 'bg-white border-2 border-slate-300 text-slate-700 dark:from-slate-500/20 dark:to-slate-600/20 dark:text-white dark:border-slate-500/30 hover:bg-purple-50 hover:border-purple-300 dark:hover:from-purple-400/30 dark:hover:to-pink-500/30'
+                    ? 'tech3d-button'
+                    : 'tech3d-button-secondary'
                 }`}
                 data-testid="tab-schedule-config"
               >
@@ -251,10 +251,10 @@ export default function CompanyConfig({ onBack }: CompanyConfigProps) {
               </button>
               <button
                 onClick={() => setActiveTab('facturacion')}
-                className={`tech-button-3d px-4 py-3 rounded-lg font-bold text-sm flex items-center space-x-2 transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 ${
+                className={`px-4 py-3 ${
                   activeTab === 'facturacion'
-                    ? 'bg-gradient-to-r from-orange-500 to-red-600 text-white border-2 border-orange-300 shadow-lg tech-glow'
-                    : 'bg-white border-2 border-slate-300 text-slate-700 dark:from-slate-500/20 dark:to-slate-600/20 dark:text-white dark:border-slate-500/30 hover:bg-orange-50 hover:border-orange-300 dark:hover:from-orange-400/30 dark:hover:to-red-500/30'
+                    ? 'tech3d-button'
+                    : 'tech3d-button-secondary'
                 }`}
                 data-testid="tab-billing-config"
               >
@@ -276,6 +276,7 @@ export default function CompanyConfig({ onBack }: CompanyConfigProps) {
                       value={configuracion.nombre}
                       onChange={(e) => updateField('nombre', e.target.value)}
                       placeholder="CleanWash Lavandería S.R.L."
+                      className="tech3d-input"
                       data-testid="input-company-name"
                     />
                   </div>
@@ -287,6 +288,7 @@ export default function CompanyConfig({ onBack }: CompanyConfigProps) {
                       value={configuracion.nombreComercial}
                       onChange={(e) => updateField('nombreComercial', e.target.value)}
                       placeholder="CleanWash"
+                      className="tech3d-input"
                       data-testid="input-trade-name"
                     />
                   </div>
@@ -298,6 +300,7 @@ export default function CompanyConfig({ onBack }: CompanyConfigProps) {
                       value={configuracion.rnc}
                       onChange={(e) => updateField('rnc', e.target.value)}
                       placeholder="131-12345-6"
+                      className="tech3d-input"
                       data-testid="input-company-rnc"
                     />
                   </div>
@@ -309,6 +312,7 @@ export default function CompanyConfig({ onBack }: CompanyConfigProps) {
                       value={configuracion.website}
                       onChange={(e) => updateField('website', e.target.value)}
                       placeholder="www.empresa.com"
+                      className="tech3d-input"
                       data-testid="input-company-website"
                     />
                   </div>
