@@ -206,14 +206,14 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
           {/* Mobile Navigation */}
           {mobileMenuOpen && (
             <div className="md:hidden py-4 border-t border-white/10">
-              <div className="flex flex-col space-y-4">
-                <a href="#features" className="text-sm font-bold text-white/90 hover:text-cyan-400 transition-colors duration-300" data-testid="mobile-link-features">
+              <div className="flex flex-col space-y-2">
+                <a href="#features" className="block py-3 px-4 text-base font-bold text-white/90 hover:text-cyan-400 hover:bg-white/10 rounded-lg transition-all duration-300 min-h-11 flex items-center" data-testid="mobile-link-features">
                   Características
                 </a>
-                <a href="#pricing" className="text-sm font-bold text-white/90 hover:text-cyan-400 transition-colors duration-300" data-testid="mobile-link-pricing">
+                <a href="#pricing" className="block py-3 px-4 text-base font-bold text-white/90 hover:text-cyan-400 hover:bg-white/10 rounded-lg transition-all duration-300 min-h-11 flex items-center" data-testid="mobile-link-pricing">
                   Precios
                 </a>
-                <a href="#testimonials" className="text-sm font-bold text-white/90 hover:text-cyan-400 transition-colors duration-300" data-testid="mobile-link-testimonials">
+                <a href="#testimonials" className="block py-3 px-4 text-base font-bold text-white/90 hover:text-cyan-400 hover:bg-white/10 rounded-lg transition-all duration-300 min-h-11 flex items-center" data-testid="mobile-link-testimonials">
                   Testimonios
                 </a>
                 <Button variant="ghost" onClick={onLogin} className="justify-start text-white bg-white/5 border border-white/20 hover:border-cyan-400/50 tech-glow shadow-lg hover:shadow-2xl hover:scale-105 transition-all duration-300" data-testid="mobile-login-button">
@@ -247,9 +247,9 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
           <div className="text-center max-w-6xl mx-auto">
             {/* Tech Badge */}
-            <div className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-purple-600/20 to-cyan-600/20 border border-purple-500/30 rounded-full mb-8 tech-glow interactive-badge">
+            <div className="inline-flex items-center px-6 py-4 bg-gradient-to-r from-purple-600/20 to-cyan-600/20 border border-purple-500/30 rounded-full mb-8 tech-glow interactive-badge cursor-pointer hover:bg-purple-600/30 transition-all duration-300 hover:scale-105 min-h-11">
               <Sparkles className="w-5 h-5 text-cyan-400 mr-3" />
-              <span className="text-sm font-bold text-white tracking-wide">NUEVO: MENSAJES WHATSAPP AUTOMATIZADOS</span>
+              <span className="text-base font-bold text-white tracking-wide">NUEVO: MENSAJES WHATSAPP AUTOMATIZADOS</span>
             </div>
             
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-black text-white mb-8 leading-tight tech-text-glow">
@@ -451,8 +451,8 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
                 <h4 className="text-xl font-bold text-white mb-4">Gestión de Clientes</h4>
                 <p className="text-white/90 leading-relaxed mb-4">Base de datos completa con historial de órdenes, información de contacto y preferencias de cada cliente.</p>
                 <div className="flex flex-wrap gap-2">
-                  <span className="px-3 py-1 bg-cyan-500/20 text-cyan-300 rounded-full text-sm font-medium">Historial completo</span>
-                  <span className="px-3 py-1 bg-blue-500/20 text-blue-300 rounded-full text-sm font-medium">Búsqueda rápida</span>
+                  <span className="px-4 py-2 bg-cyan-500/20 text-cyan-300 rounded-full text-sm font-medium cursor-pointer hover:bg-cyan-500/30 transition-colors min-h-8">Historial completo</span>
+                  <span className="px-4 py-2 bg-blue-500/20 text-blue-300 rounded-full text-sm font-medium cursor-pointer hover:bg-blue-500/30 transition-colors min-h-8">Búsqueda rápida</span>
                 </div>
               </div>
               
@@ -464,8 +464,8 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
                 <h4 className="text-xl font-bold text-white mb-4">Configuración de Servicios</h4>
                 <p className="text-white/90 leading-relaxed mb-4">Define precios para lavado, planchado y servicios combinados. Personaliza categorías y tarifas especiales.</p>
                 <div className="flex flex-wrap gap-2">
-                  <span className="px-3 py-1 bg-purple-500/20 text-purple-300 rounded-full text-sm font-medium">Precios flexibles</span>
-                  <span className="px-3 py-1 bg-pink-500/20 text-pink-300 rounded-full text-sm font-medium">Categorías</span>
+                  <span className="px-4 py-2 bg-purple-500/20 text-purple-300 rounded-full text-sm font-medium cursor-pointer hover:bg-purple-500/30 transition-colors min-h-8">Precios flexibles</span>
+                  <span className="px-4 py-2 bg-pink-500/20 text-pink-300 rounded-full text-sm font-medium cursor-pointer hover:bg-pink-500/30 transition-colors min-h-8">Categorías</span>
                 </div>
               </div>
               
