@@ -152,7 +152,7 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center space-x-3">
-              <div className="h-8 sm:h-10 rounded-lg overflow-hidden transition-all duration-300 hover:scale-105">
+              <div className="h-12 sm:h-14 rounded-lg overflow-hidden transition-all duration-300 hover:scale-105">
                 <img 
                   src={logoPath} 
                   alt="BT Logo" 
@@ -897,7 +897,7 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
             {/* Brand Column */}
             <div className="md:col-span-2">
               <div className="flex items-center space-x-3 mb-6">
-                <div className="h-12 rounded-lg overflow-hidden">
+                <div className="h-16 rounded-lg overflow-hidden">
                   <img 
                     src={logoPath} 
                     alt="BT Logo" 

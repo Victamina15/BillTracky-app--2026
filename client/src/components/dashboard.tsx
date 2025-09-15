@@ -254,7 +254,7 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
         <div className="p-6 border-b border-cyan-500/20">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="h-10 rounded-lg overflow-hidden">
+              <div className="h-12 rounded-lg overflow-hidden">
                 <img 
                   src="/attached_assets/generated_images/BT_fused_single_letter_1577c2b8.png" 
                   alt="BT Logo" 
