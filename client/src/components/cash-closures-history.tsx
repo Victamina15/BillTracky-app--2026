@@ -106,10 +106,20 @@ export default function CashClosuresHistory({ onBack }: CashClosuresHistoryProps
           'x-access-code': localStorage.getItem('employeeAccessCode') || '',
         },
       });
-      if (!response.ok) {
-        throw new Error('Failed to fetch cash closures history');
+      
+      // Si no hay datos (404), devolver array vacío en lugar de error
+      if (response.status === 404) {
+        return [];
       }
-      return response.json();
+      
+      // Para otros errores (401, 500, etc.), mostrar error real
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || 'Error al cargar historial de cierres');
+      }
+      
+      const data = await response.json();
+      return Array.isArray(data) ? data : [];
     },
     enabled: true,
   });
