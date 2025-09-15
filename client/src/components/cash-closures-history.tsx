@@ -98,11 +98,7 @@ export default function CashClosuresHistory({ onBack }: CashClosuresHistoryProps
     isLoading: closuresLoading,
     error: closuresError
   } = useQuery<CashClosure[]>({
-    queryKey: ['/api/cash-closures/history', dateRange.startDate, dateRange.endDate],
-    queryFn: ({ queryKey }) => {
-      const url = `${queryKey[0]}?startDate=${dateRange.startDate}&endDate=${dateRange.endDate}`;
-      return fetch(url).then(res => res.json());
-    },
+    queryKey: ['/api/cash-closures/history', { startDate: dateRange.startDate, endDate: dateRange.endDate }],
     enabled: true,
   });
 

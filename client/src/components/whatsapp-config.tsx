@@ -384,7 +384,7 @@ _{empresa_nombre}_`
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
             {/* Menu Lateral */}
-          <Card className="dark:bg-gray-800/50 dark:shadow-lg tech-glow border-border dark:border-cyan-500/20">
+          <Card className="tech3d-card">
             <CardHeader>
               <CardTitle className="text-lg">Tipos de Mensaje</CardTitle>
             </CardHeader>
@@ -423,7 +423,9 @@ _{empresa_nombre}_`
                   <button
                     key={tipo.key}
                     onClick={() => setTipoMensaje(tipo.key)}
-                    className={`tech-button-3d w-full px-4 py-3 rounded-lg font-bold text-sm flex items-center space-x-3 transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 justify-start ${getGradientClass(tipo.key, tipoMensaje === tipo.key)}`}
+                    className={`w-full px-4 py-3 flex items-center space-x-3 justify-start ${
+                      tipoMensaje === tipo.key ? 'tech3d-button' : 'tech3d-button-secondary'
+                    }`}
                     data-testid={`tab-message-${tipo.key}`}
                   >
                     <IconoTipo className="w-5 h-5" />
@@ -437,12 +439,12 @@ _{empresa_nombre}_`
 
               {/* Variables Disponibles */}
               <div className="mt-8">
-                <h4 className="text-sm font-semibold mb-3">Variables Disponibles</h4>
+                <h4 className="tech3d-text text-sm font-semibold mb-3">Variables Disponibles</h4>
                 <div className="space-y-1 max-h-60 overflow-y-auto">
                   {Object.keys(variables).map((variable) => (
                     <button
                       key={variable}
-                      className="block w-full text-xs bg-muted px-2 py-1 rounded text-left hover:bg-muted/80 transition-colors"
+                      className="tech3d-button-secondary block w-full text-xs px-2 py-1 text-left"
                       onClick={() => {
                         navigator.clipboard.writeText(`{${variable}}`);
                         toast({
@@ -463,7 +465,7 @@ _{empresa_nombre}_`
           {/* Contenido Principal */}
           <div className="lg:col-span-3 space-y-6">
             {/* Configuración del Mensaje Actual */}
-            <Card className="dark:bg-gray-800/50 dark:shadow-lg tech-glow border-border dark:border-cyan-500/20">
+            <Card className="tech3d-card">
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <CardTitle>
@@ -487,6 +489,7 @@ _{empresa_nombre}_`
                     id="titulo"
                     value={configuracion[tipoMensaje].titulo}
                     onChange={(e) => updateConfiguracion('titulo', e.target.value)}
+                    className="tech3d-input"
                     data-testid="input-message-title"
                   />
                 </div>
@@ -509,6 +512,7 @@ _{empresa_nombre}_`
                         type="time"
                         value={configuracion.pedidoListo.horaEnvio}
                         onChange={(e) => updateConfiguracion('horaEnvio', e.target.value)}
+                        className="tech3d-input"
                         data-testid="input-send-time"
                       />
                     </div>
@@ -609,7 +613,7 @@ _{empresa_nombre}_`
                     value={configuracion[tipoMensaje].mensaje}
                     onChange={(e) => updateConfiguracion('mensaje', e.target.value)}
                     rows={12}
-                    className="font-mono text-sm"
+                    className="tech3d-input font-mono text-sm"
                     placeholder="Escribe tu mensaje aquí..."
                     data-testid="textarea-message-content"
                   />
