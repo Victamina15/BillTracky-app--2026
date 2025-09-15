@@ -23,7 +23,7 @@ interface DashboardProps {
 
 export default function Dashboard({ user, onLogout, onNotification }: DashboardProps) {
   const [activeTab, setActiveTab] = useState("overview");
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const { data: metrics, isLoading: metricsLoading } = useQuery<{
     todayOrders: number;
@@ -235,11 +235,11 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
   };
 
   return (
-    <div className="min-h-screen bg-background flex">
+    <div className="min-h-screen bg-background flex relative">
       {/* Mobile Hamburger Button */}
       <button
         onClick={() => setSidebarOpen(!sidebarOpen)}
-        className="fixed top-4 left-4 z-50 lg:hidden tech-button-3d p-2 rounded-lg bg-card border border-border"
+        className="fixed top-4 left-4 z-50 lg:hidden tech-button-3d p-3 rounded-lg bg-card border border-border min-h-11 min-w-11 flex items-center justify-center hover:scale-105 transition-all duration-200"
         aria-expanded={sidebarOpen}
         aria-label={sidebarOpen ? "Cerrar menú" : "Abrir menú"}
         data-testid="hamburger-menu"
@@ -247,10 +247,19 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
         {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
       </button>
 
+      {/* Mobile Overlay */}
+      {sidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-30 lg:hidden transition-opacity duration-300"
+          onClick={() => setSidebarOpen(false)}
+          onKeyDown={(e) => e.key === 'Escape' && setSidebarOpen(false)}
+        />
+      )}
+
       {/* Sidebar Navigation */}
       <nav className={`${
         sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-      } fixed lg:relative lg:translate-x-0 w-64 h-full bg-gradient-to-b from-gray-900 via-purple-900/20 to-blue-900/20 backdrop-blur-xl border-r border-cyan-500/20 flex flex-col z-40 transition-transform duration-300 lg:transition-none tech-gradient-bg`}>
+      } fixed lg:relative lg:translate-x-0 w-64 h-screen lg:h-full bg-gradient-to-b from-gray-900 via-purple-900/20 to-blue-900/20 backdrop-blur-xl border-r border-cyan-500/20 flex flex-col z-40 transition-transform duration-300 lg:transition-none tech-gradient-bg`}>
         {/* Header in Sidebar */}
         <div className="p-6 border-b border-cyan-500/20">
           <div className="flex items-center justify-between">
@@ -463,7 +472,7 @@ export default function Dashboard({ user, onLogout, onNotification }: DashboardP
       )}
 
       {/* Main Content */}
-      <main className={`flex-1 p-6 overflow-auto transition-all duration-300 ${
+      <main className={`flex-1 pt-20 px-4 pb-6 sm:pt-6 sm:px-6 lg:p-8 overflow-auto transition-all duration-300 ${
         sidebarOpen && 'lg:ml-0'
       }`}>
         {renderTabContent()}

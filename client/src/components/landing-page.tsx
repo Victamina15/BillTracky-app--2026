@@ -195,7 +195,7 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
 
             {/* Mobile menu button */}
             <button
-              className="md:hidden text-white hover:text-cyan-400 transition-colors duration-300"
+              className="md:hidden p-3 text-white hover:text-cyan-400 transition-colors duration-300 rounded-lg hover:bg-white/10 min-h-11 min-w-11 flex items-center justify-center"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               data-testid="mobile-menu-toggle"
             >
@@ -229,7 +229,7 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
       </header>
 
       {/* Hero Section - Tech Style */}
-      <section className="relative pt-32 pb-20 lg:pt-40 lg:pb-32 overflow-hidden tech-gradient-bg">
+      <section className="relative pt-20 sm:pt-24 md:pt-32 lg:pt-40 pb-20 lg:pb-32 overflow-hidden tech-gradient-bg">
         {/* Tech Background */}
         <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900"></div>
         <div className="absolute inset-0 bg-[radial-gradient(circle_800px_at_100%_200px,rgba(59,130,246,0.15),transparent)]"></div>
