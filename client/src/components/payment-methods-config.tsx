@@ -30,7 +30,18 @@ export default function PaymentMethodsConfig({ onNotification }: PaymentMethodsC
   });
 
   
-
+const form = useForm({
+  defaultValues: {
+    name: "",
+    icon: "card",
+    active: true,
+    requiresReference: false,
+    commission: "0",
+    description: "",
+    showOnInvoice: true,
+    color: "#3B82F6",
+  },
+});
   const createMethodMutation = useMutation({
     mutationFn: async (data: any) => {
       if (editingMethod) {
