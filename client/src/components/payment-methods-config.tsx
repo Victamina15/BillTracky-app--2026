@@ -29,19 +29,7 @@ export default function PaymentMethodsConfig({ onNotification }: PaymentMethodsC
     queryKey: ["/api/payment-methods"],
   });
 
-  const form = useForm({
-  mode: "onChange",
-  defaultValues: {
-    name: "",
-    icon: "card",
-    active: true,
-    requiresReference: false,
-    commission: "0",
-    description: "",
-    showOnInvoice: true,
-    color: "#3B82F6",
-  },
-});
+  
 
   const createMethodMutation = useMutation({
     mutationFn: async (data: any) => {
@@ -138,14 +126,7 @@ export default function PaymentMethodsConfig({ onNotification }: PaymentMethodsC
     }
   };
 
-  const filteredMethods = paymentMethods.filter(method => {
-    const matchesSearch = method.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         (method.description ?? "").toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesFilter = filterActive === "all" || 
-                         (filterActive === "active" && method.active) ||
-                         (filterActive === "inactive" && !method.active);
-    return matchesSearch && matchesFilter;
-  });
+const filteredMethods = paymentMethods; // Temporal: mostrar todos sin filtro
 
   const stats = {
     total: paymentMethods.length,
