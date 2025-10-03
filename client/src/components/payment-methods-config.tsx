@@ -126,7 +126,14 @@ export default function PaymentMethodsConfig({ onNotification }: PaymentMethodsC
     }
   };
 
-const filteredMethods = paymentMethods; // Temporal: mostrar todos sin filtro
+const filteredMethods = paymentMethods.filter(method => {
+  const matchesSearch = method.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                       (method.description ?? "").toLowerCase().includes(searchTerm.toLowerCase());
+  const matchesFilter = filterActive === "all" || 
+                       (filterActive === "active" && method.active) ||
+                       (filterActive === "inactive" && !method.active);
+  return matchesSearch && matchesFilter;
+});
 
   const stats = {
     total: paymentMethods.length,
