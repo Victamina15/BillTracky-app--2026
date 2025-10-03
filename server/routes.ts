@@ -593,18 +593,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/payment-methods", async (req, res) => {
-    try {
-      const methodData = insertPaymentMethodSchema.parse(req.body);
-      const method = await storage.createPaymentMethod(methodData);
-      res.json(method);
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        return res.status(400).json({ message: "Invalid data", errors: error.errors });
-      }
-      res.status(500).json({ message: "Server error" });
+ app.post("/api/payment-methods", async (req, res) => {
+  try {
+    console.log("[Payment Method] Received data:", JSON.stringify(req.body));
+    const methodData = insertPaymentMethodSchema.parse(req.body);
+    console.log("[Payment Method] Validated data:", JSON.stringify(methodData));
+    const method = await storage.createPaymentMethod(methodData);
+    console.log("[Payment Method] Created successfully:", method.id);
+    res.json(method);
+  } catch (error) {
+    console.error("[Payment Method] Error creating:", error);
+    if (error instanceof z.ZodError) {
+      console.error("[Payment Method] Validation errors:", error.errors);
+      return res.status(400).json({ message: "Invalid data", errors: error.errors });
     }
-  });
+    res.status(500).json({ message: "Server error", error: (error as Error).message });
+  }
+});
 
   app.put("/api/payment-methods/:id", async (req, res) => {
     try {
