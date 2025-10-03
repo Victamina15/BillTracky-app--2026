@@ -314,6 +314,8 @@ export const insertInvoiceItemSchema = createInsertSchema(invoiceItems).omit({
 export const insertPaymentMethodSchema = createInsertSchema(paymentMethods).omit({
   id: true,
   createdAt: true,
+}).extend({
+  code: z.string().optional(),
 });
 
 export const insertCompanySettingsSchema = createInsertSchema(companySettings).omit({
