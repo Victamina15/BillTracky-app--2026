@@ -28,12 +28,20 @@ useEffect(() => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ accessCode: savedAccessCode })
     })
-    .then(res => res.json())
+    .then(async res => {
+      if (res.status === 401) {
+        localStorage.removeItem('employeeAccessCode');
+        localStorage.removeItem('employeeId');
+        setIsCheckingSession(false);
+        return null;
+      }
+      return res.json();
+    })
     .then(data => {
-      if (data.employee && data.employee.id === savedEmployeeId) {
+      if (data && data.employee && data.employee.id === savedEmployeeId) {
         setCurrentUser(data.employee);
         setUserType("employee");
-      } else {
+      } else if (data) {
         localStorage.removeItem('employeeAccessCode');
         localStorage.removeItem('employeeId');
       }
