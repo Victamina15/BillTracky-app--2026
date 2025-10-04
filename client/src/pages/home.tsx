@@ -15,6 +15,7 @@ export default function Home() {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showRegisterModal, setShowRegisterModal] = useState(false);
   const { toast } = useToast();
+  const [isCheckingSession, setIsCheckingSession] = useState(true);
 
   // Cargar sesión guardada al iniciar
   useEffect(() => {
@@ -103,30 +104,39 @@ export default function Home() {
     setShowRegisterModal(true);
   };
 
-  // Si no hay usuario autenticado, mostrar landing page
-  if (!currentUser) {
-    return (
-      <>
-        <LandingPage 
-          onGetStarted={handleGetStarted}
-          onLogin={handleLogin}
-        />
-        <RegisterModal
-          isOpen={showRegisterModal}
-          onClose={() => setShowRegisterModal(false)}
-          onLoginClick={switchToLogin}
-          onSuccess={handleRegisterSuccess}
-        />
-        <LoginModal
-          isOpen={showLoginModal}
-          onClose={() => setShowLoginModal(false)}
-          onRegisterClick={switchToRegister}
-          onUserLogin={handleUserLogin}
-          onEmployeeLogin={handleEmployeeLogin}
-        />
-      </>
-    );
-  }
+ // Si está verificando sesión, mostrar loading
+if (isCheckingSession) {
+  return (
+    <div className="min-h-screen gradient-bg flex items-center justify-center">
+      <p className="text-white text-xl">Verificando sesión...</p>
+    </div>
+  );
+}
+
+// Si no hay usuario autenticado, mostrar landing page
+if (!currentUser) {
+  return (
+    <>
+      <LandingPage 
+        onGetStarted={handleGetStarted}
+        onLogin={handleLogin}
+      />
+      <RegisterModal
+        isOpen={showRegisterModal}
+        onClose={() => setShowRegisterModal(false)}
+        onLoginClick={switchToLogin}
+        onSuccess={handleRegisterSuccess}
+      />
+      <LoginModal
+        isOpen={showLoginModal}
+        onClose={() => setShowLoginModal(false)}
+        onRegisterClick={switchToRegister}
+        onUserLogin={handleUserLogin}
+        onEmployeeLogin={handleEmployeeLogin}
+      />
+    </>
+  );
+}
 
   // Si hay usuario autenticado, mostrar dashboard
   return (
