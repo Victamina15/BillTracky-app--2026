@@ -18,17 +18,12 @@ export default function Home() {
   const [isCheckingSession, setIsCheckingSession] = useState(true);
 
   // Cargar sesión guardada al iniciar
-  useEffect(() => {
-    const savedAccessCode = localStorage.getItem('employeeAccessCode');
-    const savedEmployeeId = localStorage.getItem('employeeId');
-    
-    if (savedAccessCode && savedEmployeeId) {
-      // Verificar que la sesión sigue siendo válida
-      fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ accessCode: savedAccessCode })
-      })
+useEffect(() => {
+  const savedAccessCode = localStorage.getItem('employeeAccessCode');
+  const savedEmployeeId = localStorage.getItem('employeeId');
+  
+  if (savedAccessCode && savedEmployeeId) {
+    apiRequest('POST', '/api/auth/login', { accessCode: savedAccessCode })
       .then(res => res.json())
       .then(data => {
         if (data.employee && data.employee.id === savedEmployeeId) {
@@ -38,13 +33,17 @@ export default function Home() {
           localStorage.removeItem('employeeAccessCode');
           localStorage.removeItem('employeeId');
         }
+        setIsCheckingSession(false);
       })
       .catch(() => {
         localStorage.removeItem('employeeAccessCode');
         localStorage.removeItem('employeeId');
+        setIsCheckingSession(false);
       });
-    }
-  }, []);
+  } else {
+    setIsCheckingSession(false);
+  }
+}, []);
 
   const showNotification = (message: string) => {
     toast({
