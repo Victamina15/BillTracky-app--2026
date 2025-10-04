@@ -23,23 +23,27 @@ useEffect(() => {
   const savedEmployeeId = localStorage.getItem('employeeId');
   
   if (savedAccessCode && savedEmployeeId) {
-    apiRequest('POST', '/api/auth/login', { accessCode: savedAccessCode })
-      .then(res => res.json())
-      .then(data => {
-        if (data.employee && data.employee.id === savedEmployeeId) {
-          setCurrentUser(data.employee);
-          setUserType("employee");
-        } else {
-          localStorage.removeItem('employeeAccessCode');
-          localStorage.removeItem('employeeId');
-        }
-        setIsCheckingSession(false);
-      })
-      .catch(() => {
+    fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ accessCode: savedAccessCode })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.employee && data.employee.id === savedEmployeeId) {
+        setCurrentUser(data.employee);
+        setUserType("employee");
+      } else {
         localStorage.removeItem('employeeAccessCode');
         localStorage.removeItem('employeeId');
-        setIsCheckingSession(false);
-      });
+      }
+      setIsCheckingSession(false);
+    })
+    .catch(() => {
+      localStorage.removeItem('employeeAccessCode');
+      localStorage.removeItem('employeeId');
+      setIsCheckingSession(false);
+    });
   } else {
     setIsCheckingSession(false);
   }
