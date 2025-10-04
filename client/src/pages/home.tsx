@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { type Employee, type User } from "@shared/schema";
 import LandingPage from "@/components/landing-page";
 import RegisterModal from "@/components/register-modal";
@@ -15,6 +15,35 @@ export default function Home() {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showRegisterModal, setShowRegisterModal] = useState(false);
   const { toast } = useToast();
+
+  // Cargar sesión guardada al iniciar
+  useEffect(() => {
+    const savedAccessCode = localStorage.getItem('employeeAccessCode');
+    const savedEmployeeId = localStorage.getItem('employeeId');
+    
+    if (savedAccessCode && savedEmployeeId) {
+      // Verificar que la sesión sigue siendo válida
+      fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ accessCode: savedAccessCode })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.employee && data.employee.id === savedEmployeeId) {
+          setCurrentUser(data.employee);
+          setUserType("employee");
+        } else {
+          localStorage.removeItem('employeeAccessCode');
+          localStorage.removeItem('employeeId');
+        }
+      })
+      .catch(() => {
+        localStorage.removeItem('employeeAccessCode');
+        localStorage.removeItem('employeeId');
+      });
+    }
+  }, []);
 
   const showNotification = (message: string) => {
     toast({
