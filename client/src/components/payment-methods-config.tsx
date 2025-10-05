@@ -124,12 +124,8 @@ const form = useForm({
   };
 
   const handleToggleActive = (id: string, currentActive: boolean) => {
-    // Cambiar automáticamente a vista "todos" para que el usuario vea el cambio
-    if (filterActive !== "all") {
-      setFilterActive("all");
-    }
-    toggleMethodMutation.mutate({ id, active: !currentActive });
-  };
+  toggleMethodMutation.mutate({ id, active: !currentActive });
+};
 
   const handleDelete = (id: string) => {
     if (confirm("¿Está seguro de eliminar este método de pago?")) {
