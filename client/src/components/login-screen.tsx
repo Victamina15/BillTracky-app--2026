@@ -14,27 +14,31 @@ export default function LoginScreen({ onLogin, onNotification }: LoginScreenProp
   const [showKeypad, setShowKeypad] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleLogin = async () => {
-    if (!accessCode) {
-      onNotification("Por favor ingrese su código de acceso.");
-      return;
-    }
+ const handleLogin = async () => {
+  if (!accessCode) {
+    onNotification("Por favor ingrese su código de acceso.");
+    return;
+  }
 
-    setIsLoading(true);
-    try {
-      const response = await apiRequest("POST", "/api/auth/login", { accessCode });
-      const data = await response.json();
-      
-      onLogin(data.employee, accessCode);
-      onNotification(`¡Bienvenido, ${data.employee.name}!`);
-      setAccessCode("");
-    } catch (error) {
-      onNotification("Código de acceso incorrecto.");
-      setAccessCode("");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  setIsLoading(true);
+  try {
+    const response = await apiRequest("POST", "/api/auth/login", { accessCode });
+    const data = await response.json();
+    
+    // Guardar en localStorage para persistir la sesión
+    localStorage.setItem("accessCode", accessCode);
+    localStorage.setItem("employee", JSON.stringify(data.employee));
+    
+    onLogin(data.employee, accessCode);
+    onNotification(`¡Bienvenido, ${data.employee.name}!`);
+    setAccessCode("");
+  } catch (error) {
+    onNotification("Código de acceso incorrecto.");
+    setAccessCode("");
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
@@ -108,11 +112,8 @@ export default function LoginScreen({ onLogin, onNotification }: LoginScreenProp
             </button>
           </div>
         </div>
-        
-        <div className="mt-8 text-center text-xs text-muted-foreground bg-muted rounded-lg p-4">
-          <p className="font-medium mb-1">Códigos de prueba:</p>
-          <p>1234 (Gerente) | 5678 (Empleado) | 9999 (Supervisor)</p>
-        </div>
+       
+       
       </div>
 
       <NumericKeypad
