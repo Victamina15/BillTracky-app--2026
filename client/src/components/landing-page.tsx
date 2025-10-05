@@ -276,16 +276,7 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
                 Probar Gratis 30 Días
                 <ArrowRight className="ml-3 w-6 h-6" />
               </Button>
-              <Button 
-                variant="outline" 
-                size="lg"
-                onClick={onLogin}
-                className="text-xl px-12 py-6 rounded-2xl border-2 border-cyan-500/50 text-cyan-400 hover:border-cyan-400 hover:bg-cyan-500/10 transition-all duration-300 bg-black/30 backdrop-blur-sm font-bold tech-glow"
-                data-testid="hero-login-button"
-              >
-                <Play className="mr-3 w-6 h-6" />
-                Ver Demo en Vivo
-              </Button>
+              
             </div>
 
             {/* Tech Trust indicators */}
