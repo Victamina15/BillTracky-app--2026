@@ -256,11 +256,7 @@ export default function LoginModal({ isOpen, onClose, onRegisterClick, onUserLog
               {isLoading ? "Verificando..." : "Acceder"}
             </Button>
 
-            <div className="text-center">
-              <p className="text-sm text-muted-foreground">
-                Códigos de prueba: E001 (Gerente), E002 (Empleado), E003 (Supervisor)
-              </p>
-            </div>
+      
           </form>
         )}
       </DialogContent>
